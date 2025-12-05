@@ -15,7 +15,7 @@ const Home = () => {
       <AchievementsSection />
       <PartnersSection />
       <ReviewsSection />
-      <CareerSection />
+      {/* <CareerSection /> */}
       <CTASection />
     </Box>
   );

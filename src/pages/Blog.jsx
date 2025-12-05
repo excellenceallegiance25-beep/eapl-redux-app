@@ -162,7 +162,7 @@ const Blog = () => {
   const popularPosts = blogPosts.sort((a, b) => b.likes - a.likes).slice(0, 3);
 
   const filteredPosts = blogPosts.filter(post => {
-    const matchesSearch = 
+    const matchesSearch =
       post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.tags.some(tag => tag.includes(searchTerm.toLowerCase()));
@@ -176,6 +176,7 @@ const Blog = () => {
         title="Tech Blog"
         subtitle="Insights, trends, and best practices in technology"
         breadcrumbs={[{ label: 'Blog', path: '/blog' }]}
+        backgroundImage={`linear-gradient(rgba(22, 23, 23, 0.85), rgba(11, 12, 13, 0.85)), url(https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&h=400&fit=crop)`}
       />
 
       <Container maxWidth="lg">
@@ -213,14 +214,14 @@ const Blog = () => {
                             variant="outlined"
                           />
                         </Box>
-                        
+
                         <Typography variant="h5" gutterBottom fontWeight="bold">
                           {post.title}
                         </Typography>
                         <Typography variant="body2" color="text.secondary" paragraph>
                           {post.excerpt}
                         </Typography>
-                        
+
                         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2 }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Avatar sx={{ width: 32, height: 32 }}>
@@ -237,7 +238,7 @@ const Blog = () => {
                         <Button
                           size="small"
                           endIcon={<ArrowForward />}
-                          onClick={() => {/* Navigate to post detail */}}
+                          onClick={() => {/* Navigate to post detail */ }}
                         >
                           Read More
                         </Button>
@@ -334,14 +335,14 @@ const Blog = () => {
                                 />
                               ))}
                             </Box>
-                            
+
                             <Typography variant="h6" gutterBottom fontWeight="bold">
                               {post.title}
                             </Typography>
                             <Typography variant="body2" color="text.secondary" paragraph>
                               {post.excerpt}
                             </Typography>
-                            
+
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                 <Avatar sx={{ width: 32, height: 32 }}>
@@ -356,7 +357,7 @@ const Blog = () => {
                                   </Typography>
                                 </Box>
                               </Box>
-                              
+
                               <Box sx={{ display: 'flex', gap: 1 }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                   <Favorite fontSize="small" />
@@ -373,7 +374,7 @@ const Blog = () => {
                             <Button
                               size="small"
                               endIcon={<ArrowForward />}
-                              onClick={() => {/* Navigate to post detail */}}
+                              onClick={() => {/* Navigate to post detail */ }}
                             >
                               Read Article
                             </Button>

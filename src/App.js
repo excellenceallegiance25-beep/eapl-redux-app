@@ -1,29 +1,33 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { Provider } from 'react-redux';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { store } from './redux/store';
 
 // Layout
 import Layout from './components/layout/Layout';
 
 // Pages
-import Home from './pages/Home';
 import About from './pages/About';
-import Services from './pages/Services';
-import Products from './pages/Products';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
+import Home from './pages/Home';
+import Products from './pages/Products';
 import Profile from './pages/Profile';
+import Services from './pages/Services';
 
 // Auth Components
 import Login from './components/auth/Login';
-import Register from './components/auth/Register';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import Register from './components/auth/Register';
 import AppNotification from './components/common/AppNotification';
-
+import FaqSection from './components/common/FaqSection';
+import Ourteam from './components/common/Ourteam';
+import CareerSection from './components/home/CareerSection';
+import PartnersSection from './components/home/PartnersSection';
+import AppContainer from './components/common/AppContainer';
+import ServiceDetails from './components/common/ServiceDetails';
 // Create theme
 const theme = createTheme({
   palette: {
@@ -84,34 +88,52 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Router>
-          <Routes>
-            <Route path="/" element={<Layout><Home /></Layout>} />
-            <Route path="/about" element={<Layout><About /></Layout>} />
-            <Route path="/services" element={<Layout><Services /></Layout>} />
-            <Route path="/products" element={<Layout><Products /></Layout>} />
-            <Route path="/blog" element={<Layout><Blog /></Layout>} />
-            <Route path="/contact" element={<Layout><Contact /></Layout>} />
-            
-            {/* Auth Routes */}
-            <Route path="/login" element={<Layout><Login /></Layout>} />
-            <Route path="/register" element={<Layout><Register /></Layout>} />
-            
-            {/* Protected Routes */}
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Layout><Dashboard /></Layout>
-              </ProtectedRoute>
-            } />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <Layout><Profile /></Layout>
-              </ProtectedRoute>
-            } />
-            
-            {/* 404 Route */}
-            <Route path="*" element={<Layout><div>404 - Page Not Found</div></Layout>} />
-          </Routes>
-           <AppNotification />
+          <AppContainer>
+            <Routes>
+              <Route path="/" element={<Layout><Home /></Layout>} />
+              <Route path="/about" element={<Layout><About /></Layout>} />
+              {/* <Route path="/services" element={<Layout><Services /></Layout>} /> */}
+              {/* Services Routes - Make sure these match your navigation */}
+              <Route path="/services" element={<Layout><Services /></Layout>} />
+              <Route path="/services/:serviceId" element={
+                <ProtectedRoute>
+                  <Layout><ServiceDetails /></Layout>
+                </ProtectedRoute>
+              } />
+
+
+
+              <Route path="/products" element={<Layout><Products /></Layout>} />
+              <Route path="/blog" element={<Layout><Blog /></Layout>} />
+              <Route path="/contact" element={<Layout><Contact /></Layout>} />
+              <Route path="/faq" element={<Layout><FaqSection /></Layout>} />
+              <Route path="/careers" element={<Layout><CareerSection /></Layout>} />
+              <Route path="/team" element={<Layout><Ourteam /></Layout>} />
+              <Route path="/partnerships" element={<Layout><PartnersSection /></Layout>} />
+
+
+
+              {/* Auth Routes */}
+              <Route path="/login" element={<Layout><Login /></Layout>} />
+              <Route path="/register" element={<Layout><Register /></Layout>} />
+
+              {/* Protected Routes */}
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <Layout><Dashboard /></Layout>
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Layout><Profile /></Layout>
+                </ProtectedRoute>
+              } />
+
+              {/* 404 Route */}
+              <Route path="*" element={<Layout><div>404 - Page Not Found</div></Layout>} />
+            </Routes>
+            <AppNotification />
+          </AppContainer>
         </Router>
       </ThemeProvider>
     </Provider>

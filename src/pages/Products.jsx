@@ -160,7 +160,7 @@ const Products = () => {
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
+      product.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = category === 'all' || product.category === category;
     return matchesSearch && matchesCategory;
   });
@@ -189,6 +189,7 @@ const Products = () => {
         title="Our Products"
         subtitle="Innovative software solutions for every business need"
         breadcrumbs={[{ label: 'Products', path: '/products' }]}
+        backgroundImage={`linear-gradient(rgba(3, 5, 6, 0.85), rgba(21, 25, 29, 0.85)), url(https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop)`}
       />
 
       <Container maxWidth="lg">
@@ -272,14 +273,14 @@ const Products = () => {
                       </Typography>
                     </Box>
                   </Box>
-                  
+
                   <Typography variant="h6" gutterBottom fontWeight="bold">
                     {product.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" paragraph>
                     {product.description}
                   </Typography>
-                  
+
                   <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 2 }}>
                     <Typography variant="h4" component="span" fontWeight="bold">
                       {product.price}
@@ -291,7 +292,7 @@ const Products = () => {
                     )}
                   </Box>
                 </CardContent>
-                
+
                 <CardActions>
                   <Button
                     fullWidth
@@ -323,7 +324,7 @@ const Products = () => {
           <Typography variant="h3" align="center" gutterBottom fontWeight="bold">
             Product Categories
           </Typography>
-          
+
           <Grid container spacing={3} sx={{ mt: 2 }}>
             {[
               { name: 'Software Solutions', count: '15+ Products', icon: '💻' },
@@ -387,16 +388,16 @@ const Products = () => {
                         ({selectedProduct.reviews} reviews)
                       </Typography>
                     </Box>
-                    
+
                     <Typography variant="h4" gutterBottom fontWeight="bold" color="primary">
                       {selectedProduct.price}
                       {selectedProduct.monthly && ' /month'}
                     </Typography>
-                    
+
                     <Typography variant="body1" paragraph>
                       {selectedProduct.description}
                     </Typography>
-                    
+
                     <Typography variant="h6" gutterBottom fontWeight="bold">
                       Key Features:
                     </Typography>
@@ -417,20 +418,20 @@ const Products = () => {
             <DialogActions sx={{ p: 3 }}>
               <Button
                 startIcon={<Favorite />}
-                onClick={() => {/* Add to wishlist */}}
+                onClick={() => {/* Add to wishlist */ }}
               >
                 Save
               </Button>
               <Button
                 startIcon={<Share />}
-                onClick={() => {/* Share functionality */}}
+                onClick={() => {/* Share functionality */ }}
               >
                 Share
               </Button>
               <Button
                 variant="contained"
                 startIcon={<ShoppingCart />}
-                onClick={() => {/* Purchase functionality */}}
+                onClick={() => {/* Purchase functionality */ }}
                 sx={{ ml: 2 }}
               >
                 Purchase Now

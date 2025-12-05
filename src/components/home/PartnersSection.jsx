@@ -118,16 +118,19 @@ const PartnersSection = () => {
                                     mx: { xs: 1, sm: 1.5, md: 2 },
                                     p: { xs: 1.5, sm: 2, md: 2.5 },
                                     textAlign: 'center',
-                                    border: '1px solid',
+                                    // border: '1px solid',
                                     borderColor: 'divider',
                                     borderRadius: 3,
+                                    // bgcolor: 'background.paper',
+                                    bgcolor: alpha(partner.color, 0.09),
                                     minWidth: { xs: 120, sm: 140, md: 160 },
                                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                     '&:hover': {
                                         transform: 'translateY(-4px)',
                                         boxShadow: theme.shadows[4],
                                         borderColor: partner.color,
-                                        bgcolor: alpha(partner.color, 0.02),
+                                        // bgcolor: alpha(partner.color, 0.02),
+                                        bgcolor: 'background.paper',
                                     },
                                 }}
                             >

@@ -29,10 +29,17 @@ const CTASection = () => {
     <Box
       sx={{
         py: { xs: 6, sm: 8, md: 12 },
-        background: `linear-gradient(135deg, 
-          ${theme.palette.primary.dark} 0%, 
-          ${theme.palette.primary.main} 100%
-        )`,
+        // background: `linear-gradient(135deg, 
+        //   ${theme.palette.primary.dark} 0%, 
+        //   ${theme.palette.primary.main} 100%
+        // )`,
+        background: `
+                linear-gradient(180deg, #202d55ff 0%, #111827 100%),
+                radial-gradient(circle at 20% 80%, rgba(117, 100, 177, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(153, 99, 99, 0.05) 0%, transparent 50%)
+            `,
+        position: 'relative',
+        overflow: 'hidden',
         color: 'white',
       }}
     >

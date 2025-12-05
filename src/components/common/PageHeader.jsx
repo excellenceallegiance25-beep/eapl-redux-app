@@ -1,16 +1,22 @@
-import React from 'react';
-import { Box, Typography, Breadcrumbs, Link } from '@mui/material';
 import { NavigateNext } from '@mui/icons-material';
+import { Box, Breadcrumbs, Link, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 
-const PageHeader = ({ title, subtitle, breadcrumbs = [] }) => {
+const PageHeader = ({ backgroundImage, title, subtitle, breadcrumbs = [] }) => {
   return (
     <Box
       sx={{
-        background: 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
+        background: backgroundImage || 'linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)',
         color: 'white',
         py: 6,
         mb: 4,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        height: { xs: 400, md: 500, lg: 400, xl: 400 },
+        display: 'flex',
+        textAlign: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
       <Box sx={{ textAlign: 'center' }}>
@@ -22,8 +28,8 @@ const PageHeader = ({ title, subtitle, breadcrumbs = [] }) => {
             {subtitle}
           </Typography>
         )}
-        
-        {breadcrumbs.length > 0 && (
+
+        {/* {breadcrumbs.length > 0 && (
           <Breadcrumbs
             separator={<NavigateNext fontSize="small" sx={{ color: 'white' }} />}
             sx={{ justifyContent: 'center', mt: 2 }}
@@ -44,7 +50,7 @@ const PageHeader = ({ title, subtitle, breadcrumbs = [] }) => {
             ))}
             <Typography color="primary.light">{title}</Typography>
           </Breadcrumbs>
-        )}
+        )} */}
       </Box>
     </Box>
   );
