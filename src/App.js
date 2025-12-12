@@ -87,7 +87,8 @@ function App() {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Router>
+        {/* same as homepage in package json /reactui or /eaplui and keep the same rename of build folder in webapp */}
+        <Router basename="/eaplui">
           <AppContainer>
             <Routes>
               <Route path="/" element={<Layout><Home /></Layout>} />

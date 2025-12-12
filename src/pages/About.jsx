@@ -39,8 +39,10 @@ import {
   alpha,
   useTheme
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import PageHeader from '../components/common/PageHeader';
+import { getEmployeeList } from '../services/AppConfigAction';
 
 // Import placeholder images (you'll need to replace these with actual images)
 const team1 = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop';
@@ -58,7 +60,23 @@ const About = () => {
   const [selectedLeader, setSelectedLeader] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
 
-  const leadershipTeam = [
+  const [leadershipTeam, setLeadershipTeam] = useState([]);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    // Move the function definition inside useEffect
+    const loadConfigs = async () => {
+      const result = await dispatch(getEmployeeList());
+      console.log('Configurations loaded successfully', 'success');
+      if (result.type === "EMP_LIST") {
+        setLeadershipTeam(result.payload);
+      }
+    };
+
+    loadConfigs();
+  }, [dispatch]); // Only dispatch is needed as dependency
+
+
+  const leadershipTeams = [
     {
       name: 'Sarah Johnson',
       role: 'CEO & Founder',
@@ -214,6 +232,17 @@ const About = () => {
     setOpenDialog(true);
   };
 
+  const getAvatarImage = (avatar) => {
+    switch (avatar) {
+      case "SJ": return team1;
+      case "MC": return team2;
+      case "ED": return team3;
+      case "DW": return team4;
+      default: return innovation;
+    }
+  };
+
+
   return (
     <Box>
       <PageHeader
@@ -259,7 +288,7 @@ const About = () => {
           </Fade>
 
           {/* Stats Counter */}
-          <Grid container spacing={3} sx={{ mt: 6 ,justifyContent: 'center' }}>
+          <Grid container spacing={3} sx={{ mt: 6, justifyContent: 'center' }}>
             {[
               { number: '150+', label: 'Experts Worldwide', icon: '👥' },
               { number: '40+', label: 'Countries Served', icon: '🌍' },
@@ -404,7 +433,7 @@ const About = () => {
             The principles that guide everything we do
           </Typography>
 
-          <Grid container spacing={4} sx={{justifyContent: 'center'}}>
+          <Grid container spacing={4} sx={{ justifyContent: 'center' }}>
             {coreValues.map((value, index) => (
               <Grid item xs={12} sm={6} md={3} key={index}>
                 <Grow in={true} timeout={index * 200}>
@@ -512,10 +541,10 @@ const About = () => {
                       className="leader-image"
                       sx={{
                         height: '60%',
-                        backgroundImage: `url(${member.avatar})`,
+                        backgroundImage: `url(${getAvatarImage(member.avatar)})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'fit-center',
-                        backgroundRepeat:'no-repeat',
+                        backgroundRepeat: 'no-repeat',
                         transition: 'transform 0.5s'
                       }}
                     />
@@ -566,7 +595,7 @@ const About = () => {
             Our Expertise Areas
           </Typography>
 
-          <Grid container spacing={4} sx={{justifyContent: 'center'}}>
+          <Grid container spacing={4} sx={{ justifyContent: 'center' }}>
             {departments.map((dept, index) => (
               <Grid item xs={12} sm={6} md={3} key={index}>
                 <Grow in={true} timeout={index * 200}>
@@ -953,7 +982,7 @@ const About = () => {
             <DialogTitle>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                 <Avatar
-                  src={selectedLeader.avatar}
+                  src={getAvatarImage(selectedLeader.avatar)}
                   sx={{ width: 60, height: 60 }}
                 />
                 <Box>
@@ -986,7 +1015,7 @@ const About = () => {
                   Expertise
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                  {selectedLeader.expertise.map((skill, idx) => (
+                  {selectedLeader.expertise.split(',').map((skill, idx) => (
                     <Chip
                       key={idx}
                       label={skill}

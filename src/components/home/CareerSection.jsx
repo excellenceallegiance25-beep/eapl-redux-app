@@ -16,7 +16,10 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
+import { getJobOpeningsList } from '../../services/AppConfigAction';
 
 const benefits = [
   'Competitive salary & equity packages',
@@ -27,7 +30,7 @@ const benefits = [
   'Global team collaboration',
 ];
 
-const openings = [
+const openingss = [
   {
     title: 'Senior Frontend Developer',
     department: 'Engineering',
@@ -57,6 +60,23 @@ const openings = [
 const CareerSection = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const [openings, setOpenings] = useState([]);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    // Move the function definition inside useEffect
+    const loadConfigs = async () => {
+      const result = await dispatch(getJobOpeningsList());
+      console.log('Configurations loaded successfully', 'success');
+      if (result.type === "JOB_OPENING_LIST") {
+        setOpenings(result.payload);
+      }
+    };
+
+    loadConfigs();
+  }, [dispatch]); // Only dispatch is needed as dependency
+
+
 
   return (
     <Box sx={{ py: { xs: 6, sm: 8, md: 12 } }}>

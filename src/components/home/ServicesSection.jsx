@@ -1,5 +1,6 @@
-import { ArrowRightAlt, ExpandMore, ExpandLess } from '@mui/icons-material';
+import { ArrowRightAlt, ExpandLess, ExpandMore } from '@mui/icons-material';
 import {
+    alpha,
     Box,
     Button,
     Card,
@@ -10,9 +11,24 @@ import {
     Typography,
     useMediaQuery,
     useTheme,
-    alpha,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { getApplicationServicesList } from '../../services/AppConfigAction';
+// Replace the broken imports with these:
+import chart_bg from '../../assets/images/chart.jpg';
+import codescreen_bg from '../../assets/images/codescreen.jpg';
+import computing_bg from '../../assets/images/computing.jpg';
+import earthconnection_bg from '../../assets/images/earthconnection.jpg';
+import meeting_bg from '../../assets/images/meeting.jpg';
+import mobileappscreen_bg from '../../assets/images/mobileappscreen.jpg';
+import motherboard_bg from '../../assets/images/motherboard.avif';
+import review_bg from '../../assets/images/review.jpg';
+import robotdoing_bg from '../../assets/images/robotdoing.jpg';
+import serverconnection_bg from '../../assets/images/serverconnection.jpg';
+import workinghuman_bg from '../../assets/images/workinghuman.jpg';
+import workingonlaptop_bg from '../../assets/images/workingonlaptop.jpg';
+
 
 // ==================== SYMMETRICAL CARD CONFIGURATION ====================
 // ALL CARDS HAVE THE SAME FIXED DIMENSIONS ON ALL DEVICES
@@ -86,46 +102,24 @@ const ServicesSection = () => {
     const isXl = useMediaQuery(theme.breakpoints.up('xl'));
 
     const [showAllServices, setShowAllServices] = useState(false);
+    const [services, setServices] = useState([]);
 
-    // Service-specific background images (using Unsplash or similar sources)
-    const getServiceBackground = (serviceTitle) => {
-        const backgrounds = {
-            'Cloud Solutions': 'linear-gradient(rgba(130, 109, 207, 0.7), rgba(172, 103, 103, 0.7)), url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=345&q=80")',
-            'Software Development': 'linear-gradient(rgba(130, 109, 207, 0.7), rgba(172, 103, 103, 0.7)), url("https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=345&q=80")',
-            'Cybersecurity': 'linear-gradient(rgba(130, 109, 207, 0.7), rgba(172, 103, 103, 0.7)), url("https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w-345&q=80")',
-            'AI & Analytics': 'linear-gradient(rgba(130, 109, 207, 0.7), rgba(172, 103, 103, 0.7)), url("https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=345&q=80")',
-            'Mobile Development': 'linear-gradient(rgba(130, 109, 207, 0.7), rgba(172, 103, 103, 0.7)), url("https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=345&q=80")',
-            'Digital Transformation': 'linear-gradient(rgba(130, 109, 207, 0.7), rgba(172, 103, 103, 0.7)), url("https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=345&q=80")',
-            'IoT Solutions': 'linear-gradient(rgba(130, 109, 207, 0.7), rgba(172, 103, 103, 0.7)), url("https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=345&q=80")',
-            'Blockchain Services': 'linear-gradient(rgba(130, 109, 207, 0.7), rgba(172, 103, 103, 0.7)), url("https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=345&q=80")',
-            'DevOps & CI/CD': 'linear-gradient(rgba(130, 109, 207, 0.7), rgba(172, 103, 103, 0.7)), url("https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=345&q=80")',
-            'Quality Assurance': 'linear-gradient(rgba(130, 109, 207, 0.7), rgba(172, 103, 103, 0.7)), url("https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=345&q=80")',
-            'UI/UX Design': 'linear-gradient(rgba(130, 109, 207, 0.7), rgba(172, 103, 103, 0.7)), url("https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=345&q=80")',
-            'Consulting Services': 'linear-gradient(rgba(130, 109, 207, 0.7), rgba(172, 103, 103, 0.7)), url("https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=345&q=80")',
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        // Move the function definition inside useEffect
+        const loadConfigs = async () => {
+            const result = await dispatch(getApplicationServicesList());
+            console.log('Configurations loaded successfully', 'success');
+            if (result.type === "APPCONFIG_INIT") {
+                setServices(result.payload);
+            }
         };
-        return backgrounds[serviceTitle] || 'linear-gradient(rgba(130, 109, 207, 0.7), rgba(172, 103, 103, 0.7)), url("https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?auto=format&fit=crop&w=345&q=80")';
-    };
 
-    // Alternative: Pattern backgrounds based on service type
-    const getServicePattern = (serviceTitle) => {
-        const patterns = {
-            'Cloud Solutions': 'radial-gradient(circle at 20% 80%, rgba(33, 150, 243, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(33, 150, 243, 0.1) 0%, transparent 50%)',
-            'Software Development': 'linear-gradient(135deg, rgba(103, 58, 183, 0.15) 0%, transparent 50%), linear-gradient(45deg, rgba(103, 58, 183, 0.1) 0%, transparent 50%)',
-            'Cybersecurity': 'linear-gradient(45deg, rgba(244, 67, 54, 0.15) 25%, transparent 25%), linear-gradient(135deg, rgba(244, 67, 54, 0.1) 25%, transparent 25%)',
-            'AI & Analytics': 'radial-gradient(circle at 50% 50%, rgba(76, 175, 80, 0.15) 0%, transparent 70%), linear-gradient(0deg, rgba(76, 175, 80, 0.1) 0%, transparent 30%)',
-            'Mobile Development': 'linear-gradient(120deg, rgba(255, 152, 0, 0.15) 0%, transparent 50%), linear-gradient(240deg, rgba(255, 152, 0, 0.1) 0%, transparent 50%)',
-            'Digital Transformation': 'radial-gradient(ellipse at 30% 50%, rgba(156, 39, 176, 0.15) 0%, transparent 60%), radial-gradient(ellipse at 70% 50%, rgba(156, 39, 176, 0.1) 0%, transparent 60%)',
-            'IoT Solutions': 'linear-gradient(0deg, rgba(0, 188, 212, 0.15) 0%, transparent 30%), radial-gradient(circle at 50% 100%, rgba(0, 188, 212, 0.1) 0%, transparent 50%)',
-            'Blockchain Services': 'linear-gradient(90deg, rgba(255, 87, 34, 0.15) 0%, transparent 50%), linear-gradient(180deg, rgba(255, 87, 34, 0.1) 0%, transparent 50%)',
-            'DevOps & CI/CD': 'linear-gradient(45deg, rgba(121, 85, 72, 0.15) 25%, transparent 25%), linear-gradient(-45deg, rgba(121, 85, 72, 0.15) 25%, transparent 25%)',
-            'Quality Assurance': 'radial-gradient(circle at 20% 50%, rgba(96, 125, 139, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(96, 125, 139, 0.1) 0%, transparent 50%)',
-            'UI/UX Design': 'linear-gradient(135deg, rgba(233, 30, 99, 0.15) 0%, transparent 50%), radial-gradient(circle at 50% 0%, rgba(233, 30, 99, 0.1) 0%, transparent 50%)',
-            'Consulting Services': 'linear-gradient(0deg, rgba(63, 81, 181, 0.15) 0%, transparent 40%), linear-gradient(90deg, rgba(63, 81, 181, 0.1) 0%, transparent 40%)',
-        };
-        return patterns[serviceTitle] || 'linear-gradient(135deg, rgba(0, 0, 0, 0.1) 0%, transparent 50%)';
-    };
+        loadConfigs();
+    }, [dispatch]); // Only dispatch is needed as dependency
 
-    const services = [
+    const servicess = [
         {
             title: 'Cloud Solutions',
             description: 'Enterprise cloud infrastructure with auto-scaling and global CDN.',
@@ -272,6 +266,48 @@ const ServicesSection = () => {
         },
     ];
 
+    // Service-specific background images (using Unsplash or similar sources)
+    const getServiceImage = (serviceTitle) => {
+        // Simple image mapper - maps service title to image
+        const serviceImages = {
+            'Cloud Solutions': workinghuman_bg,
+            'Software Development': codescreen_bg,
+            'Cybersecurity': motherboard_bg,
+            'AI & Analytics': robotdoing_bg,
+            'Mobile Development': mobileappscreen_bg,
+            'Digital Transformation': workingonlaptop_bg,
+            'IoT Solutions': earthconnection_bg,
+            'Blockchain Services': computing_bg,
+            'DevOps & CI/CD': serverconnection_bg,
+            'Quality Assurance': review_bg,
+            'UI/UX Design': chart_bg,
+            'Consulting Services': meeting_bg,
+        };
+
+        // Fallback image if service not found
+        const fallbackImage = workinghuman_bg;
+
+        return serviceImages[serviceTitle] || fallbackImage;
+    };
+
+    // Alternative: Pattern backgrounds based on service type
+    const getServicePattern = (serviceTitle) => {
+        const patterns = {
+            'Cloud Solutions': 'radial-gradient(circle at 20% 80%, rgba(33, 150, 243, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(33, 150, 243, 0.1) 0%, transparent 50%)',
+            'Software Development': 'linear-gradient(135deg, rgba(103, 58, 183, 0.15) 0%, transparent 50%), linear-gradient(45deg, rgba(103, 58, 183, 0.1) 0%, transparent 50%)',
+            'Cybersecurity': 'linear-gradient(45deg, rgba(244, 67, 54, 0.15) 25%, transparent 25%), linear-gradient(135deg, rgba(244, 67, 54, 0.1) 25%, transparent 25%)',
+            'AI & Analytics': 'radial-gradient(circle at 50% 50%, rgba(76, 175, 80, 0.15) 0%, transparent 70%), linear-gradient(0deg, rgba(76, 175, 80, 0.1) 0%, transparent 30%)',
+            'Mobile Development': 'linear-gradient(120deg, rgba(255, 152, 0, 0.15) 0%, transparent 50%), linear-gradient(240deg, rgba(255, 152, 0, 0.1) 0%, transparent 50%)',
+            'Digital Transformation': 'radial-gradient(ellipse at 30% 50%, rgba(156, 39, 176, 0.15) 0%, transparent 60%), radial-gradient(ellipse at 70% 50%, rgba(156, 39, 176, 0.1) 0%, transparent 60%)',
+            'IoT Solutions': 'linear-gradient(0deg, rgba(0, 188, 212, 0.15) 0%, transparent 30%), radial-gradient(circle at 50% 100%, rgba(0, 188, 212, 0.1) 0%, transparent 50%)',
+            'Blockchain Services': 'linear-gradient(90deg, rgba(255, 87, 34, 0.15) 0%, transparent 50%), linear-gradient(180deg, rgba(255, 87, 34, 0.1) 0%, transparent 50%)',
+            'DevOps & CI/CD': 'linear-gradient(45deg, rgba(121, 85, 72, 0.15) 25%, transparent 25%), linear-gradient(-45deg, rgba(121, 85, 72, 0.15) 25%, transparent 25%)',
+            'Quality Assurance': 'radial-gradient(circle at 20% 50%, rgba(96, 125, 139, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(96, 125, 139, 0.1) 0%, transparent 50%)',
+            'UI/UX Design': 'linear-gradient(135deg, rgba(233, 30, 99, 0.15) 0%, transparent 50%), radial-gradient(circle at 50% 0%, rgba(233, 30, 99, 0.1) 0%, transparent 50%)',
+            'Consulting Services': 'linear-gradient(0deg, rgba(63, 81, 181, 0.15) 0%, transparent 40%), linear-gradient(90deg, rgba(63, 81, 181, 0.1) 0%, transparent 40%)',
+        };
+        return patterns[serviceTitle] || 'linear-gradient(135deg, rgba(0, 0, 0, 0.1) 0%, transparent 50%)';
+    };
 
     // Helper function to get current device config
     const getCurrentDevice = () => {
@@ -388,60 +424,94 @@ const ServicesSection = () => {
                                         minHeight: SYMMETRICAL_CARD_CONFIG.fixedDimensions.height,
                                         display: 'flex',
                                         flexDirection: 'column',
-                                        border: '1px solid',
-                                        borderColor: 'divider',
-                                        borderRadius: 3,
-                                        transition: 'all 0.3s ease-in-out',
+                                        border: 'none',
+                                        borderRadius: '16px',
+                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                                         overflow: 'hidden',
                                         position: 'relative',
-                                        // Background based on service type
-                                        background: service.bgType === 'image'
-                                            ? getServiceBackground(service.title)
-                                            : getServicePattern(service.title),
-                                        backgroundSize: service.bgType === 'image' ? 'cover' : '400% 400%',
-                                        backgroundPosition: service.bgType === 'image' ? 'center' : '0% 0%',
+                                        // Professional gradient overlay over image
+                                        backgroundImage: `
+                                            linear-gradient(
+                                                to bottom,
+                                                rgba(0, 0, 0, 0.85) 0%,
+                                                rgba(0, 0, 0, 0.7) 30%,
+                                                rgba(0, 0, 0, 0.4) 70%,
+                                                rgba(0, 0, 0, 0.2) 100%
+                                            ),
+                                            url(${getServiceImage(service.title)})
+                                        `,
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
                                         backgroundRepeat: 'no-repeat',
                                         color: 'white',
-                                        '&:hover': {
-                                            transform: 'translateY(-8px)',
-                                            boxShadow: theme.shadows[8],
-                                            borderColor: service.color,
-                                            backgroundSize: service.bgType === 'image' ? '420% 420%' : '450% 450%',
-                                            '& .service-icon': {
-                                                transform: 'scale(1.1) rotate(5deg)',
-                                                bgcolor: alpha(service.color, 0.9),
-                                            },
-                                            '& .service-title': {
-                                                color: service.color,
-                                            },
-                                            '& .service-description': {
-                                                color: alpha('#fff', 0.9),
-                                            },
-                                            '& .service-chip': {
-                                                bgcolor: alpha(service.color, 0.9),
-                                                color: 'white',
-                                            },
-                                            '& .service-button': {
-                                                borderColor: service.color,
-                                                bgcolor: alpha(service.color, 0.9),
-                                                color: 'white',
-                                            }
-                                        },
-                                        '&::before': service.bgType === 'pattern' ? {
+                                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+                                        '&::before': {
                                             content: '""',
                                             position: 'absolute',
                                             top: 0,
                                             left: 0,
                                             right: 0,
                                             bottom: 0,
-                                            background: `linear-gradient(135deg, 
-                                                ${alpha(service.color, 0.3)} 0%, 
-                                                ${alpha('#000', 0.7)} 100%)`,
+                                            background: `linear-gradient(45deg, 
+                                                ${alpha(service.color, 0.15)} 0%, 
+                                                transparent 50%,
+                                                ${alpha(service.color, 0.05)} 100%
+                                            )`,
+                                            opacity: 0,
+                                            transition: 'opacity 0.4s ease',
                                             zIndex: 0,
-                                        } : {},
+                                        },
+                                        '&:hover': {
+                                            transform: 'translateY(-12px) scale(1.02)',
+                                            boxShadow: `
+                                                0 20px 40px rgba(0, 0, 0, 0.3),
+                                                0 0 0 1px ${alpha(service.color, 0.3)},
+                                                0 0 60px ${alpha(service.color, 0.1)}
+                                            `,
+                                            backgroundImage: `
+                                                linear-gradient(
+                                                    to bottom,
+                                                    rgba(0, 0, 0, 0.7) 0%,
+                                                    rgba(0, 0, 0, 0.55) 30%,
+                                                    rgba(0, 0, 0, 0.3) 70%,
+                                                    rgba(0, 0, 0, 0.15) 100%
+                                                ),
+                                                url(${getServiceImage(service.title)})
+                                            `,
+                                            backgroundSize: '110% 110%',
+                                            '&::before': {
+                                                opacity: 1,
+                                            },
+                                            '& .service-icon': {
+                                                transform: 'scale(1.15) translateY(-5px)',
+                                                bgcolor: alpha(service.color, 0.95),
+                                                boxShadow: `0 10px 25px ${alpha(service.color, 0.4)}`,
+                                                borderColor: alpha('#fff', 0.5),
+                                            },
+                                            '& .service-title': {
+                                                color: service.color,
+                                                textShadow: `0 0 20px ${alpha(service.color, 0.5)}`,
+                                            },
+                                            '& .service-description': {
+                                                color: '#ffffff',
+                                            },
+                                            '& .service-chip': {
+                                                bgcolor: alpha(service.color, 0.9),
+                                                transform: 'translateY(-2px)',
+                                                boxShadow: `0 4px 12px ${alpha(service.color, 0.3)}`,
+                                                borderColor: alpha('#fff', 0.3),
+                                            },
+                                            '& .service-button': {
+                                                borderColor: service.color,
+                                                bgcolor: alpha(service.color, 0.95),
+                                                color: 'white',
+                                                transform: 'translateY(-2px)',
+                                                boxShadow: `0 8px 20px ${alpha(service.color, 0.4)}`,
+                                            }
+                                        },
                                     }}
                                 >
-                                    {/* Overlay for better text readability */}
+                                    {/* Animated gradient border effect */}
                                     <Box
                                         sx={{
                                             position: 'absolute',
@@ -449,12 +519,22 @@ const ServicesSection = () => {
                                             left: 0,
                                             right: 0,
                                             bottom: 0,
-                                            background: 'linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.8) 100%)',
+                                            background: `linear-gradient(45deg, 
+                                                transparent 40%, 
+                                                ${alpha(service.color, 0.1)} 50%, 
+                                                transparent 60%
+                                            )`,
+                                            backgroundSize: '300% 300%',
+                                            animation: 'shimmer 3s infinite linear',
+                                            opacity: 0,
+                                            transition: 'opacity 0.3s ease',
                                             zIndex: 0,
-                                            opacity: service.bgType === 'image' ? 0.7 : 0.3,
-                                            transition: 'opacity 0.3s ease-in-out',
                                             '&:hover': {
-                                                opacity: service.bgType === 'image' ? 0.5 : 0.2,
+                                                opacity: 0.3,
+                                            },
+                                            '@keyframes shimmer': {
+                                                '0%': { backgroundPosition: '-100% 0' },
+                                                '100%': { backgroundPosition: '200% 0' },
                                             }
                                         }}
                                     />
@@ -466,154 +546,197 @@ const ServicesSection = () => {
                                             flexDirection: 'column',
                                             height: '100%',
                                             width: '100%',
-                                            p: SYMMETRICAL_CARD_CONFIG.padding,
-                                            overflow: 'hidden',
+                                            p: 3,
                                             position: 'relative',
                                             zIndex: 1,
+                                            '&:hover': {
+                                                '& .service-content': {
+                                                    transform: 'translateY(-5px)',
+                                                }
+                                            }
                                         }}
                                     >
-                                        {/* Icon Container */}
+                                        {/* Professional Icon Container with glow effect */}
                                         <Box
                                             className="service-icon"
                                             sx={{
                                                 width: SYMMETRICAL_CARD_CONFIG.iconSize,
                                                 height: SYMMETRICAL_CARD_CONFIG.iconSize,
-                                                borderRadius: '50%',
-                                                bgcolor: alpha(service.color, 0.7),
+                                                borderRadius: '20px',
+                                                bgcolor: alpha(service.color, 0.8),
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
                                                 fontSize: SYMMETRICAL_CARD_CONFIG.iconFontSize,
                                                 color: 'white',
-                                                mb: 2,
-                                                transition: 'all 0.3s ease-in-out',
+                                                mb: 3,
+                                                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                                                 flexShrink: 0,
                                                 mx: 'auto',
-                                                backdropFilter: 'blur(10px)',
-                                                border: `2px solid ${alpha('#fff', 0.2)}`,
+                                                backdropFilter: 'blur(20px) saturate(180%)',
+                                                border: `2px solid ${alpha('#fff', 0.15)}`,
+                                                boxShadow: `
+                                                    inset 0 0 20px ${alpha('#fff', 0.1)},
+                                                    0 8px 32px ${alpha(service.color, 0.3)}
+                                                `,
                                             }}
                                         >
                                             {service.icon}
                                         </Box>
 
-                                        {/* Title */}
+                                        {/* Title with professional typography */}
                                         <Typography
                                             className="service-title"
                                             variant="h6"
-                                            fontWeight="bold"
+                                            fontWeight="700"
                                             align="center"
                                             sx={{
-                                                fontSize: SYMMETRICAL_CARD_CONFIG.titleFontSize,
+                                                fontSize: '1.375rem',
                                                 lineHeight: 1.3,
-                                                height: SYMMETRICAL_CARD_CONFIG.titleHeight,
-                                                display: '-webkit-box',
-                                                WebkitLineClamp: 2,
-                                                WebkitBoxOrient: 'vertical',
-                                                overflow: 'hidden',
-                                                mb: 1,
+                                                height: 'auto',
+                                                minHeight: SYMMETRICAL_CARD_CONFIG.titleHeight,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                mb: 2,
                                                 flexShrink: 0,
-                                                color: 'white',
-                                                transition: 'color 0.3s ease-in-out',
+                                                color: '#ffffff',
+                                                transition: 'all 0.4s ease',
+                                                textShadow: '0 2px 8px rgba(0, 0, 0, 0.5)',
+                                                letterSpacing: '0.5px',
                                             }}
                                         >
                                             {service.title}
                                         </Typography>
 
-                                        {/* Description */}
+                                        {/* Description with better readability */}
                                         <Typography
                                             className="service-description"
                                             variant="body2"
                                             align="center"
                                             sx={{
-                                                fontSize: SYMMETRICAL_CARD_CONFIG.descriptionFontSize,
-                                                lineHeight: 1.5,
-                                                height: SYMMETRICAL_CARD_CONFIG.descriptionHeight,
-                                                display: '-webkit-box',
-                                                WebkitLineClamp: SYMMETRICAL_CARD_CONFIG.descriptionLines,
-                                                WebkitBoxOrient: 'vertical',
-                                                overflow: 'hidden',
-                                                mb: 2,
+                                                fontSize: '0.9375rem',
+                                                lineHeight: 1.6,
+                                                height: 'auto',
+                                                minHeight: SYMMETRICAL_CARD_CONFIG.descriptionHeight,
+                                                mb: 3,
                                                 flexGrow: 0,
-                                                color: alpha('#fff', 0.8),
-                                                transition: 'color 0.3s ease-in-out',
+                                                color: alpha('#fff', 0.85),
+                                                transition: 'all 0.4s ease',
+                                                fontWeight: '300',
+                                                letterSpacing: '0.3px',
                                             }}
                                         >
                                             {service.description}
                                         </Typography>
 
-                                        {/* Features Chips */}
+                                        {/* Professional Chips Container */}
                                         <Box
                                             sx={{
-                                                mb: 2,
-                                                height: SYMMETRICAL_CARD_CONFIG.featuresHeight,
-                                                overflow: 'hidden',
+                                                mb: 3,
                                                 flexShrink: 0,
                                                 display: 'flex',
                                                 justifyContent: 'center',
-                                            }}
-                                        >
-                                            <Box sx={{
-                                                display: 'flex',
                                                 flexWrap: 'wrap',
                                                 gap: 1,
-                                                justifyContent: 'center',
-                                                maxWidth: '100%',
-                                            }}>
-                                                {service.features.map((feature, idx) => (
-                                                    <Chip
-                                                        key={idx}
-                                                        className="service-chip"
-                                                        label={feature}
-                                                        size="small"
-                                                        sx={{
-                                                            bgcolor: alpha(service.color, 0.7),
-                                                            color: 'white',
-                                                            fontSize: SYMMETRICAL_CARD_CONFIG.chipFontSize,
-                                                            height: SYMMETRICAL_CARD_CONFIG.chipHeight,
-                                                            flexShrink: 0,
-                                                            maxWidth: '100%',
-                                                            backdropFilter: 'blur(10px)',
-                                                            border: `1px solid ${alpha('#fff', 0.2)}`,
-                                                            transition: 'all 0.3s ease-in-out',
-                                                        }}
-                                                    />
-                                                ))}
-                                            </Box>
+                                                minHeight: SYMMETRICAL_CARD_CONFIG.featuresHeight,
+                                            }}
+                                        >
+                                            {service.features.split(',').map((feature, idx) => (
+                                                <Chip
+                                                    key={idx}
+                                                    className="service-chip"
+                                                    label={feature.trim()}
+                                                    size="small"
+                                                    sx={{
+                                                        bgcolor: alpha(service.color, 0.75),
+                                                        color: 'white',
+                                                        fontSize: '0.75rem',
+                                                        height: '28px',
+                                                        fontWeight: '500',
+                                                        backdropFilter: 'blur(10px)',
+                                                        border: `1px solid ${alpha('#fff', 0.15)}`,
+                                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                        '&:hover': {
+                                                            transform: 'translateY(-1px)',
+                                                        }
+                                                    }}
+                                                />
+                                            ))}
                                         </Box>
 
-                                        {/* Button */}
-                                        <Box sx={{
-                                            mt: 'auto',
-                                            flexShrink: 0,
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                        }}>
+                                        {/* Professional Button with subtle animation */}
+                                        <Box
+                                            sx={{
+                                                mt: 'auto',
+                                                flexShrink: 0,
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                opacity: 0.9,
+                                                transition: 'opacity 0.3s ease',
+                                                '&:hover': {
+                                                    opacity: 1,
+                                                }
+                                            }}
+                                        >
                                             <Button
                                                 className="service-button"
                                                 variant="outlined"
-                                                size="small"
-                                                endIcon={<ArrowRightAlt />}
+                                                size="medium"
+                                                endIcon={<ArrowRightAlt sx={{ transition: 'transform 0.3s ease' }} />}
                                                 sx={{
-                                                    borderColor: alpha('#fff', 0.3),
+                                                    borderColor: alpha('#fff', 0.25),
                                                     color: 'white',
+                                                    bgcolor: alpha('#000', 0.2),
+                                                    fontSize: '0.875rem',
+                                                    py: 1.2,
+                                                    px: 4,
+                                                    minWidth: 160,
+                                                    backdropFilter: 'blur(20px)',
+                                                    borderWidth: 1.5,
+                                                    borderRadius: '12px',
+                                                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    fontWeight: '600',
+                                                    letterSpacing: '0.5px',
+                                                    textTransform: 'none',
                                                     '&:hover': {
                                                         borderColor: service.color,
-                                                        bgcolor: alpha(service.color, 0.7),
+                                                        bgcolor: alpha(service.color, 0.9),
+                                                        color: 'white',
+                                                        '& .MuiButton-endIcon': {
+                                                            transform: 'translateX(4px)',
+                                                        }
                                                     },
-                                                    fontSize: SYMMETRICAL_CARD_CONFIG.buttonFontSize,
-                                                    py: SYMMETRICAL_CARD_CONFIG.buttonPaddingY,
-                                                    px: 3,
-                                                    minWidth: 140,
-                                                    backdropFilter: 'blur(10px)',
-                                                    borderWidth: 1.5,
-                                                    transition: 'all 0.3s ease-in-out',
-                                                    fontWeight: 'bold',
                                                 }}
                                             >
-                                                Learn More
+                                                Explore Service
                                             </Button>
                                         </Box>
                                     </CardContent>
+
+                                    {/* Subtle corner accent */}
+                                    <Box
+                                        sx={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            right: 0,
+                                            width: '60px',
+                                            height: '60px',
+                                            background: `linear-gradient(135deg, 
+                                                ${alpha(service.color, 0.2)} 0%, 
+                                                transparent 50%
+                                            )`,
+                                            borderBottomLeftRadius: '50%',
+                                            transition: 'all 0.4s ease',
+                                            zIndex: 0,
+                                            '&:hover': {
+                                                background: `linear-gradient(135deg, 
+                                                ${alpha(service.color, 0.4)} 0%, 
+                                                transparent 50%
+                                            )`,
+                                            }
+                                        }}
+                                    />
                                 </Card>
                             </Grid>
                         ))}
@@ -629,9 +752,9 @@ const ServicesSection = () => {
                                 right: 0,
                                 height: '200px',
                                 background: `linear-gradient(to bottom, 
-                  transparent 0%, 
-                  ${theme.palette.background.default} 70%
-                )`,
+                                transparent 0%, 
+                                ${theme.palette.background.default} 70%
+                                )`,
                                 pointerEvents: 'none',
                                 zIndex: 2,
                             }}

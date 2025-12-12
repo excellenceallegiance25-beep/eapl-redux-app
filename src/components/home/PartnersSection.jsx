@@ -8,9 +8,11 @@ import {
     useMediaQuery,
     useTheme
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { getPartnerList } from '../../services/AppConfigAction';
 
-const partners = [
+const partnerss = [
     { name: 'Microsoft', type: 'Technology', logo: 'MS', color: '#00A4EF' },
     { name: 'Amazon', type: 'Cloud', logo: 'AZ', color: '#FF9900' },
     { name: 'Google', type: 'AI', logo: 'GG', color: '#4285F4' },
@@ -30,6 +32,22 @@ const PartnersSection = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
     const [marqueeKey, setMarqueeKey] = useState(0);
+
+    const [partners, setPartners] = useState([]);
+    const dispatch = useDispatch();
+    useEffect(() => {
+        // Move the function definition inside useEffect
+        const loadConfigs = async () => {
+            const result = await dispatch(getPartnerList());
+            console.log('Configurations loaded successfully', 'success');
+            if (result.type === "PARTNER_LIST") {
+                setPartners(result.payload);
+            }
+        };
+
+        loadConfigs();
+    }, [dispatch]); // Only dispatch is needed as dependency
+
 
     // Duplicate partners for seamless loop
     const duplicatedPartners = [...partners, ...partners];

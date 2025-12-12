@@ -9,8 +9,12 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { useEffect, useState } from 'react';
+import { getReviewList } from "../../services/AppConfigAction";
+import { useDispatch } from 'react-redux';
 
-const reviews = [
+
+const reviewss = [
   {
     name: "Sarah Johnson",
     position: "CTO",
@@ -44,11 +48,27 @@ const reviews = [
 ];
 
 // Duplicate list for seamless scrolling
-const scrollingReviews = [...reviews, ...reviews];
 
 const ReviewsSection = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const [reviews, setReviews] = useState([]);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    // Move the function definition inside useEffect
+    const loadConfigs = async () => {
+      const result = await dispatch(getReviewList());
+      console.log('Configurations loaded successfully', 'success');
+      if (result.type === "REVIEW_LIST") {
+        setReviews(result.payload);
+      }
+    };
+
+    loadConfigs();
+  }, [dispatch]); // Only dispatch is needed as dependency
+
+  const scrollingReviews = [...reviews, ...reviews];
 
   return (
     <Box sx={{ py: { xs: 6, sm: 8, md: 10 }, bgcolor: "grey.50" }}>
@@ -80,7 +100,7 @@ const ReviewsSection = () => {
             sx={{
               display: "flex",
               flexDirection: "column",
-              animation: "scrollReviews 12s linear infinite",
+              animation: "scrollReviews 30s linear infinite",
             }}
           >
             {scrollingReviews.map((review, index) => (
@@ -101,7 +121,7 @@ const ReviewsSection = () => {
                   color="text.secondary"
                   sx={{ mb: 2, fontStyle: "italic" }}
                 >
-                  "{review.comment}"
+                  "{review.comment_text}"
                 </Typography>
 
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>

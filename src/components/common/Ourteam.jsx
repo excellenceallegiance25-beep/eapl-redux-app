@@ -6,12 +6,49 @@ import {
     alpha,
     useTheme
 } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { getEmployeeList } from '../../services/AppConfigAction';
 
 const Ourteam = () => {
 
     const theme = useTheme();
+    // Import placeholder images (you'll need to replace these with actual images)
+    const team1 = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop';
+    const team2 = 'https://images.unsplash.com/photo-1557862921-37829c790f19?w=400&h=400&fit=crop';
+    const team3 = 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w-400&h=400&fit=crop';
+    const team4 = 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop';
+    const office1 = 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800&h=400&fit=crop';
+    const office2 = 'https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?w=800&h=400&fit=crop';
+    // const innovation = 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h-400&fit=crop';
+    const innovation = 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1950&q=80';
 
-    const leadershipTeam = [
+    const [leadershipTeam, setLeadershipTeam] = useState([]);
+    const dispatch = useDispatch();
+    useEffect(() => {
+        // Move the function definition inside useEffect
+        const loadConfigs = async () => {
+            const result = await dispatch(getEmployeeList());
+            console.log('Configurations loaded successfully', 'success');
+            if (result.type === "EMP_LIST") {
+                setLeadershipTeam(result.payload);
+            }
+        };
+
+        loadConfigs();
+    }, [dispatch]); // Only dispatch is needed as dependency
+
+    const getAvatarImage = (avatar) => {
+        switch (avatar) {
+            case "SJ": return team1;
+            case "MC": return team2;
+            case "ED": return team3;
+            case "DW": return team4;
+            default: return innovation;
+        }
+    };
+
+    const leadershipTeams = [
         {
             name: 'Sarah Johnson',
             role: 'CEO & Founder',
@@ -91,16 +128,19 @@ const Ourteam = () => {
                         }}>
                             <CardContent sx={{ p: 3, textAlign: 'center' }}>
                                 <Avatar
+                                    src={getAvatarImage(member.avatar)}
                                     sx={{
                                         width: 120,
                                         height: 120,
                                         margin: '0 auto 20px',
                                         bgcolor: theme.palette.primary.main,
                                         fontSize: '2.5rem',
-                                        border: `4px solid ${alpha(theme.palette.primary.main, 0.2)}`
+                                        border: `4px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                                        backgroundImage: `url(${getAvatarImage(member.avatar)})`,
+                                        backgroundPosition: 'fit'
                                     }}
                                 >
-                                    {member.avatar}
+                                    {/* {member.avatar} */}
                                 </Avatar>
                                 <Typography variant="h5" gutterBottom fontWeight="bold">
                                     {member.name}
@@ -115,7 +155,7 @@ const Ourteam = () => {
                                     {member.bio}
                                 </Typography>
                                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, justifyContent: 'center' }}>
-                                    {member.expertise.map((skill, idx) => (
+                                    {member.expertise.split(',').map((skill, idx) => (
                                         <Chip
                                             key={idx}
                                             label={skill}
