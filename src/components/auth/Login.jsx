@@ -13,6 +13,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { loginStart, loginSuccess, loginFailure } from '../../redux/slices/authSlice';
+import { userLogin } from '../../services/AppConfigAction';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -21,7 +22,7 @@ const Login = () => {
   });
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error } = useSelector((state) => state.auth);
+  const { loading, error, isAuthenticated, user } = useSelector((state) => state.auth);
 
   const handleChange = (e) => {
     setFormData({
@@ -32,30 +33,119 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Simulate API call
-    dispatch(loginStart());
-    
+
+    // Basic validation
+    if (!formData.email || !formData.password) {
+      dispatch(loginFailure('Please fill in all fields'));
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      dispatch(loginFailure('Please enter a valid email address'));
+      return;
+    }
+
     try {
-      // In a real app, you would make an API call here
-      // For demo purposes, we'll simulate a successful login
-      setTimeout(() => {
-        const mockUser = {
-          id: 1,
-          name: 'John Doe',
-          email: formData.email,
-          role: 'user',
+      // Start loading
+      dispatch(loginStart());
+
+      // Dispatch login action
+      const result = await dispatch(userLogin(formData));
+
+      // Check the action type in the result
+      if (result.type === "EMP_COMPLETE_LOGIN_SUCCESS") {
+
+        // Validate the payload structure
+        if (!result.payload) {
+          dispatch(loginFailure('Invalid server response'));
+          return;
+        }
+
+        // Check if dataList exists and is not empty
+        if (!result.payload.dataList || !Array.isArray(result.payload.dataList)) {
+          dispatch(loginFailure('No user data received from server'));
+          return;
+        }
+
+        if (result.payload.dataList.length === 0) {
+          dispatch(loginFailure('Access denied. Your account is either inactive or does not exist. Please contact your manager.'));
+          return;
+        }
+
+        // Get user data from the payload - safely
+        const userData = result.payload.dataList[0];
+
+        // Validate user data has required fields
+        if (!userData || !userData.id) {
+          dispatch(loginFailure('Invalid user data received'));
+          return;
+        }
+
+        // Ensure user has minimum required data
+        const completeUserData = {
+          id: userData.id,
+          name: userData.name || '',
+          email: userData.email || formData.email,
+          role: userData.role || 'user',
+          // Add other fields with defaults if missing
+          phone: userData.phone || '',
+          title: userData.title || '',
+          status: userData.status !== undefined ? userData.status : true,
+          role_type: userData.role_type || '',
+          profile_picture: userData.profile_picture || null,
+          profile_picture_type: userData.profile_picture_type || null,
+          department: userData.department || '',
+          position: userData.position || ''
         };
-        
+
+        // Store in sessionStorage
+        sessionStorage.setItem('authToken', result.payload.token || 'dummy-token');
+        sessionStorage.setItem('userData', JSON.stringify(completeUserData));
+
+        // Update Redux state
         dispatch(loginSuccess({
-          user: mockUser,
-          token: 'mock-jwt-token',
+          user: completeUserData,
+          token: result.payload.token || 'dummy-token'
         }));
-        
-        navigate('/dashboard');
-      }, 1000);
-    } catch (err) {
-      dispatch(loginFailure('Invalid credentials'));
+
+        // Navigate to profile
+        navigate(`/profile/${completeUserData.id}`);
+
+      } else if (result.type === "EMP_FAILURE_LOGIN") {
+        // Show error from payload
+        const errorMessage = result.payload || 'Login failed';
+        dispatch(loginFailure(errorMessage));
+      } else {
+        // Handle unexpected response types
+        console.error('Unexpected response type:', result.type);
+        dispatch(loginFailure('Unexpected server response'));
+      }
+
+    } catch (error) {
+      console.error("Login error:", error);
+
+      // More specific error messages
+      if (error.message && error.message.includes('Network Error')) {
+        dispatch(loginFailure('Network error. Please check your connection.'));
+      } else if (error.response) {
+        // Server responded with error status
+        const status = error.response.status;
+        if (status === 401) {
+          dispatch(loginFailure('Invalid email or password'));
+        } else if (status === 403) {
+          dispatch(loginFailure('Account disabled or access denied'));
+        } else if (status === 404) {
+          dispatch(loginFailure('Service not found'));
+        } else if (status >= 500) {
+          dispatch(loginFailure('Server error. Please try again later.'));
+        } else {
+          dispatch(loginFailure(`Error ${status}: ${error.response.data?.message || 'Unknown error'}`));
+        }
+      } else {
+        dispatch(loginFailure('An unexpected error occurred.'));
+      }
     }
   };
 
@@ -101,7 +191,7 @@ const Login = () => {
               required
               autoComplete="email"
             />
-            
+
             <TextField
               fullWidth
               label="Password"

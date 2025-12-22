@@ -11,7 +11,6 @@ import Layout from './components/layout/Layout';
 import About from './pages/About';
 import Blog from './pages/Blog';
 import Contact from './pages/Contact';
-import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import Profile from './pages/Profile';
@@ -28,6 +27,16 @@ import CareerSection from './components/home/CareerSection';
 import PartnersSection from './components/home/PartnersSection';
 import AppContainer from './components/common/AppContainer';
 import ServiceDetails from './components/common/ServiceDetails';
+
+// Dashboard Components
+import Dashboard from './components/dashboardmenu/Dashboard';
+import { LeaveManagementPage } from './components/dashboardmenu/LeaveManagementPage';
+import { EmployeeManagementPage } from './components/dashboardmenu/EmployeeManagementPage';
+import { ServicesManagementPage } from './components/dashboardmenu/ServicesManagementPage';
+import { PartnersManagementPage } from './components/dashboardmenu/PartnersManagementPage';
+import ForgotPassword from './components/auth/ForgotPassword';
+import { LoadingProvider } from './context/SkeletonWrapper';
+
 // Create theme
 const theme = createTheme({
   palette: {
@@ -87,23 +96,18 @@ function App() {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {/* same as homepage in package json /reactui or /eaplui and keep the same rename of build folder in webapp */}
         <Router basename="/eaplui">
           <AppContainer>
             <Routes>
+              {/* Public Routes */}
               <Route path="/" element={<Layout><Home /></Layout>} />
               <Route path="/about" element={<Layout><About /></Layout>} />
-              {/* <Route path="/services" element={<Layout><Services /></Layout>} /> */}
-              {/* Services Routes - Make sure these match your navigation */}
               <Route path="/services" element={<Layout><Services /></Layout>} />
               <Route path="/services/:serviceId" element={
-                <ProtectedRoute>
-                  <Layout><ServiceDetails /></Layout>
-                </ProtectedRoute>
+                // <ProtectedRoute>
+                <Layout><ServiceDetails /></Layout>
+                // </ProtectedRoute>
               } />
-
-
-
               <Route path="/products" element={<Layout><Products /></Layout>} />
               <Route path="/blog" element={<Layout><Blog /></Layout>} />
               <Route path="/contact" element={<Layout><Contact /></Layout>} />
@@ -112,19 +116,51 @@ function App() {
               <Route path="/team" element={<Layout><Ourteam /></Layout>} />
               <Route path="/partnerships" element={<Layout><PartnersSection /></Layout>} />
 
-
-
               {/* Auth Routes */}
               <Route path="/login" element={<Layout><Login /></Layout>} />
+              <Route path="/forgot-password" element={<Layout><ForgotPassword /></Layout>} />
               <Route path="/register" element={<Layout><Register /></Layout>} />
 
-              {/* Protected Routes */}
+              {/* Dashboard Routes */}
               <Route path="/dashboard" element={
                 <ProtectedRoute>
-                  <Layout><Dashboard /></Layout>
+                  <Dashboard />
                 </ProtectedRoute>
               } />
-              <Route path="/profile" element={
+
+              <Route path="/dashboard/:userId" element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } />
+
+              {/* Dashboard Child Pages - These should use Dashboard layout, not main Layout */}
+              <Route path="/leave-management" element={
+                <ProtectedRoute>
+                  <LeaveManagementPage />
+                </ProtectedRoute>
+              } />
+
+              <Route path="/employees" element={
+                <ProtectedRoute>
+                  <EmployeeManagementPage />
+                </ProtectedRoute>
+              } />
+
+              <Route path="/services-management" element={
+                <ProtectedRoute>
+                  <ServicesManagementPage />
+                </ProtectedRoute>
+              } />
+
+              <Route path="/partners-management" element={
+                <ProtectedRoute>
+                  <PartnersManagementPage />
+                </ProtectedRoute>
+              } />
+
+              {/* Profile Route */}
+              <Route path="/profile/:userId" element={
                 <ProtectedRoute>
                   <Layout><Profile /></Layout>
                 </ProtectedRoute>

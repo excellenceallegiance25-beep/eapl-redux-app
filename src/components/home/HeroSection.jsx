@@ -17,6 +17,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import TrustIndicators from './TrustIndicators';
+import home_background from '../../assets/images/home_bg.avif';
 
 const HeroSection = () => {
   const theme = useTheme();
@@ -41,21 +42,6 @@ const HeroSection = () => {
   };
 
   return (
-    // <Box
-    //   sx={{
-    //     minHeight: '100vh',
-    //     display: 'flex',
-    //     alignItems: 'center',
-    //     justifyContent: 'center',
-    //     position: 'relative',
-    //     background: `linear-gradient(135deg, 
-    //       ${theme.palette.primary.dark} 0%, 
-    //       ${theme.palette.primary.main} 50%, 
-    //       ${theme.palette.secondary.main} 100%
-    //     )`,
-    //     overflow: 'hidden',
-    //   }}
-    // >
     <Box
       sx={{
         minHeight: '100vh',
@@ -63,11 +49,7 @@ const HeroSection = () => {
         alignItems: 'center',
         justifyContent: 'center',
         position: 'relative',
-        background: `
-      linear-gradient(135deg, rgba(0,0,0,0.75), rgba(0,0,0,0.6)),
-      // url('https://images.unsplash.com/photo-1535223289827-42f1e9919769?auto=format&fit=crop&w=1950&q=80')
-      url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1950&q=80')
-    `,
+        background: `linear-gradient(135deg, rgba(0,0,0,0.75), rgba(0,0,0,0.6)),url("${home_background}")`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

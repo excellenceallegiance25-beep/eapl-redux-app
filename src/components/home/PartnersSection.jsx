@@ -1,4 +1,5 @@
 import {
+    Avatar,
     Box,
     Chip,
     Container,
@@ -32,6 +33,8 @@ const PartnersSection = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
     const [marqueeKey, setMarqueeKey] = useState(0);
+
+    const randomSeed = Math.random().toString(36).substring(2, 10);
 
     const [partners, setPartners] = useState([]);
     const dispatch = useDispatch();
@@ -153,6 +156,7 @@ const PartnersSection = () => {
                                 }}
                             >
                                 <Box
+                                    key={partner.id ?? index}
                                     sx={{
                                         width: { xs: 50, sm: 60, md: 70 },
                                         height: { xs: 50, sm: 60, md: 70 },
@@ -162,13 +166,12 @@ const PartnersSection = () => {
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         margin: '0 auto 8px',
-                                        fontSize: { xs: '1.2rem', sm: '1.5rem', md: '1.8rem' },
-                                        fontWeight: 'bold',
-                                        color: partner.color,
-                                        transition: 'all 0.3s',
                                     }}
                                 >
-                                    {partner.logo}
+                                    <Avatar
+                                        src={`https://api.dicebear.com/7.x/adventurer/svg?seed=${partner.id}`}
+                                        sx={{ width: '100%', height: '100%' }}
+                                    />
                                 </Box>
                                 <Typography
                                     variant={isMobile ? "subtitle2" : "subtitle1"}

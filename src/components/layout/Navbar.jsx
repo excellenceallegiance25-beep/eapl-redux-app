@@ -59,10 +59,13 @@ const Navbar = () => {
     { text: 'Contact', path: '/contact', icon: <ContactMail /> },
   ];
 
-  // Navigation items for authenticated users (ONLY Dashboard and Profile)
+  // Get user ID for navigation - if no user, use a default or handle gracefully
+  const userId = user?.id;
+
+  // Navigation items for authenticated users - WITH USER ID IN URL
   const privateMenuItems = [
-    { text: 'Dashboard', path: '/dashboard', icon: <Dashboard /> },
-    { text: 'Profile', path: '/profile', icon: <Person /> },
+    { text: 'Dashboard', path: `/dashboard/${userId}`, icon: <Dashboard /> },
+    { text: 'Profile', path: `/profile/${userId}`, icon: <Person /> },
   ];
 
   // Use appropriate menu items based on authentication
@@ -102,8 +105,8 @@ const Navbar = () => {
             key={item.text}
             component={RouterLink}
             to={item.path}
-            sx={{ 
-              textDecoration: 'none', 
+            sx={{
+              textDecoration: 'none',
               color: 'inherit',
               '&:hover': {
                 backgroundColor: 'action.hover',
@@ -111,19 +114,19 @@ const Navbar = () => {
             }}
           >
             <ListItemIcon sx={{ color: 'primary.main' }}>{item.icon}</ListItemIcon>
-            <ListItemText 
-              primary={item.text} 
+            <ListItemText
+              primary={item.text}
               primaryTypographyProps={{ fontWeight: 'medium' }}
             />
           </ListItem>
         ))}
         {!isAuthenticated ? (
           <>
-            <ListItem 
+            <ListItem
               component={RouterLink}
               to="/login"
-              sx={{ 
-                textDecoration: 'none', 
+              sx={{
+                textDecoration: 'none',
                 color: 'inherit',
                 '&:hover': {
                   backgroundColor: 'action.hover',
@@ -133,17 +136,17 @@ const Navbar = () => {
               <ListItemIcon sx={{ color: 'primary.main' }}>
                 <Login />
               </ListItemIcon>
-              <ListItemText 
-                primary="Login" 
+              <ListItemText
+                primary="Login"
                 primaryTypographyProps={{ fontWeight: 'medium' }}
               />
             </ListItem>
-            <ListItem 
+            <ListItem
               onClick={() => {
                 setMobileOpen(false);
                 setRegisterOpen(true);
               }}
-              sx={{ 
+              sx={{
                 cursor: 'pointer',
                 '&:hover': {
                   backgroundColor: 'action.hover',
@@ -153,9 +156,9 @@ const Navbar = () => {
               <ListItemIcon sx={{ color: 'secondary.main' }}>
                 <AppRegistration />
               </ListItemIcon>
-              <ListItemText 
-                primary="Register" 
-                primaryTypographyProps={{ 
+              <ListItemText
+                primary="Register"
+                primaryTypographyProps={{
                   fontWeight: 'medium',
                   color: 'secondary.main'
                 }}
@@ -165,24 +168,24 @@ const Navbar = () => {
         ) : (
           <>
             {/* User info in mobile drawer */}
-            <ListItem sx={{ 
-              backgroundColor: 'primary.light', 
+            <ListItem sx={{
+              backgroundColor: 'primary.light',
               color: 'white',
               mb: 2
             }}>
               <ListItemIcon sx={{ color: 'white' }}>
                 <Person />
               </ListItemIcon>
-              <ListItemText 
-                primary={user?.name || 'User'} 
+              <ListItemText
+                primary={user?.name || 'User'}
                 secondary={user?.email}
                 primaryTypographyProps={{ fontWeight: 'bold' }}
                 secondaryTypographyProps={{ color: 'rgba(255, 255, 255, 0.8)' }}
               />
             </ListItem>
-            <ListItem 
+            <ListItem
               onClick={handleLogout}
-              sx={{ 
+              sx={{
                 cursor: 'pointer',
                 '&:hover': {
                   backgroundColor: 'error.light',
@@ -193,9 +196,9 @@ const Navbar = () => {
               <ListItemIcon sx={{ color: 'error.main' }}>
                 <Logout />
               </ListItemIcon>
-              <ListItemText 
-                primary="Logout" 
-                primaryTypographyProps={{ 
+              <ListItemText
+                primary="Logout"
+                primaryTypographyProps={{
                   fontWeight: 'medium',
                   color: 'error.main'
                 }}
@@ -209,10 +212,10 @@ const Navbar = () => {
 
   return (
     <>
-      <AppBar 
-        position="sticky" 
+      <AppBar
+        position="sticky"
         elevation={2}
-        sx={{ 
+        sx={{
           background: 'white',
           borderBottom: `1px solid ${theme.palette.divider}`,
         }}
@@ -248,7 +251,7 @@ const Navbar = () => {
             >
               <Business sx={{ mr: 1, fontSize: { xs: '1.5rem', sm: '2rem' } }} />
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                Excellence Allegiance 
+                Excellence Allegiance
                 <Box component="span" sx={{ color: 'secondary.main', ml: 0.5 }}>
                   Pvt Ltd
                 </Box>
@@ -270,7 +273,7 @@ const Navbar = () => {
                         component={RouterLink}
                         to={item.path}
                         color="inherit"
-                        sx={{ 
+                        sx={{
                           color: 'text.primary',
                           '&:hover': {
                             color: 'primary.main',
@@ -284,7 +287,7 @@ const Navbar = () => {
                   </Box>
                 )}
 
-                {/* Show only Dashboard and Profile for authenticated users */}
+                {/* Show only Dashboard and Profile for authenticated users WITH USER ID */}
                 {isAuthenticated && (
                   <Box sx={{ display: 'flex', gap: 1 }}>
                     {privateMenuItems.map((item) => (
@@ -294,7 +297,7 @@ const Navbar = () => {
                         to={item.path}
                         color="inherit"
                         startIcon={item.icon}
-                        sx={{ 
+                        sx={{
                           color: 'text.primary',
                           '&:hover': {
                             color: 'primary.main',
@@ -313,10 +316,10 @@ const Navbar = () => {
                   {isAuthenticated ? (
                     <>
                       <Tooltip title="Account settings">
-                        <IconButton 
-                          onClick={handleMenu} 
-                          size="small" 
-                          sx={{ 
+                        <IconButton
+                          onClick={handleMenu}
+                          size="small"
+                          sx={{
                             ml: 2,
                             border: `2px solid ${theme.palette.primary.main}`,
                             '&:hover': {
@@ -324,9 +327,9 @@ const Navbar = () => {
                             }
                           }}
                         >
-                          <Avatar 
-                            sx={{ 
-                              width: 32, 
+                          <Avatar
+                            sx={{
+                              width: 32,
                               height: 32,
                               bgcolor: 'primary.main',
                               fontWeight: 'bold'
@@ -348,13 +351,13 @@ const Navbar = () => {
                           }
                         }}
                       >
-                        <MenuItem 
-                          component={RouterLink} 
-                          to="/profile"
+                        <MenuItem
+                          component={RouterLink}
+                          to={`/profile/${userId}`}
                           onClick={handleClose}
                           sx={{ py: 1.5 }}
                         >
-                          <Person sx={{ mr: 2, color: 'primary.main' }} /> 
+                          <Person sx={{ mr: 2, color: 'primary.main' }} />
                           <Box>
                             <Typography variant="body1" fontWeight="medium">
                               {user?.name || 'User'}
@@ -364,12 +367,12 @@ const Navbar = () => {
                             </Typography>
                           </Box>
                         </MenuItem>
-                        <MenuItem 
+                        <MenuItem
                           onClick={() => {
                             handleClose();
                             handleLogout();
                           }}
-                          sx={{ 
+                          sx={{
                             py: 1.5,
                             color: 'error.main',
                             '&:hover': {
@@ -377,7 +380,7 @@ const Navbar = () => {
                             }
                           }}
                         >
-                          <Logout sx={{ mr: 2 }} /> 
+                          <Logout sx={{ mr: 2 }} />
                           <Typography fontWeight="medium">Logout</Typography>
                         </MenuItem>
                       </Menu>
@@ -425,19 +428,19 @@ const Navbar = () => {
 
             {/* Mobile auth button (only show when authenticated) */}
             {isMobile && isAuthenticated && (
-              <IconButton 
-                onClick={handleMenu} 
+              <IconButton
+                onClick={handleMenu}
                 size="small"
-                sx={{ 
+                sx={{
                   border: `2px solid ${theme.palette.primary.main}`,
                   '&:hover': {
                     borderColor: theme.palette.primary.dark,
                   }
                 }}
               >
-                <Avatar 
-                  sx={{ 
-                    width: 32, 
+                <Avatar
+                  sx={{
+                    width: 32,
                     height: 32,
                     bgcolor: 'primary.main',
                     fontWeight: 'bold'
@@ -457,7 +460,7 @@ const Navbar = () => {
         anchor="left"
         open={mobileOpen}
         onClose={handleDrawerToggle}
-        ModalProps={{ 
+        ModalProps={{
           keepMounted: true,
           sx: {
             '& .MuiBackdrop-root': {

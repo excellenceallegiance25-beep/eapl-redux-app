@@ -37,15 +37,45 @@ import {
   useTheme
 } from '@mui/material';
 import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader';
+import { useDispatch } from 'react-redux';
+import { getApplicationServicesList } from '../services/AppConfigAction';
+
+import chart_bg from '../assets/images/chart.jpg';
+import codescreen_bg from '../assets/images/codescreen.jpg';
+import computing_bg from '../assets/images/computing.jpg';
+import earthconnection_bg from '../assets/images/earthconnection.jpg';
+import meeting_bg from '../assets/images/meeting.jpg';
+import mobileappscreen_bg from '../assets/images/mobileappscreen.jpg';
+import motherboard_bg from '../assets/images/motherboard.avif';
+import review_bg from '../assets/images/review.jpg';
+import robotdoing_bg from '../assets/images/robotdoing.jpg';
+import serverconnection_bg from '../assets/images/serverconnection.jpg';
+import workinghuman_bg from '../assets/images/workinghuman.jpg';
+import workingonlaptop_bg from '../assets/images/workingonlaptop.jpg';
 
 const Services = () => {
   const theme = useTheme();
   const [tabValue, setTabValue] = useState(0);
   const [viewAll, setViewAll] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
+
+  const [services, setServices] = useState([]);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    // Move the function definition inside useEffect
+    const loadConfigs = async () => {
+      const result = await dispatch(getApplicationServicesList());
+      console.log('Configurations loaded successfully', 'success');
+      if (result.type === "APPCONFIG_INIT") {
+        setServices(result.payload);
+      }
+    };
+
+    loadConfigs();
+  }, [dispatch]); // Only dispatch is needed as dependency
 
   // Header image
   const headerImage = 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=2000&q=80';
@@ -54,7 +84,7 @@ const Services = () => {
   const SYMMETRICAL_CARD_CONFIG = {
     fixedDimensions: {
       width: 345,
-      height: 400,
+      height: 350,
     },
     cardsPerRow: {
       xs: 1,
@@ -78,7 +108,7 @@ const Services = () => {
       xl: 4,
     },
     padding: 2.5,
-    iconSize: 70,
+    iconSize: 50,
     iconFontSize: 32,
     titleFontSize: '1.25rem',
     titleHeight: 56,
@@ -105,156 +135,21 @@ const Services = () => {
   // Service-specific background images
   const getServiceBackground = (serviceTitle) => {
     const backgrounds = {
-      'Cloud Solutions': 'linear-gradient(rgba(33, 150, 243, 0.8), rgba(25, 118, 210, 0.9)), url("https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=345&q=80")',
-      'Software Development': 'linear-gradient(rgba(103, 58, 183, 0.8), rgba(81, 45, 168, 0.9)), url("https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=345&q=80")',
-      'Cybersecurity': 'linear-gradient(rgba(244, 67, 54, 0.8), rgba(198, 40, 40, 0.9)), url("https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=345&q=80")',
-      'AI & Analytics': 'linear-gradient(rgba(76, 175, 80, 0.8), rgba(56, 142, 60, 0.9)), url("https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=345&q=80")',
-      'Mobile Development': 'linear-gradient(rgba(255, 152, 0, 0.8), rgba(245, 124, 0, 0.9)), url("https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=345&q=80")',
-      'Digital Transformation': 'linear-gradient(rgba(156, 39, 176, 0.8), rgba(123, 31, 162, 0.9)), url("https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=345&q=80")',
-      'IoT Solutions': 'linear-gradient(rgba(0, 188, 212, 0.8), rgba(0, 151, 167, 0.9)), url("https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=345&q=80")',
-      'Blockchain Services': 'linear-gradient(rgba(255, 87, 34, 0.8), rgba(230, 74, 25, 0.9)), url("https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=345&q=80")',
-      'DevOps & CI/CD': 'linear-gradient(rgba(121, 85, 72, 0.8), rgba(93, 64, 55, 0.9)), url("https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=345&q=80")',
-      'Quality Assurance': 'linear-gradient(rgba(96, 125, 139, 0.8), rgba(69, 90, 100, 0.9)), url("https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=345&q=80")',
-      'UI/UX Design': 'linear-gradient(rgba(233, 30, 99, 0.8), rgba(194, 24, 91, 0.9)), url("https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=345&q=80")',
-      'Consulting Services': 'linear-gradient(rgba(63, 81, 181, 0.8), rgba(48, 63, 159, 0.9)), url("https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=345&q=80")',
+      'Cloud Solutions': workinghuman_bg,
+      'Software Development': codescreen_bg,
+      'Cybersecurity': motherboard_bg,
+      'AI & Analytics': robotdoing_bg,
+      'Mobile Development': mobileappscreen_bg,
+      'Digital Transformation': workingonlaptop_bg,
+      'IoT Solutions': earthconnection_bg,
+      'Blockchain Services': computing_bg,
+      'DevOps & CI/CD': serverconnection_bg,
+      'Quality Assurance': review_bg,
+      'UI/UX Design': chart_bg,
+      'Consulting Services': meeting_bg,
     };
     return backgrounds[serviceTitle] || 'linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.9)), url("https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?auto=format&fit=crop&w=345&q=80")';
   };
-
-  const services = [
-    {
-      title: 'Cloud Solutions',
-      description: 'Enterprise cloud infrastructure with auto-scaling and global CDN for optimal performance.',
-      icon: <Cloud />,
-      color: '#2196F3',
-      features: ['AWS/Azure Migration', 'DevOps Integration', '24/7 Monitoring'],
-      bgType: 'image',
-      category: 'Cloud',
-      details: 'End-to-end cloud solutions including migration strategy, implementation, and ongoing management.',
-      stats: { clients: 250, satisfaction: 98, uptime: 99.9 },
-    },
-    {
-      title: 'Software Development',
-      description: 'Custom applications with modern frameworks following agile methodologies and best practices.',
-      icon: <Code />,
-      color: '#673AB7',
-      features: ['Web & Mobile Apps', 'API Development', 'Microservices'],
-      bgType: 'image',
-      category: 'Development',
-      details: 'From concept to deployment, we build robust and scalable software solutions.',
-      stats: { clients: 350, satisfaction: 96, projects: 500 },
-    },
-    {
-      title: 'Cybersecurity',
-      description: 'Complete security solutions with advanced threat detection and compliance management.',
-      icon: <Security />,
-      color: '#F44336',
-      features: ['Penetration Testing', 'Data Encryption', 'Real-time Monitoring'],
-      bgType: 'image',
-      category: 'Security',
-      details: 'Protect your digital assets with our advanced security solutions.',
-      stats: { breachesPrevented: 1200, responseTime: '2hr', coverage: 100 },
-    },
-    {
-      title: 'AI & Analytics',
-      description: 'Data-driven insights and machine learning solutions for intelligent business decisions.',
-      icon: <Analytics />,
-      color: '#4CAF50',
-      features: ['BI Dashboards', 'Predictive Analytics', 'ML Models'],
-      bgType: 'image',
-      category: 'Analytics',
-      details: 'Leverage the power of data with our analytics and AI solutions.',
-      stats: { dataProcessed: '5TB', insights: 12000, accuracy: 95 },
-    },
-    {
-      title: 'Mobile Development',
-      description: 'Cross-platform mobile apps for iOS and Android with native-like performance.',
-      icon: <Smartphone />,
-      color: '#FF9800',
-      features: ['React Native', 'Flutter', 'Native Apps'],
-      bgType: 'image',
-      category: 'Mobile',
-      details: 'Build engaging mobile experiences with our expert development team.',
-      stats: { apps: 150, users: '5M+', rating: 4.8 },
-    },
-    {
-      title: 'Digital Transformation',
-      description: 'Complete digital overhaul with process automation and modernization strategies.',
-      icon: <Rocket />,
-      color: '#9C27B0',
-      features: ['Strategy Planning', 'Process Automation', 'Modernization'],
-      bgType: 'image',
-      category: 'Transformation',
-      details: 'Guide your business through digital transformation with our proven methodologies.',
-      stats: { transformed: 75, roi: '320%', efficiency: 65 },
-    },
-    {
-      title: 'IoT Solutions',
-      description: 'Connect and manage smart devices with comprehensive IoT platforms.',
-      icon: <Settings />,
-      color: '#00BCD4',
-      features: ['Smart Devices', 'Real-time Data', 'Remote Management'],
-      bgType: 'image',
-      category: 'Cloud',
-      details: 'End-to-end IoT platform development, device integration, and real-time monitoring.',
-      stats: { devices: 10000, dataPoints: '1M/day', uptime: 99.5 },
-    },
-    {
-      title: 'Blockchain Services',
-      description: 'Secure decentralized solutions for finance, supply chain, and digital assets.',
-      icon: <Api />,
-      color: '#FF5722',
-      features: ['Smart Contracts', 'DApps', 'Tokenization'],
-      bgType: 'image',
-      category: 'Development',
-      details: 'Build and deploy secure blockchain applications and smart contracts.',
-      stats: { transactions: '2M+', security: 100, speed: '2000tps' },
-    },
-    {
-      title: 'DevOps & CI/CD',
-      description: 'Automated deployment pipelines and infrastructure as code for rapid delivery.',
-      icon: <Settings />,
-      color: '#795548',
-      features: ['Jenkins', 'Docker', 'Kubernetes'],
-      bgType: 'image',
-      category: 'Development',
-      details: 'Accelerate your development lifecycle with CI/CD automation and DevOps practices.',
-      stats: { deployments: 5000, downtime: '99.9%', speed: '+40%' },
-    },
-    {
-      title: 'Quality Assurance',
-      description: 'Comprehensive testing solutions ensuring software quality and reliability.',
-      icon: <CheckCircle />,
-      color: '#607D8B',
-      features: ['Test Automation', 'Performance', 'Security Testing'],
-      bgType: 'image',
-      category: 'Security',
-      details: 'End-to-end software testing including automation, performance, and security validation.',
-      stats: { bugsFound: 15000, coverage: 95, efficiency: 80 },
-    },
-    {
-      title: 'UI/UX Design',
-      description: 'User-centered design for exceptional digital experiences and engagement.',
-      icon: <Rocket />,
-      color: '#E91E63',
-      features: ['Wireframing', 'Prototyping', 'User Testing'],
-      bgType: 'image',
-      category: 'Development',
-      details: 'Craft intuitive and visually stunning user experiences with modern UI/UX practices.',
-      stats: { designs: 300, satisfaction: 97, conversion: '+35%' },
-    },
-    {
-      title: 'Consulting Services',
-      description: 'Strategic technology consulting and roadmap planning for business growth.',
-      icon: <SupportAgent />,
-      color: '#3F51B5',
-      features: ['Strategy', 'Architecture', 'Planning'],
-      bgType: 'image',
-      category: 'Transformation',
-      details: 'Get expert guidance for your technology investments and digital roadmap.',
-      stats: { clients: 200, savings: '40%', growth: '+50%' },
-    },
-  ];
 
   const servicePackages = [
     {
@@ -429,7 +324,7 @@ const Services = () => {
               Comprehensive technology solutions tailored for modern businesses
             </Typography>
 
-            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+            {/* <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
               <Button
                 variant="contained"
                 size="large"
@@ -444,26 +339,7 @@ const Services = () => {
               >
                 Get Started
               </Button>
-              {/* <Button
-                variant="outlined"
-                size="large"
-                sx={{
-                  px: 4,
-                  py: 1.5,
-                  fontSize: '1.1rem',
-                  borderRadius: 2,
-                  borderColor: 'white',
-                  color: 'white',
-                  '&:hover': {
-                    borderColor: 'white',
-                    backgroundColor: 'rgba(255,255,255,0.1)',
-                  },
-                  animation: 'fadeInUp 1s ease-out 0.9s both',
-                }}
-              >
-                View Services
-              </Button> */}
-            </Box>
+            </Box> */}
           </Box>
         </Container>
       </Box>
@@ -566,7 +442,16 @@ const Services = () => {
                         overflow: 'hidden',
                         border: 'none',
                         borderRadius: 3,
-                        background: getServiceBackground(service.title),
+                        backgroundImage: `
+                                            linear-gradient(
+                                                to bottom,
+                                                rgba(0, 0, 0, 0.85) 0%,
+                                                rgba(0, 0, 0, 0.7) 30%,
+                                                rgba(0, 0, 0, 0.4) 70%,
+                                                rgba(0, 0, 0, 0.2) 100%
+                                            ),
+                                            url(${getServiceBackground(service.title)})
+                                        `,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -610,8 +495,9 @@ const Services = () => {
                         {/* Icon */}
                         <Box
                           sx={{
-                            width: 60,
-                            height: 60,
+                            width: SYMMETRICAL_CARD_CONFIG.iconSize,
+                            height: SYMMETRICAL_CARD_CONFIG.iconSize,
+                            fontSize: SYMMETRICAL_CARD_CONFIG.iconFontSize,
                             borderRadius: 2,
                             bgcolor: alpha('#fff', 0.2),
                             backdropFilter: 'blur(10px)',
@@ -655,7 +541,7 @@ const Services = () => {
 
                         {/* Features */}
                         <Box sx={{ mb: 2 }}>
-                          {service.features.slice(0, 2).map((feature, idx) => (
+                          {service.features.split(',').map((feature, idx) => (
                             <Chip
                               key={idx}
                               label={feature}
@@ -673,36 +559,11 @@ const Services = () => {
                           ))}
                         </Box>
 
-                        {/* Stats (Hidden until hover) */}
-                        <Box
-                          className="service-stats"
-                          sx={{
-                            transform: 'translateY(20px)',
-                            opacity: 0,
-                            transition: 'all 0.3s ease',
-                            display: 'flex',
-                            justifyContent: 'space-around',
-                            mb: 2,
-                            pt: 1,
-                            borderTop: '1px solid',
-                            borderColor: alpha('#fff', 0.1),
-                          }}
-                        >
-                          {Object.entries(service.stats).map(([key, value], idx) => (
-                            <Box key={idx} sx={{ textAlign: 'center' }}>
-                              <Typography variant="h6" fontWeight="bold">
-                                {typeof value === 'number' && key !== 'rating' ? value.toLocaleString() : value}
-                              </Typography>
-                              <Typography variant="caption" sx={{ opacity: 0.8 }}>
-                                {key}
-                              </Typography>
-                            </Box>
-                          ))}
-                        </Box>
-
                         {/* Button */}
                         <Button
                           fullWidth
+                          component={RouterLink}
+                          to={`/services/${service.id}`}
                           variant="outlined"
                           size="small"
                           endIcon={<ArrowForward />}
@@ -814,6 +675,8 @@ const Services = () => {
 
                     <Button
                       fullWidth
+                      component={RouterLink}
+                      to={`/services/${pkg.id}`}
                       variant={pkg.recommended ? 'contained' : 'outlined'}
                       size="large"
                       sx={{

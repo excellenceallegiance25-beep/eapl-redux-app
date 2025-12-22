@@ -14,8 +14,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { getApplicationServicesList } from '../../services/AppConfigAction';
-// Replace the broken imports with these:
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import chart_bg from '../../assets/images/chart.jpg';
 import codescreen_bg from '../../assets/images/codescreen.jpg';
 import computing_bg from '../../assets/images/computing.jpg';
@@ -28,6 +27,7 @@ import robotdoing_bg from '../../assets/images/robotdoing.jpg';
 import serverconnection_bg from '../../assets/images/serverconnection.jpg';
 import workinghuman_bg from '../../assets/images/workinghuman.jpg';
 import workingonlaptop_bg from '../../assets/images/workingonlaptop.jpg';
+import { getApplicationServicesList } from '../../services/AppConfigAction';
 
 
 // ==================== SYMMETRICAL CARD CONFIGURATION ====================
@@ -100,12 +100,11 @@ const ServicesSection = () => {
     const isMd = useMediaQuery(theme.breakpoints.between('md', 'lg'));
     const isLg = useMediaQuery(theme.breakpoints.between('lg', 'xl'));
     const isXl = useMediaQuery(theme.breakpoints.up('xl'));
-
+    const navigate = useNavigate();
     const [showAllServices, setShowAllServices] = useState(false);
+
     const [services, setServices] = useState([]);
-
     const dispatch = useDispatch();
-
     useEffect(() => {
         // Move the function definition inside useEffect
         const loadConfigs = async () => {
@@ -683,6 +682,8 @@ const ServicesSection = () => {
                                                 className="service-button"
                                                 variant="outlined"
                                                 size="medium"
+                                                component={RouterLink}
+                                                to={`/services/${service.id}`}
                                                 endIcon={<ArrowRightAlt sx={{ transition: 'transform 0.3s ease' }} />}
                                                 sx={{
                                                     borderColor: alpha('#fff', 0.25),
@@ -768,7 +769,9 @@ const ServicesSection = () => {
                         variant="contained"
                         color="primary"
                         size={isXs ? "medium" : "large"}
-                        onClick={toggleShowAllServices}
+                        // onClick={toggleShowAllServices}
+                        component={RouterLink}
+                        to={`/services`}
                         endIcon={showAllServices ? <ExpandLess /> : <ExpandMore />}
                         sx={{
                             px: { xs: 4, sm: 5 },

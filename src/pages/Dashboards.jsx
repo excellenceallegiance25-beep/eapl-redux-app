@@ -37,7 +37,7 @@ import { useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 import { useState } from 'react';
 
-const Dashboard = () => {
+const Dashboards = () => {
   const { user } = useSelector((state) => state.auth);
   const [activeFilter, setActiveFilter] = useState('all');
   const [selectedMetric, setSelectedMetric] = useState(null);
@@ -156,31 +156,31 @@ const Dashboard = () => {
 
   // Overall metrics with counts
   const overallMetrics = [
-    { 
-      label: 'Total Projects', 
-      value: allServices.length.toString(), 
-      change: '+2', 
+    {
+      label: 'Total Projects',
+      value: allServices.length.toString(),
+      change: '+2',
       icon: <Timeline />,
       filter: 'all'
     },
-    { 
-      label: 'Active Projects', 
-      value: allServices.filter(s => s.status === 'active').length.toString(), 
-      change: '+5', 
+    {
+      label: 'Active Projects',
+      value: allServices.filter(s => s.status === 'active').length.toString(),
+      change: '+5',
       icon: <Storage />,
       filter: 'active'
     },
-    { 
-      label: 'Delayed Projects', 
-      value: allServices.filter(s => s.status === 'delayed').length.toString(), 
-      change: '+2', 
+    {
+      label: 'Delayed Projects',
+      value: allServices.filter(s => s.status === 'delayed').length.toString(),
+      change: '+2',
       icon: <Error />,
       filter: 'delayed'
     },
-    { 
-      label: 'Warning Projects', 
-      value: allServices.filter(s => s.status === 'warning').length.toString(), 
-      change: '+1', 
+    {
+      label: 'Warning Projects',
+      value: allServices.filter(s => s.status === 'warning').length.toString(),
+      change: '+1',
       icon: <Warning />,
       filter: 'warning'
     },
@@ -255,7 +255,7 @@ const Dashboard = () => {
             </Avatar>
             <Box>
               <Typography variant="h5" fontWeight="bold">
-                 Project Management
+                Project Management
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 Real-time tracking of all services
@@ -286,8 +286,8 @@ const Dashboard = () => {
       <Grid container spacing={3} sx={{ mb: 4 }}>
         {overallMetrics.map((metric, index) => (
           <Grid item xs={12} sm={6} md={3} key={index}>
-            <Card 
-              sx={{ 
+            <Card
+              sx={{
                 height: '100%',
                 cursor: 'pointer',
                 border: selectedMetric === metric.filter ? '2px solid' : 'none',
@@ -310,7 +310,7 @@ const Dashboard = () => {
                       {metric.label}
                     </Typography>
                   </Box>
-                  <Box sx={{ 
+                  <Box sx={{
                     color: selectedMetric === metric.filter ? 'primary.main' : 'primary.light',
                     transform: selectedMetric === metric.filter ? 'scale(1.1)' : 'scale(1)',
                     transition: 'all 0.2s'
@@ -356,8 +356,8 @@ const Dashboard = () => {
                 />
               )}
             </Box>
-            <Button 
-              size="small" 
+            <Button
+              size="small"
               variant="text"
               onClick={clearFilters}
             >
@@ -372,13 +372,13 @@ const Dashboard = () => {
 
       {/* Category Tabs */}
       <Paper sx={{ mb: 3, borderRadius: 2 }}>
-        <Tabs 
-          value={activeFilter} 
+        <Tabs
+          value={activeFilter}
           onChange={handleCategoryChange}
           variant="scrollable"
           scrollButtons="auto"
-          sx={{ 
-            '& .MuiTab-root': { 
+          sx={{
+            '& .MuiTab-root': {
               textTransform: 'none',
               fontWeight: activeFilter === 'all' ? 600 : 500,
               minHeight: 48
@@ -386,13 +386,13 @@ const Dashboard = () => {
           }}
         >
           {categories.map((category) => (
-            <Tab 
+            <Tab
               key={category.value}
               label={
                 <Box display="flex" alignItems="center" gap={0.5}>
                   {category.label}
                   {category.value !== 'all' && (
-                    <Chip 
+                    <Chip
                       label={
                         allServices.filter(s => s.category === category.value).length
                       }
@@ -403,7 +403,7 @@ const Dashboard = () => {
                 </Box>
               }
               value={category.value}
-              sx={{ 
+              sx={{
                 borderBottom: activeFilter === category.value ? '3px solid' : 'none',
                 borderColor: 'primary.main'
               }}
@@ -432,8 +432,8 @@ const Dashboard = () => {
           <Typography variant="body2" color="text.secondary" paragraph>
             Try changing your filters to see more results
           </Typography>
-          <Button 
-            variant="outlined" 
+          <Button
+            variant="outlined"
             onClick={clearFilters}
           >
             Clear Filters
@@ -452,7 +452,7 @@ const Dashboard = () => {
                         {service.name}
                       </Typography>
                     </Box>
-                    <Chip 
+                    <Chip
                       label={service.category}
                       size="small"
                       variant="outlined"
@@ -591,4 +591,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Dashboards;

@@ -14,6 +14,10 @@ import {
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { getAchievementssList } from '../../services/AppConfigAction';
+import wave_graph_background from '../../assets/images/wave_graph_bg.avif';
+import meeting from '../../assets/images/meeting.jpg';
+import team_background from '../../assets/images/team_bg.avif';
+import happy_client_background from '../../assets/images/happy_client.jpg';
 
 // Icon mapping object
 const iconComponents = {
@@ -32,10 +36,10 @@ const getIconComponent = (iconName) => {
 
 // Achievement backgrounds configuration - keep your existing backgrounds
 const ACHIEVEMENT_BACKGROUNDS = {
-    projects: 'linear-gradient(135deg, rgba(130, 109, 207, 0.2) 0%, rgba(172, 103, 103, 0.1) 100%), url("https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80")',
-    ongoing: 'linear-gradient(135deg, rgba(130, 109, 207, 0.2) 0%, rgba(172, 103, 103, 0.1) 100%), url("https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&q=80")',
-    clients: 'linear-gradient(135deg, rgba(130, 109, 207, 0.2) 0%, rgba(172, 103, 103, 0.1) 100%), url("https://images.unsplash.com/photo-1551836026-d5c2d5e43487?auto=format&fit=crop&w=600&q=80")',
-    team: 'linear-gradient(135deg, rgba(130, 109, 207, 0.2) 0%, rgba(172, 103, 103, 0.1) 100%), url("https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80")',
+    projects: `linear-gradient(135deg, rgba(130, 109, 207, 0.2) 0%, rgba(172, 103, 103, 0.1) 100%), url("${wave_graph_background}")`,
+    ongoing: `linear-gradient(135deg, rgba(130, 109, 207, 0.2) 0%, rgba(172, 103, 103, 0.1) 100%), url("${meeting}")`,
+    clients: `linear-gradient(135deg, rgba(130, 109, 207, 0.2) 0%, rgba(172, 103, 103, 0.1) 100%),  url("${happy_client_background}")`,
+    team: `linear-gradient(135deg, rgba(130, 109, 207, 0.2) 0%, rgba(172, 103, 103, 0.1) 100%), url("${team_background}")`,
 };
 
 const AchievementsSection = () => {

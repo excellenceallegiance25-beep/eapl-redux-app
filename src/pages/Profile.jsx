@@ -94,14 +94,16 @@ import {
   getEmployeePHistoryList,
   updateEmployeeCompleteProfile  // Your existing generic API
 } from '../services/AppConfigAction';
+import { useParams } from 'react-router-dom';
 
 const Profile = () => {
+  const { userId } = useParams(); // This gets the userId from URL
   const theme = useTheme();
   const { user } = useSelector((state) => state.auth);
   const { profile } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
-  const [activeTab, setActiveTab] = useState(0);
+
   const [editMode, setEditMode] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -153,24 +155,99 @@ const Profile = () => {
 
   const loadProfileData = async () => {
     const result = await dispatch(getEmployeeProfileList());
+
     if (result.type === "EMP_INFO_LIST" && result.payload && result.payload.length > 0) {
-      setOriginalProfileData(result.payload[0]);
-      setEditedProfileData(result.payload[0]);
+
+      // Get the current logged-in user from Redux auth state
+      const currentUserId = user?.id;
+
+      // Find the profile data that matches the logged-in user
+      let userProfileData = null;
+
+      if (currentUserId) {
+        // Try to find by matching ID
+        userProfileData = result.payload.find(emp => emp.id === currentUserId);
+      }
+
+      // If not found by ID, try to find by email
+      if (!userProfileData && user?.email) {
+        userProfileData = result.payload.find(emp =>
+          emp.email && emp.email.toLowerCase() === user.email.toLowerCase()
+        );
+      }
+
+      // If still not found, use the first item (fallback)
+      if (!userProfileData) {
+        userProfileData = result.payload[0];
+        console.warn('Could not find exact user profile, using first available');
+      }
+
+      // Set the picture if available
+      if (userProfileData) {
+        let picture = null;
+
+        if (userProfileData.profilePicture && userProfileData.profilePictureType) {
+          picture = `data:${userProfileData.profilePictureType};base64,${userProfileData.profilePicture}`;
+        }
+        setSelectedAvatar(picture);
+
+        setOriginalProfileData(userProfileData);
+        setEditedProfileData(userProfileData);
+
+        // Update Redux auth user data if it's missing info
+        if (!user.name && userProfileData.name) {
+          // You might want to dispatch an action to update the auth user
+          // console.log('Updating user info with profile data');
+        }
+      }
+    } else {
+      console.error('No profile data found in API response');
     }
   };
 
   const loadSkills = async () => {
     const result = await dispatch(getEmployeeSkillList());
-    if (result.type === "EMP_SKILL_LIST") {
-      setProfileSkills(result.payload || []);
-      setTempSkills(result.payload || []);
+    const currentUserId = user?.id;
+
+    if (result.type === "EMP_SKILL_LIST" && result.payload) {
+      // Filter skills for the current user
+      const userSkills = Array.isArray(result.payload)
+        ? result.payload.filter(skill => skill.employeeId === currentUserId)
+        : [];
+
+      // console.log('Loaded skills for user', currentUserId, ':', userSkills);
+
+      setProfileSkills(userSkills);
+      setTempSkills([...userSkills]); // Create a copy for editing
     }
   };
 
   const loadHistory = async () => {
     const result = await dispatch(getEmployeePHistoryList());
-    if (result.type === "EMP_HISTORY_LIST") {
-      setProfileHistory(result.payload || []);
+    const currentUserId = user?.id;
+
+    // console.log('History API response:', result);
+    console.log('Current user ID:', currentUserId);
+
+    if (result.type === "EMP_HISTORY_LIST" && result.payload && Array.isArray(result.payload)) {
+
+      // Filter history for the current user only
+      const userHistory = result.payload.filter(history =>
+        Number(history.employeeId) === Number(currentUserId)
+      );
+
+      // console.log('Filtered user history:', userHistory);
+
+      // Sort by timestamp (newest first)
+      const sortedHistory = userHistory.sort((a, b) =>
+        new Date(b.timestamp) - new Date(a.timestamp)
+      );
+
+      setProfileHistory(sortedHistory);
+
+    } else {
+      // console.warn('No history data found');
+      setProfileHistory([]);
     }
   };
 
@@ -284,12 +361,12 @@ const Profile = () => {
         skillName: skill.skillName,        // Use the skillName from tempSkills
         level: skill.level,
         yearsExperience: skill.yearsExperience || 1,
-        updatedAt: new Date().toISOString().split('T')[0]
+        updatedAt: skill.updatedAt
       }));
 
       // Prepare request payload
       const payload = {
-        employeeId: parseInt(employeeId),  // Ensure it's a number
+        id: parseInt(employeeId),  // Ensure it's a number
         name: editedProfileData?.name || currentProfileData.name,
         email: editedProfileData?.email || currentProfileData.email,
         phone: editedProfileData?.phone || currentProfileData.phone,
@@ -313,7 +390,8 @@ const Profile = () => {
         currentPassword: passwordData.currentPassword || undefined,
         newPassword: passwordData.newPassword || undefined,
         profilePicture: profilePictureBase64,
-        profilePictureType: profilePictureType
+        profilePictureType: profilePictureType,
+        indicator: parseInt(employeeId) ? "U" : "I",
       };
 
       // Remove undefined values (not null or empty string)
@@ -324,13 +402,28 @@ const Profile = () => {
       });
 
       // DEBUG: Log what's being sent
-      console.log("Final payload to send:", JSON.stringify(payload, null, 2));
+      // console.log("Final payload to send:", JSON.stringify(payload, null, 2));
 
       // Call API
       const result = await dispatch(updateEmployeeCompleteProfile(payload));
 
       if (result && result.type === "EMP_COMPLETE_PROFILE_UPDATE_SUCCESS") {
-        // ... success handling
+        // Reload all data
+        await loadAllData();
+
+        // Reset form
+        setNewSkill('');
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+
+        setSnackbarSeverity('success');
+        // setSnackbarMessage('Profile updated successfully!');
+        setSnackbarMessage(result?.payload.data[0].operationMessage);
+        setSnackbarOpen(true);
+        setEditMode(false);
       } else {
         throw new Error(result?.payload?.message || 'Failed to update profile');
       }
@@ -343,33 +436,6 @@ const Profile = () => {
       setIsUpdating(false);
     }
   };
-
-  // const handleAddSkill = () => {
-  //   if (newSkill.trim()) {
-  //     const newSkillObj = {
-  //       id: `temp-${Date.now()}`, // Temporary ID for UI
-  //       employeeId: currentProfileData.id,
-  //       skillName: newSkill.trim(),
-  //       level: 'Beginner',
-  //       yearsExperience: 1,
-  //       updatedAt: new Date().toISOString(),
-  //       isNew: true // Flag to identify newly added skills
-  //     };
-
-  //     setTempSkills(prev => [...prev, newSkillObj]);
-  //     setNewSkill('');
-  //   }
-  // };
-
-  // const handleUpdateSkillLevel = (skillId, newLevel) => {
-  //   setTempSkills(prev =>
-  //     prev.map(skill =>
-  //       skill.id === skillId
-  //         ? { ...skill, level: newLevel, updatedAt: new Date().toISOString() }
-  //         : skill
-  //     )
-  //   );
-  // };
 
   const handleRemoveSkill = (skillId) => {
     setTempSkills(prev => prev.filter(skill => skill.id !== skillId));
@@ -456,6 +522,7 @@ const Profile = () => {
     return past.toLocaleDateString();
   };
 
+  const [activeTab, setActiveTab] = useState(0);
   const tabs = [
     { label: 'Profile', icon: <AccountCircle /> },
     { label: 'Security', icon: <Security /> },
@@ -483,7 +550,7 @@ const Profile = () => {
 
   return (
     <Box sx={{ bgcolor: theme.palette.background.default, minHeight: '100vh' }}>
-      <PageHeader
+      {/* <PageHeader
         title="My Profile"
         subtitle="Manage your account information and preferences"
         breadcrumbs={[
@@ -498,7 +565,7 @@ const Profile = () => {
           display: 'flex',
           alignItems: 'center',
         }}
-      />
+      /> */}
 
       {/* Update Progress Overlay */}
       {isUpdating && (
@@ -535,7 +602,7 @@ const Profile = () => {
         <Container maxWidth="xl" sx={{ py: { xs: 3, sm: 4, md: 5 }, position: 'relative', zIndex: 2 }}>
           <Grid container spacing={3} sx={{ width: '100%', m: 0, justifyContent: 'space-between' }}>
             {/* Left Column - Profile Overview */}
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={4} lg={6} xl={5} width={{ xl: "20%", md: "40%", lg: "20%", xs: "100%" }}>
               <Grow in={true} timeout={300}>
                 <Card sx={{ borderRadius: 3, boxShadow: theme.shadows[4], overflow: 'visible', position: 'relative', mb: 3 }}>
                   <Box sx={{
@@ -714,18 +781,28 @@ const Profile = () => {
                                       height: 20,
                                       fontSize: '0.7rem',
                                       bgcolor: safeAlpha(
-                                        update.status === 'completed' ? theme.palette.success.main :
-                                          update.status === 'pending' ? theme.palette.warning.main :
-                                            theme.palette.error.main, 0.1
+                                        update.status === 'completed'
+                                          ? theme.palette.success.main
+                                          : update.status === 'pending'
+                                            ? theme.palette.warning.main
+                                            : theme.palette.error.main,
+                                        0.1
                                       ),
-                                      color: update.status === 'completed' ? theme.palette.success.main :
-                                        update.status === 'pending' ? theme.palette.warning.main :
-                                          theme.palette.error.main,
+                                      color:
+                                        update.status === 'completed'
+                                          ? theme.palette.success.main
+                                          : update.status === 'pending'
+                                            ? theme.palette.warning.main
+                                            : theme.palette.error.main,
                                     }}
                                   />
                                 </Box>
                               }
+                              slotProps={{
+                                secondary: { component: 'span' }    // ✅ New correct API (no <p>)
+                              }}
                             />
+
                           </ListItem>
                         ))}
                       </List>
@@ -745,36 +822,37 @@ const Profile = () => {
             </Grid>
 
             {/* Right Column - Main Content */}
-            <Grid item xs={12} md={8}>
+            <Grid item xs={12} md={8} width={{ xl: "78%", md: "55%", lg: "78%", xs: "100%" }}>
+              <Tabs
+                value={activeTab}
+                onChange={handleTabChange}
+                variant="scrollable"
+                scrollButtons="auto"
+                sx={{
+                  borderBottom: 1,
+                  borderColor: 'divider',
+                  bgcolor: safeAlpha(theme.palette.primary.main, 0.02),
+                }}
+              >
+                {tabs.map((tab, index) => (
+                  <Tab
+                    key={index}
+                    value={index}
+                    icon={tab.icon}
+                    label={tab.label}
+                    iconPosition="start"
+                    sx={{
+                      minHeight: 60,
+                      '&.Mui-selected': {
+                        color: theme.palette.primary.main,
+                        fontWeight: 'bold',
+                      },
+                    }}
+                  />
+                ))}
+              </Tabs>
               <Zoom in={true} timeout={400}>
                 <Paper sx={{ borderRadius: 3, overflow: 'hidden', boxShadow: theme.shadows[4], mb: 3 }}>
-                  <Tabs
-                    value={activeTab}
-                    onChange={handleTabChange}
-                    variant="scrollable"
-                    scrollButtons="auto"
-                    sx={{
-                      borderBottom: 1,
-                      borderColor: 'divider',
-                      bgcolor: safeAlpha(theme.palette.primary.main, 0.02),
-                    }}
-                  >
-                    {tabs.map((tab, index) => (
-                      <Tab
-                        key={index}
-                        icon={tab.icon}
-                        label={tab.label}
-                        iconPosition="start"
-                        sx={{
-                          minHeight: 60,
-                          '&.Mui-selected': {
-                            color: theme.palette.primary.main,
-                            fontWeight: 'bold',
-                          },
-                        }}
-                      />
-                    ))}
-                  </Tabs>
 
                   <Box sx={{ p: { xs: 2, sm: 3 } }}>
                     {activeTab === 0 && (
@@ -806,6 +884,13 @@ const Profile = () => {
                               { field: 'location', label: 'Location' },
                               { field: 'email', label: 'Email' },
                               { field: 'phone', label: 'Phone' },
+                              { field: 'github', label: 'github' },
+                              { field: 'linkedin', label: 'linkedIn' },
+                              { field: 'education', label: 'education' },
+                              { field: 'website', label: 'website' },
+                              { field: 'status', label: 'status' },
+                              { field: 'role', label: 'role' },
+                              { field: 'roleType', label: 'roleType' },
                             ].map((item) => (
                               <Grid item xs={12} sm={6} key={item.field}>
                                 <TextField
@@ -824,9 +909,9 @@ const Profile = () => {
                           </Grid>
                         </Box>
 
-                        <Divider sx={{ my: 4 }}>
+                        {/* <Divider sx={{ my: 4 }}>
                           <Chip label="About" size="small" />
-                        </Divider>
+                        </Divider> */}
 
                         <Box sx={{ mb: 4 }}>
                           <Typography variant="h6" gutterBottom fontWeight="bold" sx={{ mb: 3 }}>
@@ -847,9 +932,9 @@ const Profile = () => {
                           />
                         </Box>
 
-                        <Divider sx={{ my: 4 }}>
+                        {/* <Divider sx={{ my: 4 }}>
                           <Chip label="Skills & Expertise" size="small" />
-                        </Divider>
+                        </Divider> */}
 
                         <Box sx={{ mb: 4 }}>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
@@ -995,7 +1080,7 @@ const Profile = () => {
                                         )}
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                           <Typography variant="caption" color="text.secondary">
-                                            {skill.yearsExperience} year{skill.yearsExperience > 1 ? 's' : ''}
+                                            &nbsp;{skill.yearsExperience} year{skill.yearsExperience > 1 ? 's' : ''}
                                           </Typography>
                                         </Box>
                                       </Box>
@@ -1101,6 +1186,7 @@ const Profile = () => {
         onClose={() => !isUpdating && setChangePasswordDialogOpen(false)}
         maxWidth="sm"
         fullWidth
+        disableRestoreFocus
       >
         <DialogTitle>Change Password</DialogTitle>
         <DialogContent>

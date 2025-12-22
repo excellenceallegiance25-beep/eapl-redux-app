@@ -15,10 +15,25 @@ import {
 import { ArrowRightAlt } from '@mui/icons-material';
 import { alpha } from '@mui/material/styles';
 
-const ServicesGrid = () => {
+const ServicesGrids = () => {
     const theme = useTheme();
 
-    const services = [
+    const [services, setServices] = useState([]);
+    const dispatch = useDispatch();
+    useEffect(() => {
+        // Move the function definition inside useEffect
+        const loadConfigs = async () => {
+            const result = await dispatch(getApplicationServicesList());
+            console.log('Configurations loaded successfully', 'success');
+            if (result.type === "APPCONFIG_INIT") {
+                setServices(result.payload);
+            }
+        };
+
+        loadConfigs();
+    }, [dispatch]); // Only dispatch is needed as dependency
+
+    const servicess = [
         {
             title: 'Cloud Solutions',
             description: 'Enterprise cloud infrastructure with auto-scaling and global CDN.',
@@ -86,7 +101,6 @@ const ServicesGrid = () => {
                         key={index}
                         sx={{ display: 'flex', justifyContent: 'space-around' }}
                     >
-
                         <Card
                             sx={{
                                 width: '400px',          // <-- FIXED
@@ -236,4 +250,4 @@ const ServicesGrid = () => {
     );
 };
 
-export default ServicesGrid;
+export default ServicesGrids;

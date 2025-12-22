@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CheckCircle } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -30,11 +30,13 @@ import {
   Phone,
   Business,
 } from '@mui/icons-material';
-import { registerStart, registerSuccess, registerFailure, clearError } from '../../redux/slices/authSlice';
+import { newEmployeeRegistration } from '../../services/AppConfigAction';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterPopup = ({ open, onClose }) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.auth);
+  const { loading } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -50,7 +52,23 @@ const RegisterPopup = ({ open, onClose }) => {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [apiResponse, setApiResponse] = useState({
+    success: false,
+    message: '',
+    type: null
+  });
+
+  // Reset form and messages when dialog opens
+  useEffect(() => {
+    if (open) {
+      setErrors({});
+      setApiResponse({
+        success: false,
+        message: '',
+        type: null
+      });
+    }
+  }, [open]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -101,6 +119,11 @@ const RegisterPopup = ({ open, onClose }) => {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
+    // Terms acceptance validation
+    if (!formData.acceptTerms) {
+      newErrors.acceptTerms = 'You must accept the terms and conditions';
+    }
+
     return newErrors;
   };
 
@@ -119,84 +142,106 @@ const RegisterPopup = ({ open, onClose }) => {
       }));
     }
 
-    // Clear Redux error when user starts typing
-    if (error) {
-      dispatch(clearError());
+    // Clear API response when user starts typing
+    if (apiResponse.message) {
+      setApiResponse({
+        success: false,
+        message: '',
+        type: null
+      });
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
+    // Clear previous API response
+    setApiResponse({
+      success: false,
+      message: '',
+      type: null
+    });
+
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
-    dispatch(registerStart());
+    // Prepare the API request payload
+    const registrationPayload = {
+      employeeId: 0,
+      firstname: formData.firstName,
+      lastname: formData.lastName,
+      email: formData.email,
+      company: formData.company,
+      phone: formData.phone.replace(/\D/g, ''),
+      currentPassword: formData.password,
+      newPassword: formData.password
+    };
 
     try {
-      // Simulate API call
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          // For demo, we'll simulate random success/failure
-          const isSuccess = Math.random() > 0.3; // 70% success rate for demo
-          
-          if (isSuccess) {
-            resolve();
-          } else {
-            reject(new Error('Registration failed. Please try again.'));
-          }
-        }, 1500);
-      });
+      // Dispatch the registration action and get the result
+      const result = await dispatch(newEmployeeRegistration(registrationPayload));
 
-      // Registration successful
-      const mockUser = {
-        id: Math.floor(Math.random() * 1000),
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
-        phone: formData.phone,
-        company: formData.company,
-        role: 'user',
-        createdAt: new Date().toISOString(),
-      };
+      // Check the result based on your action's response
+      if (result.payload) {
+        // Check if the backend response contains the expected structure
+        if (result.payload.success === true) {
+          // Success case
+          setApiResponse({
+            success: true,
+            message: result.payload.message || 'Registration successful! Your account has been created.',
+            type: result.payload.type
+          });
 
-      const mockToken = `mock-jwt-token-${Date.now()}`;
-
-      dispatch(registerSuccess({
-        user: mockUser,
-        token: mockToken,
-      }));
-
-      setRegistrationSuccess(true);
-      
-      // Reset form after successful registration
-      setTimeout(() => {
-        onClose();
-        setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          phone: '',
-          company: '',
-          password: '',
-          confirmPassword: '',
-          acceptTerms: false,
+          // Reset form after successful registration
+          setTimeout(() => {
+            handleClose();
+            setFormData({
+              firstName: '',
+              lastName: '',
+              email: '',
+              phone: '',
+              company: '',
+              password: '',
+              confirmPassword: '',
+              acceptTerms: false,
+            });
+          }, 3000);
+        } else {
+          // Error case from backend
+          setApiResponse({
+            success: false,
+            message: result.payload.message || 'Registration failed. Please try again.',
+            type: result.payload.type
+          });
+        }
+      } else if (result.error) {
+        // Handle action error
+        setApiResponse({
+          success: false,
+          message: result.error.message || 'An error occurred during registration.',
+          type: null
         });
-        setRegistrationSuccess(false);
-      }, 2000);
-
-    } catch (err) {
-      dispatch(registerFailure(err.message || 'Registration failed. Please try again.'));
+      }
+    } catch (error) {
+      // Handle unexpected errors
+      setApiResponse({
+        success: false,
+        message: error.message || 'An unexpected error occurred.',
+        type: null
+      });
     }
   };
 
   const handleClose = () => {
-    // Clear any errors when closing
-    dispatch(clearError());
     setErrors({});
-    setRegistrationSuccess(false);
+    setApiResponse({
+      success: false,
+      message: '',
+      type: null
+    });
     onClose();
   };
 
@@ -204,7 +249,7 @@ const RegisterPopup = ({ open, onClose }) => {
   const formatPhoneNumber = (value) => {
     const cleaned = value.replace(/\D/g, '');
     const match = cleaned.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
-    
+
     if (match) {
       return !match[2] ? match[1] : `(${match[1]}) ${match[2]}${match[3] ? `-${match[3]}` : ''}`;
     }
@@ -212,8 +257,8 @@ const RegisterPopup = ({ open, onClose }) => {
   };
 
   return (
-    <Dialog 
-      open={open} 
+    <Dialog
+      open={open}
       onClose={handleClose}
       maxWidth="sm"
       fullWidth
@@ -236,7 +281,7 @@ const RegisterPopup = ({ open, onClose }) => {
       </DialogTitle>
 
       <DialogContent dividers>
-        {registrationSuccess ? (
+        {apiResponse.success ? (
           <Box textAlign="center" py={4}>
             <Box
               sx={{
@@ -256,17 +301,33 @@ const RegisterPopup = ({ open, onClose }) => {
               Registration Successful!
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Welcome to Excellence Allegiance Pvt Ltd. Your account has been created successfully.
+              {apiResponse.message || 'Welcome to Excellence Allegiance Pvt Ltd. Your account has been created successfully.'}
             </Typography>
             <Typography variant="body2" sx={{ mt: 2 }}>
-              Redirecting to dashboard...
+              Closing this window...
             </Typography>
           </Box>
         ) : (
           <>
-            {error && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {error}
+            {/* Display error message from API response */}
+            {apiResponse.message && !apiResponse.success && (
+              <Alert
+                severity="error"
+                sx={{ mb: 2 }}
+                onClose={() => setApiResponse(prev => ({ ...prev, message: '' }))}
+              >
+                {apiResponse.message}
+              </Alert>
+            )}
+
+            {/* Display success message (if any) */}
+            {apiResponse.message && apiResponse.success && (
+              <Alert
+                severity="success"
+                sx={{ mb: 2 }}
+                onClose={() => setApiResponse(prev => ({ ...prev, message: '' }))}
+              >
+                {apiResponse.message}
               </Alert>
             )}
 
@@ -282,6 +343,7 @@ const RegisterPopup = ({ open, onClose }) => {
                     error={!!errors.firstName}
                     helperText={errors.firstName}
                     required
+                    disabled={loading}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -302,6 +364,7 @@ const RegisterPopup = ({ open, onClose }) => {
                     error={!!errors.lastName}
                     helperText={errors.lastName}
                     required
+                    disabled={loading}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -323,6 +386,7 @@ const RegisterPopup = ({ open, onClose }) => {
                     error={!!errors.email}
                     helperText={errors.email}
                     required
+                    disabled={loading}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -345,6 +409,7 @@ const RegisterPopup = ({ open, onClose }) => {
                     }}
                     error={!!errors.phone}
                     helperText={errors.phone}
+                    disabled={loading}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -366,6 +431,7 @@ const RegisterPopup = ({ open, onClose }) => {
                     error={!!errors.company}
                     helperText={errors.company}
                     required
+                    disabled={loading}
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">
@@ -386,6 +452,7 @@ const RegisterPopup = ({ open, onClose }) => {
                       onChange={handleChange}
                       label="Password *"
                       required
+                      disabled={loading}
                       startAdornment={
                         <InputAdornment position="start">
                           <Lock fontSize="small" />
@@ -396,6 +463,7 @@ const RegisterPopup = ({ open, onClose }) => {
                           <IconButton
                             onClick={() => setShowPassword(!showPassword)}
                             edge="end"
+                            disabled={loading}
                           >
                             {showPassword ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
@@ -418,6 +486,7 @@ const RegisterPopup = ({ open, onClose }) => {
                       onChange={handleChange}
                       label="Confirm Password *"
                       required
+                      disabled={loading}
                       startAdornment={
                         <InputAdornment position="start">
                           <Lock fontSize="small" />
@@ -428,6 +497,7 @@ const RegisterPopup = ({ open, onClose }) => {
                           <IconButton
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                             edge="end"
+                            disabled={loading}
                           >
                             {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
                           </IconButton>
@@ -449,6 +519,7 @@ const RegisterPopup = ({ open, onClose }) => {
                       checked={formData.acceptTerms}
                       onChange={handleChange}
                       style={{ marginTop: '4px', marginRight: '8px' }}
+                      disabled={loading}
                       required
                     />
                     <label htmlFor="acceptTerms" style={{ fontSize: '0.875rem' }}>
@@ -499,8 +570,9 @@ const RegisterPopup = ({ open, onClose }) => {
                   size="small"
                   onClick={() => {
                     handleClose();
-                    // You can add logic to open login modal here
+                    navigate('/login'); // Navigate to your login page
                   }}
+                  disabled={loading}
                 >
                   Sign In
                 </Button>
