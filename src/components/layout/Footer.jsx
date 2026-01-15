@@ -1,28 +1,30 @@
 import {
   ArrowForward,
   Business,
+  Email,
+  ExpandLess,
+  ExpandMore,
   Facebook,
   GitHub,
   Instagram,
-  Language,
   LinkedIn,
+  LocationOn,
+  Menu,
+  Phone,
   Security,
   Star,
-  Twitter,
-  VerifiedUser,
-  Email,
-  Phone,
-  LocationOn,
-  ExpandMore,
-  ExpandLess,
-  Menu
+  VerifiedUser
 } from '@mui/icons-material';
 import {
   Alert,
+  AppBar,
   Box,
+  Button,
   Chip,
+  Collapse,
   Container,
   Divider,
+  Drawer,
   Grid,
   IconButton,
   Link,
@@ -30,28 +32,23 @@ import {
   ListItem,
   ListItemIcon,
   Snackbar,
+  Toolbar,
   Typography,
-  useMediaQuery,
-  Collapse,
-  Button,
-  Drawer,
-  ListItemText,
-  AppBar,
-  Toolbar
+  useMediaQuery
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 const Footer = () => {
   const theme = useTheme();
   const currentYear = new Date().getFullYear();
-  
+
   // Media queries for responsive design
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
-  
+
   const [email, setEmail] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [subscriptionSuccess, setSubscriptionSuccess] = useState(false);
@@ -97,20 +94,26 @@ const Footer = () => {
   const quickLinks = [
     { text: 'Home', path: '/' },
     { text: 'About Us', path: '/about' },
-    { text: 'Services', path: '/services' },
-    { text: 'Products', path: '/products' },
-    { text: 'Blog', path: '/blog' },
+    { text: 'Careers', path: '/careers' },
+    // { text: 'Services', path: '/services' },
+    // { text: 'Products', path: '/products' },
+    // { text: 'Blog', path: '/blog' },
     { text: 'Contact Us', path: '/contact' },
     { text: 'FAQ', path: '/faq' },
   ];
 
   const companyLinks = [
+    // { text: 'Contact Us', path: '/contact' },
     { text: 'Our Team', path: '/team' },
-    { text: 'Careers', path: '/careers' },
-    { text: 'Press & Media', path: '/press' },
+    // { text: 'Careers', path: '/careers' },
+    { text: 'Services', path: '/services' },
+    { text: 'Products', path: '/products' },
+    // { text: 'Blog', path: '/blog' },
+    // { text: 'Press & Media', path: '/press' },
     { text: 'Partnerships', path: '/partnerships' },
-    { text: 'Investor Relations', path: '/investors' },
-    { text: 'Sustainability', path: '/sustainability' },
+    // { text: 'Investor Relations', path: '/investors' },
+    // { text: 'Sustainability', path: '/sustainability' },
+    // { text: 'FAQ', path: '/faq' },
   ];
 
   const supportLinks = [
@@ -132,12 +135,12 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: <Facebook />, label: 'Facebook', url: 'https://facebook.com' },
-    { icon: <Twitter />, label: 'Twitter', url: 'https://twitter.com' },
-    { icon: <LinkedIn />, label: 'LinkedIn', url: 'https://linkedin.com' },
-    { icon: <Instagram />, label: 'Instagram', url: 'https://instagram.com' },
-    { icon: <GitHub />, label: 'GitHub', url: 'https://github.com' },
-    { icon: <Language />, label: 'Website', url: 'https://excellenceallegiance.com' },
+    { icon: <Facebook />, label: 'Facebook', url: 'https://www.facebook.com/people/Excellence-Allegiance-Private-Limited/61583992607696/?mibextid=rS40aB7S9Ucbxw6v' },
+    // { icon: <Twitter />, label: 'Twitter', url: 'https://twitter.com' },
+    { icon: <LinkedIn />, label: 'LinkedIn', url: 'https://www.linkedin.com/company/excellence-allegiance-private-limited/' },
+    { icon: <Instagram />, label: 'Instagram', url: 'https://www.instagram.com/eallegiance?igsh=Y2pzejMzNzVhNmc3' },
+    { icon: <GitHub />, label: 'GitHub', url: 'https://github.com/excellenceallegiance25-beep' },
+    // { icon: <Language />, label: 'Website', url: 'https://excellenceallegiance.com' },
   ];
 
   const achievements = [
@@ -149,19 +152,17 @@ const Footer = () => {
 
   const contactInfo = {
     headquarters: [
-      '123 Tech Street, Innovation City',
-      'Silicon Valley, CA 94000',
-      'United States'
+      '1st floor, 1/16, Basanta Rd. Nitai Nagar, Mukundapur Kolkata, West Bengal 700099'
     ],
     phones: [
-      'Sales: +1 (555) 123-4567',
-      'Support: +1 (555) 987-6543',
-      'Emergency: +1 (555) 789-0123'
+      'Sales: +91 6289534780',
+      'Support: +91 6289534780',
+      'Emergency: +91 6289534780'
     ],
     emails: [
-      'General: info@excellenceallegiance.com',
-      'Support: support@excellenceallegiance.com',
-      'Careers: careers@excellenceallegiance.com'
+      'General: contact@myeapl.com',
+      'Support: contact@myeapl.com',
+      'Careers: contact@myeapl.com'
     ]
   };
 
@@ -386,30 +387,30 @@ const Footer = () => {
           <Container maxWidth="lg">
             <Grid container spacing={{ xs: 3, md: 4 }} alignItems="flex-start">
               {/* Company Info Column */}
-              <Grid item xs={12} md={visibleColumns >= 4 ? 4 : 6}>
+              <Grid xs={12} md={visibleColumns >= 4 ? 4 : 6}>
                 <Box sx={{ mb: { xs: 2, md: 3 } }}>
-                  <Typography 
-                    variant={isTablet ? "h6" : "h5"} 
-                    gutterBottom 
-                    sx={{ 
-                      fontWeight: 'bold', 
+                  <Typography
+                    variant={isTablet ? "h6" : "h5"}
+                    gutterBottom
+                    sx={{
+                      fontWeight: 'bold',
                       color: 'secondary.light',
                       fontSize: { xs: '1.1rem', md: '1.5rem' }
                     }}
                   >
                     Excellence Allegiance Pvt Ltd
                   </Typography>
-                  <Typography 
-                    variant="body2" 
-                    paragraph 
-                    sx={{ 
+                  <Typography
+                    variant="body2"
+                    paragraph
+                    sx={{
                       color: 'grey.300',
                       fontSize: { xs: '0.875rem', md: '0.9rem' }
                     }}
                   >
-                    {isMobile ? 'Digital transformation pioneers' : 
-                     isTablet ? 'Pioneering digital transformation with innovative solutions' :
-                     'Pioneering digital transformation with cutting-edge technology solutions and innovative software development since 2010.'}
+                    {isMobile ? 'Digital transformation pioneers' :
+                      isTablet ? 'Pioneering digital transformation with innovative solutions' :
+                        'Pioneering digital transformation with cutting-edge technology solutions and innovative software development since 2020.'}
                   </Typography>
                 </Box>
 
@@ -447,8 +448,8 @@ const Footer = () => {
                   <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
                     Follow Us
                   </Typography>
-                  <Box sx={{ 
-                    display: 'flex', 
+                  <Box sx={{
+                    display: 'flex',
                     gap: 1,
                     flexWrap: isMobile ? 'wrap' : 'nowrap'
                   }}>
@@ -479,12 +480,12 @@ const Footer = () => {
 
               {/* Quick Links Column - Conditional rendering */}
               {visibleColumns >= 2 && (
-                <Grid item xs={6} sm={4} md={2}>
-                  <Typography 
-                    variant="h6" 
-                    gutterBottom 
-                    sx={{ 
-                      fontWeight: 'bold', 
+                <Grid xs={6} sm={4} md={2}>
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    sx={{
+                      fontWeight: 'bold',
                       color: 'secondary.light',
                       fontSize: { xs: '0.95rem', md: '1.1rem' }
                     }}
@@ -520,12 +521,12 @@ const Footer = () => {
 
               {/* Company Column - Conditional rendering */}
               {visibleColumns >= 3 && (
-                <Grid item xs={6} sm={4} md={2}>
-                  <Typography 
-                    variant="h6" 
-                    gutterBottom 
-                    sx={{ 
-                      fontWeight: 'bold', 
+                <Grid xs={6} sm={4} md={2}>
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    sx={{
+                      fontWeight: 'bold',
                       color: 'secondary.light',
                       fontSize: { xs: '0.95rem', md: '1.1rem' }
                     }}
@@ -594,7 +595,7 @@ const Footer = () => {
 
               {/* Contact Info Column for Tablet */}
               {isTablet && visibleColumns >= 2 && (
-                <Grid item xs={12} sm={4}>
+                <Grid xs={12} sm={4}>
                   <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: 'secondary.light' }}>
                     Contact
                   </Typography>
@@ -621,22 +622,25 @@ const Footer = () => {
             <Divider sx={{ borderColor: 'grey.700', my: { xs: 3, md: 4 } }} />
 
             {/* Bottom Footer */}
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12} md={6}>
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
+            <Grid container spacing={2} alignItems="center" justifyContent={"space-between"}>
+              <Grid xs={12} md={6}>
+                <Typography
+                  variant="body2"
+                  sx={{
                     color: 'grey.400',
                     fontSize: { xs: '0.75rem', md: '0.875rem' }
                   }}
                 >
                   © {currentYear} Excellence Allegiance Pvt Ltd. All rights reserved.
                 </Typography>
-                <Typography 
-                  variant="caption" 
-                  sx={{ 
-                    display: 'block', 
-                    color: 'grey.500', 
+              </Grid>
+
+              <Grid xs={12} md={6}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    display: 'block',
+                    color: 'grey.500',
                     mt: 0.5,
                     fontSize: { xs: '0.7rem', md: '0.75rem' }
                   }}
@@ -645,11 +649,11 @@ const Footer = () => {
                 </Typography>
               </Grid>
 
-              <Grid item xs={12} md={6}>
-                <Box sx={{ 
-                  display: 'flex', 
-                  justifyContent: { xs: 'flex-start', md: 'flex-end' }, 
-                  flexWrap: 'wrap', 
+              {/* <Grid item xs={12} md={6}>
+                <Box sx={{
+                  display: 'flex',
+                  justifyContent: { xs: 'flex-start', md: 'flex-end' },
+                  flexWrap: 'wrap',
                   gap: { xs: 1, md: 2 }
                 }}>
                   {legalLinks.slice(0, isMobile ? 3 : legalLinks.length).map((link, index) => (
@@ -671,7 +675,7 @@ const Footer = () => {
                     </Link>
                   ))}
                 </Box>
-              </Grid>
+              </Grid> */}
             </Grid>
 
             {/* Certifications for Mobile/Tablet */}

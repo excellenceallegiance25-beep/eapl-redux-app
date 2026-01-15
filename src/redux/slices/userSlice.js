@@ -42,6 +42,10 @@ const userSlice = createSlice({
     clearUserError: (state) => {
       state.error = null;
     },
+    leaveFailure: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
@@ -51,6 +55,7 @@ export const {
   updateProfileSuccess,
   updateProfileFailure,
   clearUserError,
+  leaveFailure
 } = userSlice.actions;
 
 // Export individual action creators for convenience

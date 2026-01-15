@@ -1,71 +1,60 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import Paper from '@mui/material/Paper';
 import {
-  Container,
-  Grid,
-  Typography,
+  AccessTime,
+  BookmarkAdd,
+  BookmarkBorder,
+  CalendarToday,
+  Category,
+  Close,
+  Comment,
+  Email,
+  Favorite,
+  FilterList,
+  Launch,
+  Search,
+  Send,
+  Share as ShareIcon,
+  Sort,
+  Tag,
+  TrendingUp,
+  Visibility
+} from '@mui/icons-material';
+import {
+  Avatar,
+  Box,
+  Button,
   Card,
+  CardActions,
   CardContent,
   CardMedia,
-  CardActions,
-  Button,
-  Box,
   Chip,
-  TextField,
-  InputAdornment,
-  Avatar,
-  IconButton,
-  Pagination,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
+  Fade,
+  FormControl,
+  Grid,
+  Grow,
+  IconButton,
+  InputAdornment,
+  InputLabel,
   List,
   ListItem,
-  ListItemText,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Tabs,
-  Tab,
-  Badge,
-  Fade,
-  Grow,
-  Zoom,
-  useTheme,
-  useMediaQuery,
+  MenuItem,
+  Pagination,
+  Select,
+  TextField,
+  Typography,
   alpha,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
-import {
-  Search,
-  CalendarToday,
-  Person,
-  Category,
-  ArrowForward,
-  Share,
-  Bookmark,
-  Comment,
-  Favorite,
-  TrendingUp,
-  FilterList,
-  Sort,
-  AccessTime,
-  Visibility,
-  Email,
-  Send,
-  Close,
-  BookmarkBorder,
-  BookmarkAdd,
-  Share as ShareIcon,
-  MoreVert,
-  Tag,
-  Launch,
-} from '@mui/icons-material';
-import { useSelector, useDispatch } from 'react-redux';
+import Paper from '@mui/material/Paper';
+import React, { useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import PageHeader from '../components/common/PageHeader';
-import { motion, AnimatePresence } from 'framer-motion';
 
 const Blog = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -586,7 +575,7 @@ const Blog = () => {
               <FormControl fullWidth size="medium">
                 <InputLabel>Category</InputLabel>
                 <Select
-                  value={category}
+                  value={category ?? ''}
                   label="Category"
                   onChange={(e) => setCategory(e.target.value)}
                   startAdornment={<Category sx={{ mr: 1, color: 'action.active' }} />}
@@ -608,7 +597,7 @@ const Blog = () => {
               <FormControl fullWidth size="medium">
                 <InputLabel>Sort By</InputLabel>
                 <Select
-                  value={sortBy}
+                  value={sortBy ?? ''}
                   label="Sort By"
                   onChange={(e) => setSortBy(e.target.value)}
                   startAdornment={<Sort sx={{ mr: 1, color: 'action.active' }} />}

@@ -52,7 +52,7 @@ const AchievementsSection = () => {
     useEffect(() => {
         const loadConfigs = async () => {
             const result = await dispatch(getAchievementssList());
-            console.log('Achievements loaded:', result);
+            // console.log('Achievements loaded:', result);
             if (result.type === "ACHIEVEMENT_LIST") {
                 setAchievements(result.payload);
             }

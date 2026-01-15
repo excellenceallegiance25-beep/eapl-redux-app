@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { Link as RouterLink } from 'react-router-dom';
 
 const CTASection = () => {
   const theme = useTheme();
@@ -75,7 +76,9 @@ const CTASection = () => {
               color="secondary"
               size={isMobile ? "medium" : "large"}
               endIcon={<ArrowForward />}
-              onClick={handleGetStarted}
+              // onClick={handleGetStarted}
+              component={RouterLink}
+              to="/contact"
               sx={{
                 py: { xs: 1.5, md: 2 },
                 px: { xs: 3, md: 4 },
@@ -85,7 +88,7 @@ const CTASection = () => {
             >
               Get Started Today
             </Button>
-            <Button
+            {/* <Button
               variant="outlined"
               color="inherit"
               size={isMobile ? "medium" : "large"}
@@ -97,7 +100,7 @@ const CTASection = () => {
               }}
             >
               Schedule a Demo
-            </Button>
+            </Button> */}
           </Stack>
         </Box>
       </Container>

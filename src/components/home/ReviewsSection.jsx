@@ -59,7 +59,7 @@ const ReviewsSection = () => {
     // Move the function definition inside useEffect
     const loadConfigs = async () => {
       const result = await dispatch(getReviewList());
-      console.log('Configurations loaded successfully', 'success');
+      // console.log('Configurations loaded successfully', 'success');
       if (result.type === "REVIEW_LIST") {
         setReviews(result.payload);
       }

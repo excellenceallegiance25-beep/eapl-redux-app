@@ -24,9 +24,11 @@ const ServicesGrids = () => {
         // Move the function definition inside useEffect
         const loadConfigs = async () => {
             const result = await dispatch(getApplicationServicesList());
-            console.log('Configurations loaded successfully', 'success');
+            // console.log('Configurations loaded successfully', 'success');
             if (result.type === "APPCONFIG_INIT") {
-                setServices(result.payload);
+                setServices(result.payload.filter(service =>
+                    service.status === true
+                ));
             }
         };
 

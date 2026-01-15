@@ -1,6 +1,6 @@
 import { ArrowRightAlt, ExpandLess, ExpandMore } from '@mui/icons-material';
 import {
-    alpha,
+    safeAlpha,
     Box,
     Button,
     Card,
@@ -11,6 +11,7 @@ import {
     Typography,
     useMediaQuery,
     useTheme,
+    alpha,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -106,164 +107,95 @@ const ServicesSection = () => {
     const [services, setServices] = useState([]);
     const dispatch = useDispatch();
     useEffect(() => {
-        // Move the function definition inside useEffect
         const loadConfigs = async () => {
             const result = await dispatch(getApplicationServicesList());
-            console.log('Configurations loaded successfully', 'success');
+            // console.log('Configurations loaded successfully', 'success');
+
             if (result.type === "APPCONFIG_INIT") {
-                setServices(result.payload);
+                // console.log('Raw services data:', result.payload); // Debug log
+
+                // Process services to ensure they have colors and proper icon format
+                const processedServices = result.payload.map(service => {
+                    // console.log('Processing service:', service.title, 'icon:', service.icon); // Debug log
+
+                    // Check if icon is base64 data without data URL prefix
+                    let processedIcon = service.icon;
+
+                    // If icon exists and looks like base64 (but not a full data URL)
+                    if (service.icon &&
+                        !service.icon.startsWith('data:') &&
+                        !service.icon.startsWith('http') &&
+                        service.icon.length > 100) { // Base64 strings are usually long
+
+                        // Check if it's likely base64 (contains alphanumeric chars, +, /, =)
+                        const base64Pattern = /^[A-Za-z0-9+/=]+$/;
+                        if (base64Pattern.test(service.icon)) {
+                            // Determine image type
+                            const iconType = service.iconType || 'image/png'; // Default to PNG
+                            processedIcon = `data:${iconType};base64,${service.icon}`;
+                            // console.log('Converted to data URL:', processedIcon.substring(0, 50) + '...');
+                        }
+                    }
+
+                    return {
+                        ...service,
+                        icon: processedIcon,
+                        color: getServiceColor(service)
+                    };
+                });
+
+                // console.log('Processed services:', processedServices);
+                setServices(processedServices.filter(service =>
+                    service.status === true
+                ));
             }
         };
-
         loadConfigs();
-    }, [dispatch]); // Only dispatch is needed as dependency
+    }, [dispatch]);
 
-    const servicess = [
-        {
-            title: 'Cloud Solutions',
-            description: 'Enterprise cloud infrastructure with auto-scaling and global CDN.',
-            icon: '☁️',
-            color: '#2196F3',
-            features: ['AWS/Azure', 'Migration', 'DevOps'],
-            bgType: 'image',
+    // Add this helper function after your other helper functions
+    const isImageUrl = (str) => {
+        if (!str) return false;
 
-            // Added
-            category: 'Cloud',
-            details: 'We provide end-to-end cloud solutions including migration strategy, implementation, and ongoing management.',
-        },
-        {
-            title: 'Software Development',
-            description: 'Custom applications with modern frameworks and best practices.',
-            icon: '💻',
-            color: '#673AB7',
-            features: ['Web Apps', 'Mobile Apps', 'APIs'],
-            bgType: 'image',
+        // Check if it's a base64 image
+        if (str.startsWith('data:image/')) return true;
 
-            // Added
-            category: 'Development',
-            details: 'From concept to deployment, we build robust and scalable software solutions.',
-        },
-        {
-            title: 'Cybersecurity',
-            description: 'Complete security solutions with threat detection and compliance.',
-            icon: '🔒',
-            color: '#F44336',
-            features: ['Pen Testing', 'Encryption', 'Monitoring'],
-            bgType: 'image',
+        // Check if it's a URL
+        if (str.startsWith('http://') || str.startsWith('https://')) return true;
 
-            // Added
-            category: 'Security',
-            details: 'Protect your digital assets with our advanced security solutions.',
-        },
-        {
-            title: 'AI & Analytics',
-            description: 'Data-driven insights and machine learning solutions.',
-            icon: '🤖',
-            color: '#4CAF50',
-            features: ['BI Dashboards', 'Predictive', 'ML Models'],
-            bgType: 'image',
+        // Check for common image file extensions
+        const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp', '.bmp'];
+        return imageExtensions.some(ext =>
+            str.toLowerCase().includes(ext.toLowerCase())
+        );
+    };
 
-            // Added
-            category: 'Analytics',
-            details: 'Leverage the power of data with our analytics and AI solutions.',
-        },
-        {
-            title: 'Mobile Development',
-            description: 'Cross-platform mobile apps for iOS and Android.',
-            icon: '📱',
-            color: '#FF9800',
-            features: ['React Native', 'Flutter', 'Native'],
-            bgType: 'image',
+    const getServiceIcon = (service) => {
+        if (!service.icon) return null;
 
-            // Added
-            category: 'Mobile',
-            details: 'Build engaging mobile experiences with our expert development team.',
-        },
-        {
-            title: 'Digital Transformation',
-            description: 'Complete digital overhaul with process automation.',
-            icon: '🚀',
-            color: '#9C27B0',
-            features: ['Strategy', 'Automation', 'Modernization'],
-            bgType: 'image',
+        // If it's already a valid image URL, return it
+        if (isImageUrl(service.icon)) {
+            return service.icon;
+        }
 
-            // Added
-            category: 'Transformation',
-            details: 'Guide your business through digital transformation with our proven methodologies.',
-        },
-        {
-            title: 'IoT Solutions',
-            description: 'Connect and manage devices with smart IoT platforms.',
-            icon: '🌐',
-            color: '#00BCD4',
-            features: ['Smart Devices', 'Real-time Data'],
-            bgType: 'image',
+        // If it's base64 without prefix, construct data URL
+        if (service.icon && service.icon.length > 50) {
+            // Try to detect if it's base64
+            const base64Pattern = /^[A-Za-z0-9+/=]+$/;
+            if (base64Pattern.test(service.icon.substring(0, 50))) {
+                return `data:image/png;base64,${service.icon}`;
+            }
+        }
 
-            // No direct pair in second array
-            category: 'IoT',
-            details: 'End-to-end IoT platform development, device integration, and real-time monitoring.',
-        },
-        {
-            title: 'Blockchain Services',
-            description: 'Secure decentralized solutions for finance and supply chain.',
-            icon: '⛓️',
-            color: '#FF5722',
-            features: ['Smart Contracts', 'DApps'],
-            bgType: 'image',
+        // If it's a short string (emoji or text), return as-is
+        return service.icon;
+    };
 
-            // No direct pair in second array
-            category: 'Blockchain',
-            details: 'Build and deploy secure blockchain applications and smart contracts.',
-        },
-        {
-            title: 'DevOps & CI/CD',
-            description: 'Automated deployment pipelines and infrastructure as code.',
-            icon: '⚙️',
-            color: '#795548',
-            features: ['Jenkins', 'Docker', 'Kubernetes'],
-            bgType: 'image',
-
-            // Added (best match)
-            category: 'Development',
-            details: 'Accelerate your development lifecycle with CI/CD automation and DevOps practices.',
-        },
-        {
-            title: 'Quality Assurance',
-            description: 'Comprehensive testing solutions for software quality.',
-            icon: '✅',
-            color: '#607D8B',
-            features: ['Automation', 'Performance', 'Security'],
-            bgType: 'image',
-
-            // No equivalent in second array
-            category: 'Testing',
-            details: 'End-to-end software testing including automation, performance, and security validation.',
-        },
-        {
-            title: 'UI/UX Design',
-            description: 'User-centered design for exceptional digital experiences.',
-            icon: '🎨',
-            color: '#E91E63',
-            features: ['Wireframes', 'Prototyping', 'User Testing'],
-            bgType: 'image',
-
-            // No equivalent in second array
-            category: 'Design',
-            details: 'Craft intuitive and visually stunning user experiences with modern UI/UX practices.',
-        },
-        {
-            title: 'Consulting Services',
-            description: 'Strategic technology consulting and roadmap planning.',
-            icon: '📊',
-            color: '#3F51B5',
-            features: ['Strategy', 'Architecture', 'Planning'],
-            bgType: 'image',
-
-            // Added (matches IT Consulting)
-            category: 'Transformation',
-            details: 'Get expert guidance for your technology investments and digital roadmap.',
-        },
-    ];
+    // Safe safeAlpha function that won't throw errors
+    const safeAlpha = (color, opacity) => {
+        const safeColor = getSafeColor(color);
+        return alpha(safeColor, opacity); // <-- Call MUI's alpha function
+    };
 
     // Service-specific background images (using Unsplash or similar sources)
     const getServiceImage = (serviceTitle) => {
@@ -287,6 +219,79 @@ const ServicesSection = () => {
         const fallbackImage = workinghuman_bg;
 
         return serviceImages[serviceTitle] || fallbackImage;
+    };
+
+    // Add these helper functions at the top of your component (after the imports)
+    const isValidColor = (color) => {
+        if (!color) return false;
+
+        // Check for valid hex colors
+        if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(color)) return true;
+
+        // Check for rgb/rgba
+        if (/^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/.test(color)) return true;
+        if (/^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(0|1|0\.\d+)\)$/.test(color)) return true;
+
+        // Check for hsl/hsla
+        if (/^hsl\((\d{1,3}),\s*(\d{1,3})%,\s*(\d{1,3})%\)$/.test(color)) return true;
+        if (/^hsla\((\d{1,3}),\s*(\d{1,3})%,\s*(\d{1,3})%,\s*(0|1|0\.\d+)\)$/.test(color)) return true;
+
+        return false;
+    };
+
+    const getSafeColor = (color, defaultColor = '#1976d2') => {
+        return isValidColor(color) ? color : defaultColor;
+    };
+
+    // Function to get color based on service category or title
+    const getServiceColor = (service) => {
+        // Try to get color from service data
+        if (service.color && isValidColor(service.color)) {
+            return service.color;
+        }
+
+        // Fallback: Generate color based on category or title
+        const category = service.category || service.title || '';
+
+        const colorMap = {
+            'Cloud': '#2196F3',
+            'Development': '#673AB7',
+            'Security': '#F44336',
+            'Analytics': '#4CAF50',
+            'Mobile': '#FF9800',
+            'Transformation': '#9C27B0',
+            'IoT': '#00BCD4',
+            'Blockchain': '#FF5722',
+            'Testing': '#607D8B',
+            'Design': '#E91E63',
+            'Consulting': '#3F51B5',
+            'Software': '#673AB7',
+            'Digital': '#9C27B0',
+            'DevOps': '#795548',
+            'Quality': '#607D8B',
+            'UI/UX': '#E91E63',
+        };
+
+        // Find matching color
+        for (const [key, color] of Object.entries(colorMap)) {
+            if (category.toLowerCase().includes(key.toLowerCase())) {
+                return color;
+            }
+        }
+
+        // Default fallback colors based on hash of title
+        const defaultColors = [
+            '#2196F3', '#673AB7', '#F44336', '#4CAF50', '#FF9800',
+            '#9C27B0', '#00BCD4', '#FF5722', '#607D8B', '#E91E63',
+            '#3F51B5', '#795548'
+        ];
+
+        if (service.title) {
+            const hash = service.title.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            return defaultColors[hash % defaultColors.length];
+        }
+
+        return '#1976d2'; // MUI primary color as final fallback
     };
 
     // Alternative: Pattern backgrounds based on service type
@@ -437,7 +442,8 @@ const ServicesSection = () => {
                                                 rgba(0, 0, 0, 0.4) 70%,
                                                 rgba(0, 0, 0, 0.2) 100%
                                             ),
-                                            url(${getServiceImage(service.title)})
+                                            // url(${getServiceImage(service.title)})
+                                            url(${getServiceIcon(service)})
                                         `,
                                         backgroundSize: 'cover',
                                         backgroundPosition: 'center',
@@ -452,9 +458,9 @@ const ServicesSection = () => {
                                             right: 0,
                                             bottom: 0,
                                             background: `linear-gradient(45deg, 
-                                                ${alpha(service.color, 0.15)} 0%, 
+                                                ${safeAlpha(service.color, 0.15)} 0%, 
                                                 transparent 50%,
-                                                ${alpha(service.color, 0.05)} 100%
+                                                ${safeAlpha(service.color, 0.05)} 100%
                                             )`,
                                             opacity: 0,
                                             transition: 'opacity 0.4s ease',
@@ -464,8 +470,8 @@ const ServicesSection = () => {
                                             transform: 'translateY(-12px) scale(1.02)',
                                             boxShadow: `
                                                 0 20px 40px rgba(0, 0, 0, 0.3),
-                                                0 0 0 1px ${alpha(service.color, 0.3)},
-                                                0 0 60px ${alpha(service.color, 0.1)}
+                                                0 0 0 1px ${safeAlpha(service.color, 0.3)},
+                                                0 0 60px ${safeAlpha(service.color, 0.1)}
                                             `,
                                             backgroundImage: `
                                                 linear-gradient(
@@ -475,37 +481,38 @@ const ServicesSection = () => {
                                                     rgba(0, 0, 0, 0.3) 70%,
                                                     rgba(0, 0, 0, 0.15) 100%
                                                 ),
-                                                url(${getServiceImage(service.title)})
+                                                // url(${getServiceImage(service.title)})
+                                                url(${getServiceIcon(service)})
                                             `,
                                             backgroundSize: '110% 110%',
                                             '&::before': {
                                                 opacity: 1,
                                             },
-                                            '& .service-icon': {
-                                                transform: 'scale(1.15) translateY(-5px)',
-                                                bgcolor: alpha(service.color, 0.95),
-                                                boxShadow: `0 10px 25px ${alpha(service.color, 0.4)}`,
-                                                borderColor: alpha('#fff', 0.5),
-                                            },
+                                            // '& .service-icon': {
+                                            //     transform: 'scale(1.15) translateY(-5px)',
+                                            //     bgcolor: safeAlpha(service.color, 0.95),
+                                            //     boxShadow: `0 10px 25px ${safeAlpha(service.color, 0.4)}`,
+                                            //     borderColor: safeAlpha('#fff', 0.5),
+                                            // },
                                             '& .service-title': {
                                                 color: service.color,
-                                                textShadow: `0 0 20px ${alpha(service.color, 0.5)}`,
+                                                textShadow: `0 0 20px ${safeAlpha(service.color, 0.5)}`,
                                             },
                                             '& .service-description': {
                                                 color: '#ffffff',
                                             },
                                             '& .service-chip': {
-                                                bgcolor: alpha(service.color, 0.9),
+                                                bgcolor: safeAlpha(service.color, 0.9),
                                                 transform: 'translateY(-2px)',
-                                                boxShadow: `0 4px 12px ${alpha(service.color, 0.3)}`,
-                                                borderColor: alpha('#fff', 0.3),
+                                                boxShadow: `0 4px 12px ${safeAlpha(service.color, 0.3)}`,
+                                                borderColor: safeAlpha('#fff', 0.3),
                                             },
                                             '& .service-button': {
                                                 borderColor: service.color,
-                                                bgcolor: alpha(service.color, 0.95),
+                                                bgcolor: safeAlpha(service.color, 0.95),
                                                 color: 'white',
                                                 transform: 'translateY(-2px)',
-                                                boxShadow: `0 8px 20px ${alpha(service.color, 0.4)}`,
+                                                boxShadow: `0 8px 20px ${safeAlpha(service.color, 0.4)}`,
                                             }
                                         },
                                     }}
@@ -520,7 +527,7 @@ const ServicesSection = () => {
                                             bottom: 0,
                                             background: `linear-gradient(45deg, 
                                                 transparent 40%, 
-                                                ${alpha(service.color, 0.1)} 50%, 
+                                                ${safeAlpha(service.color, 0.1)} 50%, 
                                                 transparent 60%
                                             )`,
                                             backgroundSize: '300% 300%',
@@ -562,7 +569,7 @@ const ServicesSection = () => {
                                                 width: SYMMETRICAL_CARD_CONFIG.iconSize,
                                                 height: SYMMETRICAL_CARD_CONFIG.iconSize,
                                                 borderRadius: '20px',
-                                                bgcolor: alpha(service.color, 0.8),
+                                                bgcolor: safeAlpha(service.color, 0.8),
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
@@ -573,14 +580,39 @@ const ServicesSection = () => {
                                                 flexShrink: 0,
                                                 mx: 'auto',
                                                 backdropFilter: 'blur(20px) saturate(180%)',
-                                                border: `2px solid ${alpha('#fff', 0.15)}`,
-                                                boxShadow: `
-                                                    inset 0 0 20px ${alpha('#fff', 0.1)},
-                                                    0 8px 32px ${alpha(service.color, 0.3)}
-                                                `,
+                                                border: `2px solid ${safeAlpha('#fff', 0.15)}`,
+                                                boxShadow: `inset 0 0 20px ${safeAlpha('#fff', 0.1)},0 8px 32px ${safeAlpha(service.color, 0.3)}`,
+                                                overflow: 'hidden',
+                                                position: 'relative',
+                                                // Set background if it's an image
+                                                ...(isImageUrl(service.icon) && {
+                                                    backgroundImage: `url('${service.icon}')`,
+                                                    backgroundSize: 'cover',
+                                                    backgroundPosition: 'center',
+                                                    backgroundRepeat: 'no-repeat',
+                                                }),
                                             }}
                                         >
-                                            {service.icon}
+                                            {isImageUrl(service.icon) ? (
+                                                // For images: show overlay with first letter
+                                                null
+                                            ) : (
+                                                // For text/emoji: show directly
+                                                <Typography sx={{
+                                                    fontSize: '2rem',
+                                                    color: 'white',
+                                                    fontWeight: 'bold',
+                                                    zIndex: 1,
+                                                    textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    width: '100%',
+                                                    height: '100%'
+                                                }}>
+                                                    {service.title?.charAt(0) || '📊'}
+                                                </Typography>
+                                            )}
                                         </Box>
 
                                         {/* Title with professional typography */}
@@ -620,7 +652,7 @@ const ServicesSection = () => {
                                                 minHeight: SYMMETRICAL_CARD_CONFIG.descriptionHeight,
                                                 mb: 3,
                                                 flexGrow: 0,
-                                                color: alpha('#fff', 0.85),
+                                                color: safeAlpha('#fff', 0.85),
                                                 transition: 'all 0.4s ease',
                                                 fontWeight: '300',
                                                 letterSpacing: '0.3px',
@@ -648,13 +680,13 @@ const ServicesSection = () => {
                                                     label={feature.trim()}
                                                     size="small"
                                                     sx={{
-                                                        bgcolor: alpha(service.color, 0.75),
+                                                        bgcolor: safeAlpha(service.color, 0.75),
                                                         color: 'white',
                                                         fontSize: '0.75rem',
                                                         height: '28px',
                                                         fontWeight: '500',
                                                         backdropFilter: 'blur(10px)',
-                                                        border: `1px solid ${alpha('#fff', 0.15)}`,
+                                                        border: `1px solid ${safeAlpha('#fff', 0.15)}`,
                                                         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                                         '&:hover': {
                                                             transform: 'translateY(-1px)',
@@ -686,9 +718,9 @@ const ServicesSection = () => {
                                                 to={`/services/${service.id}`}
                                                 endIcon={<ArrowRightAlt sx={{ transition: 'transform 0.3s ease' }} />}
                                                 sx={{
-                                                    borderColor: alpha('#fff', 0.25),
+                                                    borderColor: safeAlpha('#fff', 0.25),
                                                     color: 'white',
-                                                    bgcolor: alpha('#000', 0.2),
+                                                    bgcolor: safeAlpha('#000', 0.2),
                                                     fontSize: '0.875rem',
                                                     py: 1.2,
                                                     px: 4,
@@ -702,7 +734,7 @@ const ServicesSection = () => {
                                                     textTransform: 'none',
                                                     '&:hover': {
                                                         borderColor: service.color,
-                                                        bgcolor: alpha(service.color, 0.9),
+                                                        bgcolor: safeAlpha(service.color, 0.9),
                                                         color: 'white',
                                                         '& .MuiButton-endIcon': {
                                                             transform: 'translateX(4px)',
@@ -724,7 +756,7 @@ const ServicesSection = () => {
                                             width: '60px',
                                             height: '60px',
                                             background: `linear-gradient(135deg, 
-                                                ${alpha(service.color, 0.2)} 0%, 
+                                                ${safeAlpha(service.color, 0.2)} 0%, 
                                                 transparent 50%
                                             )`,
                                             borderBottomLeftRadius: '50%',
@@ -732,7 +764,7 @@ const ServicesSection = () => {
                                             zIndex: 0,
                                             '&:hover': {
                                                 background: `linear-gradient(135deg, 
-                                                ${alpha(service.color, 0.4)} 0%, 
+                                                ${safeAlpha(service.color, 0.4)} 0%, 
                                                 transparent 50%
                                             )`,
                                             }

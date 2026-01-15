@@ -537,5 +537,119 @@ export const resetOTPforVerification = (param) => async (dispatch) => {
     }
 };
 
+export const getEmpAppliedLeaveList = () => async (dispatch) => {
+    try {
+        const response = await fetch(
+            `${cleanApiUrl}/leave/getEmpLeaveDetails`,
+            {
+                method: "GET",
+                headers: getAuthorizedHeaders
+            }
+        );
 
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
+        const data = await response.json();
+        return dispatch({
+            type: "LEAVE_LIST",
+            payload: data
+        });
+    } catch (error) {
+        console.error("Error in AppConfigAction.js > getEmpAppliedLeaveList:", error);
+        if (DEBUG_MODE) {
+            console.error("Failed URL:", `${cleanApiUrl}/leave/getEmpLeaveDetails`);
+        }
+    }
+};
+
+export const manageLeaveRequest = (param) => async (dispatch) => {
+    try {
+        const response = await fetch(
+            `${cleanApiUrl}/leave/empLeaveRequest`,  // Your new endpoint
+            {
+                method: "POST",
+                headers: postAuthorizedHeaders,
+                body: JSON.stringify(param)
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        return dispatch({
+            type: data.success ? "EMP_APPLY_LEAVE_SUCCESS" : "EMP_APPLY_LEAVE_FAILURE",
+            payload: data
+        });
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        return dispatch({
+            type: "EMP_APPLY_LEAVE_FAILURE",
+            payload: error.message
+        });
+    }
+};
+
+export const updateServiceRequest = (param) => async (dispatch) => {
+    try {
+        const response = await fetch(
+            `${cleanApiUrl}/services/updateServiceDetails`,  // Your new endpoint
+            {
+                method: "POST",
+                headers: postAuthorizedHeaders,
+                body: JSON.stringify(param)
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        return dispatch({
+            type: data.success ? "SERVICE_DETAILS_FETCH_SUCCESS" : "SERVICE_DETAILS_FETCH_FAILURE",
+            payload: data
+        });
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        return dispatch({
+            type: "SERVICE_DETAILS_FETCH_FAILURE",
+            payload: error.message
+        });
+    }
+};
+
+export const updatePartnersDetails = (param) => async (dispatch) => {
+    try {
+        const response = await fetch(
+            `${cleanApiUrl}/users/updatePartnersDetails`,  // Your new endpoint
+            {
+                method: "POST",
+                headers: postAuthorizedHeaders,
+                body: JSON.stringify(param)
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        return dispatch({
+            type: data.success ? "PARTNER_DETAILS_FETCH_SUCCESS" : "PARTNER_DETAILS_FETCH_FAILURE",
+            payload: data
+        });
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        return dispatch({
+            type: "PARTNER_DETAILS_FETCH_FAILURE",
+            payload: error.message
+        });
+    }
+};

@@ -3,13 +3,14 @@ import {
   Business,
   CheckCircle,
   Cloud,
-  DataArray,
+  Code,
   EmojiEvents,
   Handshake,
   Psychology,
   Public,
   Rocket,
   School,
+  Smartphone,
   Terminal,
   TrendingUp,
   VerifiedUser
@@ -37,6 +38,7 @@ import {
   Typography,
   Zoom,
   alpha,
+  useMediaQuery,
   useTheme
 } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -55,10 +57,14 @@ const office2 = 'https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?w=800
 const innovation = 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1950&q=80';
 
 const About = () => {
-  const theme = useTheme();
   const [hoveredCard, setHoveredCard] = useState(null);
   const [selectedLeader, setSelectedLeader] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+  const isLargeDesktop = useMediaQuery(theme.breakpoints.up('lg'));
 
   const [leadershipTeam, setLeadershipTeam] = useState([]);
   const dispatch = useDispatch();
@@ -66,7 +72,7 @@ const About = () => {
     // Move the function definition inside useEffect
     const loadConfigs = async () => {
       const result = await dispatch(getEmployeeList());
-      console.log('Configurations loaded successfully', 'success');
+      // console.log('Configurations loaded successfully', 'success');
       if (result.type === "EMP_LIST") {
         setLeadershipTeam(result.payload);
       }
@@ -76,81 +82,80 @@ const About = () => {
   }, [dispatch]); // Only dispatch is needed as dependency
 
 
-  const leadershipTeams = [
-    {
-      name: 'Sarah Johnson',
-      role: 'CEO & Founder',
-      avatar: team1,
-      bio: '15+ years in enterprise technology. Former Google Engineering Director. Passionate about driving digital transformation through innovative solutions.',
-      expertise: ['Cloud Architecture', 'Digital Transformation', 'Leadership'],
-      linkedin: '#',
-      fullBio: 'Sarah founded Excellence Allegiance in 2015 with a vision to bridge the gap between business needs and technological innovation. Under her leadership, the company has grown to serve over 200 clients globally.',
-      education: 'MBA from Stanford, BSc Computer Science from MIT'
-    },
-    {
-      name: 'Michael Chen',
-      role: 'CTO',
-      avatar: team2,
-      bio: 'PhD in Computer Science from MIT. AI/ML specialist with 20+ patents in machine learning algorithms.',
-      expertise: ['AI/ML', 'DevOps', 'System Design', 'Research'],
-      linkedin: '#',
-      fullBio: 'Michael leads our technology strategy and innovation efforts. His research in neural networks has been published in top-tier journals.',
-      education: 'PhD MIT, Postdoc at Stanford AI Lab'
-    },
-    {
-      name: 'Emma Davis',
-      role: 'VP of Engineering',
-      avatar: team3,
-      bio: 'Led teams at Amazon Web Services. Expert in building scalable distributed systems.',
-      expertise: ['Microservices', 'Cloud Security', 'Agile', 'Scalability'],
-      linkedin: '#',
-      fullBio: 'Emma oversees all engineering operations, ensuring our solutions meet the highest standards of quality and reliability.',
-      education: 'MSc Computer Engineering, Carnegie Mellon'
-    },
-    {
-      name: 'David Wilson',
-      role: 'Chief Security Officer',
-      avatar: team4,
-      bio: 'Former cybersecurity lead at NSA. Certified Ethical Hacker with extensive experience in threat intelligence.',
-      expertise: ['Cybersecurity', 'Compliance', 'Risk Management', 'Cryptography'],
-      linkedin: '#',
-      fullBio: 'David built our security framework from the ground up, implementing industry-leading practices to protect client data.',
-      education: 'MSc Cybersecurity, Georgia Tech'
-    },
+  const leadershipTeams = [{
+    name: 'Sarah Johnson',
+    role: 'CEO & Founder',
+    avatar: team1,
+    bio: '15+ years in enterprise technology. Former Google Engineering Director. Passionate about driving digital transformation through innovative solutions.',
+    expertise: ['Cloud Architecture', 'Digital Transformation', 'Leadership'],
+    linkedin: '#',
+    fullBio: 'Sarah founded Excellence Allegiance in 2020 with a vision to bridge the gap between business needs and technological innovation. Under her leadership, the company has grown to serve over 200 clients globally.',
+    education: 'MBA from Stanford, BSc Computer Science from MIT'
+  },
+  {
+    name: 'Michael Chen',
+    role: 'CTO',
+    avatar: team2,
+    bio: 'PhD in Computer Science from MIT. AI/ML specialist with 20+ patents in machine learning algorithms.',
+    expertise: ['AI/ML', 'DevOps', 'System Design', 'Research'],
+    linkedin: '#',
+    fullBio: 'Michael leads our technology strategy and innovation efforts. His research in neural networks has been published in top-tier journals.',
+    education: 'PhD MIT, Postdoc at Stanford AI Lab'
+  },
+  {
+    name: 'Emma Davis',
+    role: 'VP of Engineering',
+    avatar: team3,
+    bio: 'Led teams at Amazon Web Services. Expert in building scalable distributed systems.',
+    expertise: ['Microservices', 'Cloud Security', 'Agile', 'Scalability'],
+    linkedin: '#',
+    fullBio: 'Emma oversees all engineering operations, ensuring our solutions meet the highest standards of quality and reliability.',
+    education: 'MSc Computer Engineering, Carnegie Mellon'
+  },
+  {
+    name: 'David Wilson',
+    role: 'Chief Security Officer',
+    avatar: team4,
+    bio: 'Former cybersecurity lead at NSA. Certified Ethical Hacker with extensive experience in threat intelligence.',
+    expertise: ['Cybersecurity', 'Compliance', 'Risk Management', 'Cryptography'],
+    linkedin: '#',
+    fullBio: 'David built our security framework from the ground up, implementing industry-leading practices to protect client data.',
+    education: 'MSc Cybersecurity, Georgia Tech'
+  },
   ];
 
   const departments = [
     {
       name: 'AI Research',
       icon: <Psychology fontSize="large" />,
-      members: 24,
+      members: 10,
       projects: 18,
       description: 'Developing cutting-edge AI solutions',
       image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop'
     },
     {
-      name: 'Cloud Engineering',
-      icon: <Cloud fontSize="large" />,
-      members: 42,
+      name: 'Mobile Development',
+      icon: <Smartphone fontSize="large" />,
+      members: 22,
       projects: 56,
-      description: 'Building scalable cloud infrastructure',
-      image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop'
+      description: 'Building innovative mobile applications',
+      image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop'
     },
     {
       name: 'DevOps',
       icon: <Terminal fontSize="large" />,
-      members: 28,
+      members: 12,
       projects: 32,
       description: 'Automating deployment pipelines',
       image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop'
     },
     {
-      name: 'Data Science',
-      icon: <DataArray fontSize="large" />,
+      name: 'Web Development',
+      icon: <Code fontSize="large" />,
       members: 19,
       projects: 25,
-      description: 'Transforming data into insights',
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop'
+      description: 'Creating responsive web applications',
+      image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=300&fit=crop'
     }
   ];
 
@@ -223,8 +228,8 @@ const About = () => {
     { name: 'AWS Partner Network', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg' },
     { name: 'Microsoft Gold Partner', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg' },
     { name: 'Google Cloud Premier Partner', logo: 'https://upload.wikimedia.org/wikipedia/commons/5/51/Google_Cloud_logo.svg' },
-    { name: 'ISO 27001 Certified', logo: 'https://upload.wikimedia.org/wikipedia/commons/4/44/ISO_Certification.svg' },
-    { name: 'SOC 2 Type II Compliant', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/9e/AICPA_logo.svg' }
+    // { name: 'ISO 27001 Certified', logo: 'https://upload.wikimedia.org/wikipedia/commons/4/44/ISO_Certification.svg' },
+    // { name: 'SOC 2 Type II Compliant', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/9e/AICPA_logo.svg' }
   ];
 
   const handleLeaderClick = (leader) => {
@@ -261,7 +266,7 @@ const About = () => {
       // }}
       />
 
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" sx={{ py: 2 }}>
         {/* Company Overview with Stats */}
         <Box sx={{ mb: 10, textAlign: 'center', position: 'relative' }}>
           <Zoom in={true} style={{ transitionDelay: '100ms' }}>
@@ -274,13 +279,23 @@ const About = () => {
           </Zoom>
 
           <Fade in={true} timeout={1000}>
-            <Typography variant="h2" gutterBottom fontWeight="bold" sx={{ mb: 3 }}>
+            <Typography
+              variant={isMobile ? "h4" : isTablet ? "h3" : "h2"}
+              gutterBottom
+              fontWeight="bold"
+              sx={{ mb: 3 }}
+            >
               Shaping the Future of Technology
             </Typography>
           </Fade>
 
           <Fade in={true} timeout={1500}>
-            <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 800, mx: 'auto', lineHeight: 1.8, mb: 6 }}>
+            <Typography variant="h6" color="text.secondary"
+              sx={{
+                maxWidth: 800, mx: 'auto',
+                lineHeight: 1.8, mb: 6,
+              }}
+            >
               Excellence Allegiance is a premier technology consulting firm specializing in digital transformation,
               cloud solutions, and enterprise software development. With a team of 150+ experts across 4 continents,
               we help organizations navigate complex technological challenges and achieve measurable business outcomes.
@@ -291,9 +306,9 @@ const About = () => {
           <Grid container spacing={3} sx={{ mt: 6, justifyContent: 'center' }}>
             {[
               { number: '150+', label: 'Experts Worldwide', icon: '👥' },
-              { number: '40+', label: 'Countries Served', icon: '🌍' },
+              { number: '10+', label: 'Countries Served', icon: '🌍' },
               { number: '98%', label: 'Client Satisfaction', icon: '⭐' },
-              { number: '200+', label: 'Projects Completed', icon: '🚀' }
+              { number: '60+', label: 'Projects Completed', icon: '🚀' }
             ].map((stat, index) => (
               <Grid item xs={6} md={3} key={index}>
                 <Grow in={true} timeout={(index + 1) * 300}>
@@ -345,11 +360,11 @@ const About = () => {
                 <Box sx={{ p: 5, position: 'relative', zIndex: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
                     <Rocket sx={{ fontSize: 40 }} />
-                    <Typography variant="h3" fontWeight="bold">
+                    <Typography variant={isMobile ? "h4" : isTablet ? "h3" : "h2"} fontWeight="bold">
                       Our Mission
                     </Typography>
                   </Box>
-                  <Typography variant="h5" paragraph sx={{ mb: 4, opacity: 0.95 }}>
+                  <Typography variant="h6" paragraph sx={{ mb: 4, opacity: 0.95 }}>
                     To accelerate digital innovation by providing cutting-edge technology solutions
                     that drive growth, efficiency, and sustainable competitive advantage.
                   </Typography>
@@ -365,7 +380,8 @@ const About = () => {
                         </ListItemIcon>
                         <ListItemText
                           primary={item}
-                          primaryTypographyProps={{ variant: 'h6', sx: { opacity: 0.9 } }}
+                          variant='h6'
+                          sx={{ opacity: 0.9 }}
                         />
                       </ListItem>
                     ))}
@@ -393,11 +409,11 @@ const About = () => {
                 <Box sx={{ p: 5, position: 'relative', zIndex: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
                     <TrendingUp sx={{ fontSize: 40 }} />
-                    <Typography variant="h3" fontWeight="bold">
+                    <Typography variant={isMobile ? "h4" : isTablet ? "h3" : "h2"} fontWeight="bold">
                       Our Vision
                     </Typography>
                   </Box>
-                  <Typography variant="h5" paragraph sx={{ mb: 4, opacity: 0.95 }}>
+                  <Typography variant="h6" paragraph sx={{ mb: 4, opacity: 0.95 }}>
                     To be the world's most trusted technology innovation partner,
                     recognized for transforming industries and creating lasting impact.
                   </Typography>
@@ -411,6 +427,8 @@ const About = () => {
                           color: 'white',
                           fontWeight: 'bold',
                           backdropFilter: 'blur(10px)',
+                          variant: 'h6',
+                          opacity: 0.9,
                           '&:hover': {
                             bgcolor: 'rgba(255,255,255,0.3)'
                           }
@@ -426,7 +444,7 @@ const About = () => {
 
         {/* Core Values with Interactive Cards */}
         <Box sx={{ mb: 10 }}>
-          <Typography variant="h3" align="center" gutterBottom fontWeight="bold" sx={{ mb: 2 }}>
+          <Typography variant={isMobile ? "h4" : isTablet ? "h3" : "h2"} align="center" gutterBottom fontWeight="bold" sx={{ mb: 2 }}>
             Our Core Values
           </Typography>
           <Typography variant="h6" align="center" color="text.secondary" paragraph sx={{ mb: 6 }}>
@@ -505,7 +523,7 @@ const About = () => {
               color="secondary"
               sx={{ mb: 3, fontWeight: 'bold', px: 3, py: 1 }}
             />
-            <Typography variant="h3" gutterBottom fontWeight="bold">
+            <Typography variant={isMobile ? "h4" : isTablet ? "h3" : "h2"} gutterBottom fontWeight="bold">
               Meet Our Leadership Team
             </Typography>
             <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 700, mx: 'auto' }}>
@@ -591,7 +609,7 @@ const About = () => {
 
         {/* Departments with Hover Effects */}
         <Box sx={{ mb: 10 }}>
-          <Typography variant="h3" align="center" gutterBottom fontWeight="bold" sx={{ mb: 6 }}>
+          <Typography variant={isMobile ? "h4" : isTablet ? "h3" : "h2"} align="center" gutterBottom fontWeight="bold" sx={{ mb: 6 }}>
             Our Expertise Areas
           </Typography>
 
@@ -688,7 +706,7 @@ const About = () => {
               variant="outlined"
               sx={{ mb: 3, fontWeight: 'bold', px: 3, py: 1 }}
             />
-            <Typography variant="h3" gutterBottom fontWeight="bold">
+            <Typography variant={isMobile ? "h4" : isTablet ? "h3" : "h2"} gutterBottom fontWeight="bold">
               Milestones & Achievements
             </Typography>
           </Box>
@@ -775,6 +793,32 @@ const About = () => {
                         boxShadow: theme.shadows[4],
                         borderLeft: `4px solid ${theme.palette.primary.main}`,
                         transition: 'transform 0.3s',
+                        color: '#fff',
+                        backgroundImage: `
+  linear-gradient(
+    135deg,
+    rgba(69, 65, 85, 0.95) 0%,
+    rgba(69, 65, 85, 0.7) 25%,
+    rgba(167, 154, 154, 0.4) 75%,
+    rgba(167, 154, 154, 0.2) 100%
+  ),
+  url(${milestone.image})
+`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundBlendMode: 'multiply',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          background: 'linear-gradient(135deg, rgba(69, 65, 85, 0.3) 0%, transparent 50%)',
+                          zIndex: 1,
+                        },
                         '&:hover': {
                           transform: 'translateX(5px)'
                         }
@@ -788,7 +832,7 @@ const About = () => {
                           {milestone.title}
                         </Typography>
                       </Box>
-                      <Typography variant="body1" color="text.secondary">
+                      <Typography variant="body1" color="#fff" >
                         {milestone.description}
                       </Typography>
                     </Card>

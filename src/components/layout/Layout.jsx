@@ -1,7 +1,7 @@
-import React from 'react';
 import { Box, CssBaseline } from '@mui/material';
-import Navbar from './Navbar';
+import ChatBotWidget from '../chatbot/ChatBotWidget';
 import Footer from './Footer';
+import Navbar from './Navbar';
 
 const Layout = ({ children }) => {
   return (
@@ -10,6 +10,7 @@ const Layout = ({ children }) => {
       <Navbar />
       <Box component="main" sx={{ flexGrow: 1 }}>
         {children}
+        <ChatBotWidget />
       </Box>
       <Footer />
     </Box>

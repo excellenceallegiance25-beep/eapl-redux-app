@@ -1,100 +1,85 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import {
-  Container,
-  Grid,
-  Typography,
-  Paper,
-  Box,
+  AccountCircle,
+  Add,
+  ArrowForward,
+  CalendarToday,
+  CameraAlt,
+  CheckCircle,
+  Delete,
+  Done,
+  Edit,
+  Error,
+  ExpandLess,
+  ExpandMore,
+  History,
+  Info,
+  Pending,
+  Person,
+  Save,
+  Security,
+  Update,
+  VerifiedUser,
+  Visibility
+} from '@mui/icons-material';
+import {
+  Alert,
+  AlertTitle,
+  alpha,
   Avatar,
+  Badge,
+  Box,
   Button,
-  TextField,
-  Divider,
-  Tabs,
-  Tab,
   Card,
   CardContent,
-  IconButton,
-  Alert,
-  Snackbar,
   Chip,
-  useTheme,
-  alpha,
-  Fade,
-  Zoom,
-  Grow,
-  Badge,
-  Switch,
-  FormControlLabel,
-  MenuItem,
-  Select,
-  Tooltip,
   CircularProgress,
+  Collapse,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Fade,
+  FormControlLabel,
+  Grid,
+  Grow,
+  IconButton,
   LinearProgress,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Collapse,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Stepper,
+  MenuItem,
+  Paper,
+  Select,
+  Snackbar,
   Step,
   StepLabel,
-  AlertTitle,
+  Stepper,
+  Switch,
+  Tab,
+  Tabs,
+  TextField,
+  Tooltip,
+  Typography,
+  useTheme,
+  Zoom
 } from '@mui/material';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import { DataGrid } from '@mui/x-data-grid';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import LeaveFormDialog from '../components/dashboardmenu/LeaveFormDialog';
 import {
-  Edit,
-  Save,
-  CameraAlt,
-  Security,
-  Notifications,
-  AccountCircle,
-  Work,
-  School,
-  LocationOn,
-  Email,
-  Phone,
-  Link,
-  CheckCircle,
-  GitHub,
-  LinkedIn,
-  Language,
-  VerifiedUser,
-  CalendarToday,
-  AccessTime,
-  Visibility,
-  VisibilityOff,
-  Delete,
-  Add,
-  Star,
-  StarBorder,
-  History,
-  Update,
-  Pending,
-  Done,
-  Error,
-  Info,
-  ArrowForward,
-  ExpandMore,
-  ExpandLess,
-  Lock,
-  LockOpen,
-  CloudUpload,
-  PersonAdd,
-  Timeline,
-} from '@mui/icons-material';
-import PageHeader from '../components/common/PageHeader';
-import { updateProfileSuccess } from '../redux/slices/userSlice';
-import {
+  getEmpAppliedLeaveList,
+  getEmployeePHistoryList,
   getEmployeeProfileList,
   getEmployeeSkillList,
-  getEmployeePHistoryList,
-  updateEmployeeCompleteProfile  // Your existing generic API
+  updateEmployeeCompleteProfile // Your existing generic API
 } from '../services/AppConfigAction';
-import { useParams } from 'react-router-dom';
 
 const Profile = () => {
   const { userId } = useParams(); // This gets the userId from URL
@@ -102,7 +87,8 @@ const Profile = () => {
   const { user } = useSelector((state) => state.auth);
   const { profile } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-
+  const [leaves, setLeaves] = useState([]);
+  // const [filteredLeaves, setfilteredLeaves] = useState([]);
 
   const [editMode, setEditMode] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -131,6 +117,336 @@ const Profile = () => {
   const [profileHistory, setProfileHistory] = useState([]);
   const [tempSkills, setTempSkills] = useState([]);
   const [hasChanges, setHasChanges] = useState(false);
+
+  const [searchText, setSearchText] = useState('');
+  const [selectedLeaves, setSelectedLeaves] = useState([]);
+  const [paginationModel, setPaginationModel] = useState({
+    pageSize: 10,
+    page: 0,
+  });
+
+  // Format leave data for DataGrid
+  const formatLeavesForGrid = (leavesData) => {
+    return leavesData.map((leave, index) => ({
+      id: leave.leaveId || index,
+      leaveId: leave.leaveId,
+      employeeName: leave.employeeName,
+      employeeId: leave.employeeId,
+      leaveType: leave.leaveType,
+      startDate: leave.startDate,
+      endDate: leave.endDate,
+      duration: leave.isHalfDay === 't' ? 'Half Day' : 'Full Day',
+      halfDayPeriod: leave.halfDayPeriod,
+      totalDays: leave.totalDays,
+      status: leave.status,
+      reason: leave.reason,
+      appliedDate: leave.appliedDate,
+      approvedBy: leave.approvedBy,
+      approvedDate: leave.approvedDate,
+      rejectionReason: leave.rejectionReason,
+      isHalfDay: leave.isHalfDay
+    }));
+  };
+
+  // useEffect(() => {
+  //   const loadConfigs = async () => {
+  //     try {
+  //       const result = await dispatch(getEmpAppliedLeaveList());
+  //       console.log('Leave loaded successfully', 'success');
+  //       if (result.type === "LEAVE_LIST") {
+  //         // Ensure data matches the expected structure
+  //         const formattedServices = result.payload.dataList.map(leave => ({
+  //           ...leave,
+  //         })).sort((a, b) => parseInt(b.leaveId) - parseInt(a.leaveId));
+  //         setLeaves(formattedServices);
+  //       }
+  //     } catch (error) {
+  //       console.error('Error loading services:', error);
+  //     }
+  //   };
+
+  //   loadConfigs();
+  // }, [dispatch]);
+
+  useEffect(() => {
+    const loadConfigs = async () => {
+      try {
+        const result = await dispatch(getEmpAppliedLeaveList());
+        // console.log('Leave loaded successfully', 'success');
+
+        if (result.type === "LEAVE_LIST") {
+          // Filter leaves for the current user
+          const filteredLeaves = result.payload.dataList.filter(leave =>
+            // Compare as strings since employeeId from API is string
+            leave.employeeId === user?.id?.toString()
+          );
+
+          // Ensure data matches the expected structure
+          const formattedServices = filteredLeaves.map(leave => ({
+            ...leave,
+          }))
+            .sort((a, b) => {
+              // First sort by appliedDate (descending - newest first)
+              const dateDiff = new Date(b.appliedDate) - new Date(a.appliedDate);
+
+              // If same date, sort by leaveId (descending - newest first)
+              if (dateDiff === 0) {
+                return parseInt(b.leaveId) - parseInt(a.leaveId);
+              }
+
+              return dateDiff;
+            });
+
+          setLeaves(formattedServices);
+        }
+      } catch (error) {
+        console.error('Error loading services:', error);
+      }
+    };
+
+    // Only load if user is available
+    if (user?.id) {
+      loadConfigs();
+    }
+  }, [dispatch, user?.id]); // Add user?.id as dependency
+
+
+  // Filter leaves based on search
+  const filteredLeaves = leaves.filter(leave => {
+    if (!searchText.trim()) return true;
+
+    const searchLower = searchText.toLowerCase();
+    return (
+      (leave.employeeName || '').toLowerCase().includes(searchLower) ||
+      String(leave.employeeId || '').toLowerCase().includes(searchLower) ||
+      (leave.leaveType || '').toLowerCase().includes(searchLower) ||
+      (leave.status || '').toLowerCase().includes(searchLower)
+    );
+  });
+
+  // Add these to your component state
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [currentLeave, setCurrentLeave] = useState(null);
+  const [viewMode, setViewMode] = useState(false); // Add this state
+
+  // Handler function for view details
+  const handleViewDetails = (rowData) => {
+    console.log('Viewing leave details:', rowData);
+    setCurrentLeave(rowData);
+    setDialogOpen(true);
+    setViewMode(true);
+  };
+
+  // Handler for form submission (if needed)
+  const handleFormSubmit = async (formData) => {
+    try {
+      // Your submit logic here
+      console.log('Form submitted:', formData);
+
+      // Close dialog after successful submission
+      setDialogOpen(false);
+      setCurrentLeave(null);
+
+      // Refresh leave list if needed
+      // await loadLeaves();
+
+      return { success: true, message: 'Leave updated successfully' };
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      return { success: false, message: error.message };
+    }
+  };
+
+  // Handler for closing dialog
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    setCurrentLeave(null);
+    setViewMode(false);
+  };
+
+  // Column definitions
+  const columns = [
+    {
+      field: 'actions',
+      headerName: '',
+      width: 50,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => (
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          width: '100%'
+        }}>
+          <Tooltip title="View Details">
+            <IconButton size="small" color="info" onClick={(e) => {
+              e.stopPropagation(); // Prevent row click event
+              handleViewDetails(params.row);
+            }}>
+              <Visibility fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+    },
+    {
+      field: 'employeeName',
+      headerName: 'Employee',
+      width: 200,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => (
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          width: '100%'
+        }}>
+          <Typography variant="body2" fontWeight="medium">
+            {params.value}
+          </Typography>
+        </Box>
+      ),
+    },
+    {
+      field: 'leaveType',
+      headerName: 'Leave Type',
+      width: 130,
+      renderCell: (params) => (
+        <Chip
+          label={params.value}
+          size="small"
+          color="primary"
+          variant="outlined"
+        />
+      ),
+    },
+    {
+      field: 'period',
+      headerName: 'Period',
+      width: 230,
+      // align: 'center',
+      // headerAlign: 'center',
+      renderCell: (params) => (
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          // justifyContent: 'center',
+          height: '100%',
+          width: '100%'
+        }}>
+          <Typography variant="body2">
+            {params.row.startDate} &nbsp; to &nbsp; {params.row.endDate}
+          </Typography>
+        </Box>
+      ),
+    },
+    {
+      field: 'isHalfDay',
+      headerName: 'Duration',
+      width: 160,
+      renderCell: (params) => {
+        const durationText = params.row.isHalfDay === 't'
+          ? `Half Day (${params.row.halfDayPeriod})`
+          : `Full Day (${params.row.totalDays} day${params.row.totalDays > 1 ? 's' : ''})`;
+
+        return (
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            // justifyContent: 'center',
+            height: '100%',
+            width: '100%'
+          }}>
+            <Typography variant="body2" sx={{ textAlign: 'center' }}>
+              {durationText}
+            </Typography>
+          </Box>
+        );
+      },
+    },
+    // {
+    //   field: 'totalDays',
+    //   headerName: 'Total Days',
+    //   width: 100,
+    //   align: 'center',
+    //   headerAlign: 'center',
+    //   renderCell: (params) => (
+    //     <Chip
+    //       label={params.value}
+    //       size="small"
+    //       color="default"
+    //       variant="filled"
+    //     />
+    //   ),
+    // },
+    {
+      field: 'status',
+      headerName: 'Status',
+      width: 120,
+      renderCell: (params) => {
+        const getStatusColor = (status) => {
+          switch (status?.toLowerCase()) {
+            case 'approved': return 'success';
+            case 'pending': return 'warning';
+            case 'rejected': return 'error';
+            default: return 'default';
+          }
+        };
+
+        return (
+          <Chip
+            label={params.value}
+            color={getStatusColor(params.value)}
+            size="small"
+            sx={{ fontWeight: 'medium' }}
+          />
+        );
+      },
+    },
+    {
+      field: 'appliedDate',
+      headerName: 'Applied Date',
+      width: 130,
+    },
+    {
+      field: 'reason',
+      headerName: 'Leave Reason',
+      width: 330,
+      // align: 'center',
+      // headerAlign: 'center',
+      renderCell: (params) => (
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          // justifyContent: 'center',
+          height: '100%',
+          width: '100%'
+        }}>
+          <Typography variant="body2">
+            {params.value}
+          </Typography>
+        </Box>
+      ),
+    },
+  ];
+
+  const handleRefresh = () => {
+    // Refresh data logic
+    console.log('Refreshing leaves data...');
+  };
+
+  const handleExport = () => {
+    // Export data logic
+    console.log('Exporting leaves data...');
+  };
+
+  const handleSelectionChange = (newSelection) => {
+    setSelectedLeaves(newSelection);
+  };
 
   // Load all data
   useEffect(() => {
@@ -549,7 +865,7 @@ const Profile = () => {
   }
 
   return (
-    <Box sx={{ bgcolor: theme.palette.background.default, minHeight: '100vh' }}>
+    <Box sx={{ minHeight: '100vh' }}>
       {/* <PageHeader
         title="My Profile"
         subtitle="Manage your account information and preferences"
@@ -567,618 +883,808 @@ const Profile = () => {
         }}
       /> */}
 
-      {/* Update Progress Overlay */}
-      {isUpdating && (
-        <Box sx={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          bgcolor: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 9999,
-        }}>
-          <Card sx={{ width: 400, p: 3, textAlign: 'center' }}>
-            <CircularProgress sx={{ mb: 2 }} />
-            <Typography variant="h6" gutterBottom>
-              Saving All Changes
-            </Typography>
-            <LinearProgress
-              variant="determinate"
-              value={updateProgress}
-              sx={{ my: 2, height: 8, borderRadius: 4 }}
-            />
-            <Typography variant="body2" color="text.secondary">
-              {updateSteps.find(step => !step.completed)?.label || 'Finalizing...'}
-            </Typography>
-          </Card>
-        </Box>
-      )}
+      <Accordion sx={{
+        m: 3,
+        boxShadow: 4,
+        borderRadius: 3,
+        '&:before': { display: 'none' } // Remove the default divider line
+      }}>
+        <AccordionSummary
+          expandIcon={<ExpandMore />}
+          sx={{
+            bgcolor: 'primary.light',
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+            minHeight: 40,
+            '&.Mui-expanded': {
+              minHeight: 40,
+              borderBottom: '1px solid',
+              bgcolor: 'primary.dark',
+              borderColor: 'divider'
+            }
+          }}
+        // id="panel1-header"
+        >
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            pr: 2
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Person sx={{
+                color: 'white',
+                fontSize: { xs: 24, sm: 26, md: 28 } // Responsive icon size
+              }} />
+              <Typography variant="h6" fontWeight="bold" color="white" sx={{
+                fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' } // Responsive text
+              }}>
+                Profile Management
+              </Typography>
+            </Box>
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails>
+          {/* Update Progress Overlay */}
+          {isUpdating && (
+            <Box sx={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              bgcolor: 'rgba(0,0,0,0.5)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 9999,
+            }}>
+              <Card sx={{ width: 400, p: 3, textAlign: 'center' }}>
+                <CircularProgress sx={{ mb: 2 }} />
+                <Typography variant="h6" gutterBottom>
+                  Saving All Changes
+                </Typography>
+                <LinearProgress
+                  variant="determinate"
+                  value={updateProgress}
+                  sx={{ my: 2, height: 8, borderRadius: 4 }}
+                />
+                <Typography variant="body2" color="text.secondary">
+                  {updateSteps.find(step => !step.completed)?.label || 'Finalizing...'}
+                </Typography>
+              </Card>
+            </Box>
+          )}
 
-      <Box sx={{ position: 'relative', width: '100%', zIndex: 1 }}>
-        <Container maxWidth="xl" sx={{ py: { xs: 3, sm: 4, md: 5 }, position: 'relative', zIndex: 2 }}>
-          <Grid container spacing={3} sx={{ width: '100%', m: 0, justifyContent: 'space-between' }}>
-            {/* Left Column - Profile Overview */}
-            <Grid item xs={12} md={4} lg={6} xl={5} width={{ xl: "20%", md: "40%", lg: "20%", xs: "100%" }}>
-              <Grow in={true} timeout={300}>
-                <Card sx={{ borderRadius: 3, boxShadow: theme.shadows[4], overflow: 'visible', position: 'relative', mb: 3 }}>
-                  <Box sx={{
-                    height: 80,
-                    background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary?.main || theme.palette.primary.light})`,
-                    borderRadius: '12px 12px 0 0',
-                  }} />
+          <Box sx={{ position: 'relative', width: '100%', zIndex: 1 }}>
+            <Container maxWidth="xl" sx={{ py: { xs: 3, sm: 4, md: 5 }, position: 'relative', zIndex: 2 }}>
+              <Grid container spacing={3} sx={{ width: '100%', m: 0, justifyContent: 'space-between' }}>
+                {/* Left Column - Profile Overview */}
+                <Grid item xs={12} md={4} lg={6} xl={5} width={{ xl: "20%", md: "40%", lg: "20%", xs: "100%" }}>
+                  <Grow in={true} timeout={300}>
+                    <Card sx={{ borderRadius: 3, boxShadow: theme.shadows[4], overflow: 'visible', position: 'relative', mb: 3 }}>
+                      <Box sx={{
+                        height: 80,
+                        background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary?.main || theme.palette.primary.light})`,
+                        borderRadius: '12px 12px 0 0',
+                      }} />
 
-                  <CardContent sx={{ textAlign: 'center', p: 3, pt: 0 }}>
-                    <Box sx={{ position: 'relative', display: 'inline-block', mt: -6 }}>
-                      <Badge
-                        overlap="circular"
-                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                        badgeContent={
-                          <Tooltip title="Change avatar">
-                            <label htmlFor="avatar-upload">
-                              <IconButton
-                                component="span"
-                                sx={{
-                                  bgcolor: theme.palette.primary.main,
-                                  color: 'white',
-                                  '&:hover': { bgcolor: theme.palette.primary.dark },
-                                  width: 36,
-                                  height: 36,
-                                  border: `3px solid ${theme.palette.background.paper}`,
-                                }}
-                              >
-                                {uploading ? <CircularProgress size={16} color="inherit" /> : <CameraAlt sx={{ fontSize: 16 }} />}
-                              </IconButton>
-                            </label>
-                          </Tooltip>
-                        }
-                      >
-                        <input
-                          id="avatar-upload"
-                          type="file"
-                          accept="image/*"
-                          style={{ display: 'none' }}
-                          onChange={handleAvatarUpload}
-                          disabled={uploading || !editMode}
-                        />
-                        <Avatar
-                          src={selectedAvatar}
-                          sx={{
-                            width: 120,
-                            height: 120,
-                            fontSize: '3rem',
-                            bgcolor: theme.palette.primary.main,
-                            border: `4px solid ${theme.palette.background.paper}`,
-                            boxShadow: theme.shadows[4],
-                          }}
-                        >
-                          {currentProfileData.name ? currentProfileData.name.charAt(0) : 'U'}
-                        </Avatar>
-                      </Badge>
-                    </Box>
-
-                    <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ mt: 2 }}>
-                      {currentProfileData.name}
-                    </Typography>
-                    <Typography variant="body1" color="text.secondary" paragraph>
-                      {currentProfileData.title}
-                    </Typography>
-                    <Chip
-                      label={currentProfileData.role}
-                      color="primary"
-                      size="small"
-                      icon={<VerifiedUser sx={{ fontSize: 16 }} />}
-                      sx={{ mb: 2 }}
-                    />
-
-                    {/* Last Update Indicator */}
-                    <Box sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: 1,
-                      mb: 3,
-                      p: 1,
-                      borderRadius: 2,
-                      bgcolor: safeAlpha(theme.palette.success.main, 0.1),
-                      border: `1px solid ${safeAlpha(theme.palette.success.main, 0.2)}`,
-                    }}>
-                      <Update sx={{ fontSize: 16, color: theme.palette.success.main }} />
-                      <Typography variant="caption" color="text.secondary">
-                        Last updated: {formatTimeAgo(currentProfileData.lastProfileUpdate)}
-                      </Typography>
-                    </Box>
-
-                    {/* Changes Indicator */}
-                    {editMode && hasChanges && (
-                      <Alert severity="info" sx={{ mb: 2, borderRadius: 2 }}>
-                        <Typography variant="caption">
-                          You have unsaved changes
-                        </Typography>
-                      </Alert>
-                    )}
-
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 3 }}>
-                      <Button
-                        variant={editMode ? 'contained' : 'outlined'}
-                        startIcon={editMode ? <Save /> : <Edit />}
-                        onClick={editMode ? handleSaveProfile : () => setEditMode(true)}
-                        fullWidth
-                        disabled={isUpdating || (editMode && !hasChanges)}
-                        sx={{
-                          py: 1.5,
-                          borderRadius: 2,
-                          transition: 'all 0.3s ease',
-                          '&:hover': { transform: 'translateY(-2px)', boxShadow: theme.shadows[4] },
-                        }}
-                      >
-                        {editMode ? 'Save All Changes' : 'Edit Profile'}
-                      </Button>
-
-                      {editMode && (
-                        <Button
-                          variant="outlined"
-                          color="secondary"
-                          onClick={() => {
-                            setEditMode(false);
-                            setEditedProfileData(originalProfileData);
-                            setTempSkills(profileSkills);
-                            setNewSkill('');
-                            setHasChanges(false);
-                          }}
-                          fullWidth
-                          sx={{ py: 1.5, borderRadius: 2 }}
-                        >
-                          Cancel Editing
-                        </Button>
-                      )}
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grow>
-
-              {/* Update History */}
-              <Grow in={true} timeout={500}>
-                <Card sx={{ borderRadius: 3, boxShadow: theme.shadows[4] }}>
-                  <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                      <Typography variant="h6" fontWeight="bold">
-                        Update History
-                      </Typography>
-                      <IconButton
-                        size="small"
-                        onClick={() => setUpdateHistoryExpanded(!updateHistoryExpanded)}
-                      >
-                        {updateHistoryExpanded ? <ExpandLess /> : <ExpandMore />}
-                      </IconButton>
-                    </Box>
-
-                    <Collapse in={updateHistoryExpanded}>
-                      <List dense>
-                        {profileHistory.slice(0, 5).map((update) => (
-                          <ListItem key={update.id} sx={{ px: 0 }}>
-                            <ListItemIcon sx={{ minWidth: 36 }}>
-                              {getStatusIcon(update.status)}
-                            </ListItemIcon>
-                            <ListItemText
-                              primary={
-                                <Typography variant="body2" fontWeight="medium">
-                                  {update.fieldName} {update.action}
-                                </Typography>
-                              }
-                              secondary={
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                  <Typography variant="caption" color="text.secondary">
-                                    {formatTimeAgo(update.timestamp)}
-                                  </Typography>
-                                  <Chip
-                                    label={update.status}
-                                    size="small"
+                      <CardContent sx={{ textAlign: 'center', p: 3, pt: 0 }}>
+                        <Box sx={{ position: 'relative', display: 'inline-block', mt: -6 }}>
+                          <Badge
+                            overlap="circular"
+                            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                            badgeContent={
+                              <Tooltip title="Change avatar">
+                                <label htmlFor="avatar-upload">
+                                  <IconButton
+                                    component="span"
                                     sx={{
-                                      height: 20,
-                                      fontSize: '0.7rem',
-                                      bgcolor: safeAlpha(
-                                        update.status === 'completed'
-                                          ? theme.palette.success.main
-                                          : update.status === 'pending'
-                                            ? theme.palette.warning.main
-                                            : theme.palette.error.main,
-                                        0.1
-                                      ),
-                                      color:
-                                        update.status === 'completed'
-                                          ? theme.palette.success.main
-                                          : update.status === 'pending'
-                                            ? theme.palette.warning.main
-                                            : theme.palette.error.main,
+                                      bgcolor: theme.palette.primary.main,
+                                      color: 'white',
+                                      '&:hover': { bgcolor: theme.palette.primary.dark },
+                                      width: 36,
+                                      height: 36,
+                                      border: `3px solid ${theme.palette.background.paper}`,
                                     }}
-                                  />
-                                </Box>
-                              }
-                              slotProps={{
-                                secondary: { component: 'span' }    // ✅ New correct API (no <p>)
-                              }}
-                            />
-
-                          </ListItem>
-                        ))}
-                      </List>
-                    </Collapse>
-
-                    <Button
-                      fullWidth
-                      startIcon={<History />}
-                      onClick={() => setUpdateHistoryExpanded(!updateHistoryExpanded)}
-                      sx={{ mt: 2 }}
-                    >
-                      {updateHistoryExpanded ? 'Show Less' : 'Show Update History'}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Grow>
-            </Grid>
-
-            {/* Right Column - Main Content */}
-            <Grid item xs={12} md={8} width={{ xl: "78%", md: "55%", lg: "78%", xs: "100%" }}>
-              <Tabs
-                value={activeTab}
-                onChange={handleTabChange}
-                variant="scrollable"
-                scrollButtons="auto"
-                sx={{
-                  borderBottom: 1,
-                  borderColor: 'divider',
-                  bgcolor: safeAlpha(theme.palette.primary.main, 0.02),
-                }}
-              >
-                {tabs.map((tab, index) => (
-                  <Tab
-                    key={index}
-                    value={index}
-                    icon={tab.icon}
-                    label={tab.label}
-                    iconPosition="start"
-                    sx={{
-                      minHeight: 60,
-                      '&.Mui-selected': {
-                        color: theme.palette.primary.main,
-                        fontWeight: 'bold',
-                      },
-                    }}
-                  />
-                ))}
-              </Tabs>
-              <Zoom in={true} timeout={400}>
-                <Paper sx={{ borderRadius: 3, overflow: 'hidden', boxShadow: theme.shadows[4], mb: 3 }}>
-
-                  <Box sx={{ p: { xs: 2, sm: 3 } }}>
-                    {activeTab === 0 && (
-                      <>
-                        {/* Profile Update Status Banner */}
-                        {editMode && (
-                          <Alert
-                            severity="info"
-                            icon={<Update />}
-                            sx={{ mb: 3, borderRadius: 2 }}
+                                  >
+                                    {uploading ? <CircularProgress size={16} color="inherit" /> : <CameraAlt sx={{ fontSize: 16 }} />}
+                                  </IconButton>
+                                </label>
+                              </Tooltip>
+                            }
                           >
-                            <AlertTitle>Editing Mode Active</AlertTitle>
-                            All changes will be saved together in a single API call when you click "Save All Changes".
+                            <input
+                              id="avatar-upload"
+                              type="file"
+                              accept="image/*"
+                              style={{ display: 'none' }}
+                              onChange={handleAvatarUpload}
+                              disabled={uploading || !editMode}
+                            />
+                            <Avatar
+                              src={selectedAvatar}
+                              sx={{
+                                width: 120,
+                                height: 120,
+                                fontSize: '3rem',
+                                bgcolor: theme.palette.primary.main,
+                                border: `4px solid ${theme.palette.background.paper}`,
+                                boxShadow: theme.shadows[4],
+                              }}
+                            >
+                              {currentProfileData.name ? currentProfileData.name.charAt(0) : 'U'}
+                            </Avatar>
+                          </Badge>
+                        </Box>
+
+                        <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ mt: 2 }}>
+                          {currentProfileData.name}
+                        </Typography>
+                        <Typography variant="body1" color="text.secondary" paragraph>
+                          {currentProfileData.title}
+                        </Typography>
+                        <Chip
+                          label={currentProfileData.role}
+                          color="primary"
+                          size="small"
+                          icon={<VerifiedUser sx={{ fontSize: 16 }} />}
+                          sx={{ mb: 2 }}
+                        />
+
+                        {/* Last Update Indicator */}
+                        <Box sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 1,
+                          mb: 3,
+                          p: 1,
+                          borderRadius: 2,
+                          bgcolor: safeAlpha(theme.palette.success.main, 0.1),
+                          border: `1px solid ${safeAlpha(theme.palette.success.main, 0.2)}`,
+                        }}>
+                          <Update sx={{ fontSize: 16, color: theme.palette.success.main }} />
+                          <Typography variant="caption" color="text.secondary">
+                            Last updated: {formatTimeAgo(currentProfileData.lastProfileUpdate)}
+                          </Typography>
+                        </Box>
+
+                        {/* Changes Indicator */}
+                        {editMode && hasChanges && (
+                          <Alert severity="info" sx={{ mb: 2, borderRadius: 2 }}>
+                            <Typography variant="caption">
+                              You have unsaved changes
+                            </Typography>
                           </Alert>
                         )}
 
-                        <Box sx={{ mb: 4 }}>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                            <Typography variant="h6" fontWeight="bold">
-                              Basic Information
-                            </Typography>
-                          </Box>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 3 }}>
+                          <Button
+                            variant={editMode ? 'contained' : 'outlined'}
+                            startIcon={editMode ? <Save /> : <Edit />}
+                            onClick={editMode ? handleSaveProfile : () => setEditMode(true)}
+                            fullWidth
+                            disabled={isUpdating || (editMode && !hasChanges)}
+                            sx={{
+                              py: 1.5,
+                              borderRadius: 2,
+                              transition: 'all 0.3s ease',
+                              '&:hover': { transform: 'translateY(-2px)', boxShadow: theme.shadows[4] },
+                            }}
+                          >
+                            {editMode ? 'Save All Changes' : 'Edit Profile'}
+                          </Button>
 
-                          <Grid container spacing={2}>
-                            {[
-                              { field: 'name', label: 'Full Name' },
-                              { field: 'title', label: 'Job Title' },
-                              { field: 'company', label: 'Company' },
-                              { field: 'location', label: 'Location' },
-                              { field: 'email', label: 'Email' },
-                              { field: 'phone', label: 'Phone' },
-                              { field: 'github', label: 'github' },
-                              { field: 'linkedin', label: 'linkedIn' },
-                              { field: 'education', label: 'education' },
-                              { field: 'website', label: 'website' },
-                              { field: 'status', label: 'status' },
-                              { field: 'role', label: 'role' },
-                              { field: 'roleType', label: 'roleType' },
-                            ].map((item) => (
-                              <Grid item xs={12} sm={6} key={item.field}>
-                                <TextField
-                                  fullWidth
-                                  label={item.label}
-                                  value={editedProfileData?.[item.field] || currentProfileData[item.field] || ''}
-                                  onChange={(e) => handleInputChange(item.field, e.target.value)}
-                                  disabled={!editMode}
-                                  size="small"
-                                  InputProps={{
-                                    sx: { borderRadius: 2 },
-                                  }}
-                                />
-                              </Grid>
-                            ))}
-                          </Grid>
+                          {editMode && (
+                            <Button
+                              variant="outlined"
+                              color="secondary"
+                              onClick={() => {
+                                setEditMode(false);
+                                setEditedProfileData(originalProfileData);
+                                setTempSkills(profileSkills);
+                                setNewSkill('');
+                                setHasChanges(false);
+                              }}
+                              fullWidth
+                              sx={{ py: 1.5, borderRadius: 2 }}
+                            >
+                              Cancel Editing
+                            </Button>
+                          )}
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grow>
+
+                  {/* Update History */}
+                  <Grow in={true} timeout={500}>
+                    <Card sx={{ borderRadius: 3, boxShadow: theme.shadows[4] }}>
+                      <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                          <Typography variant="h6" fontWeight="bold">
+                            Update History
+                          </Typography>
+                          <IconButton
+                            size="small"
+                            onClick={() => setUpdateHistoryExpanded(!updateHistoryExpanded)}
+                          >
+                            {updateHistoryExpanded ? <ExpandLess /> : <ExpandMore />}
+                          </IconButton>
                         </Box>
 
-                        {/* <Divider sx={{ my: 4 }}>
+                        <Collapse in={updateHistoryExpanded}>
+                          <List dense>
+                            {profileHistory.slice(0, 5).map((update) => (
+                              <ListItem key={update.id} sx={{ px: 0 }}>
+                                <ListItemIcon sx={{ minWidth: 36 }}>
+                                  {getStatusIcon(update.status)}
+                                </ListItemIcon>
+                                <ListItemText
+                                  primary={
+                                    <Typography variant="body2" fontWeight="medium">
+                                      {update.fieldName} {update.action}
+                                    </Typography>
+                                  }
+                                  secondary={
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                      <Typography variant="caption" color="text.secondary">
+                                        {formatTimeAgo(update.timestamp)}
+                                      </Typography>
+                                      <Chip
+                                        label={update.status}
+                                        size="small"
+                                        sx={{
+                                          height: 20,
+                                          fontSize: '0.7rem',
+                                          bgcolor: safeAlpha(
+                                            update.status === 'completed'
+                                              ? theme.palette.success.main
+                                              : update.status === 'pending'
+                                                ? theme.palette.warning.main
+                                                : theme.palette.error.main,
+                                            0.1
+                                          ),
+                                          color:
+                                            update.status === 'completed'
+                                              ? theme.palette.success.main
+                                              : update.status === 'pending'
+                                                ? theme.palette.warning.main
+                                                : theme.palette.error.main,
+                                        }}
+                                      />
+                                    </Box>
+                                  }
+                                  slotProps={{
+                                    secondary: { component: 'span' }    // ✅ New correct API (no <p>)
+                                  }}
+                                />
+
+                              </ListItem>
+                            ))}
+                          </List>
+                        </Collapse>
+
+                        <Button
+                          fullWidth
+                          startIcon={<History />}
+                          onClick={() => setUpdateHistoryExpanded(!updateHistoryExpanded)}
+                          sx={{ mt: 2 }}
+                        >
+                          {updateHistoryExpanded ? 'Show Less' : 'Show Update History'}
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </Grow>
+                </Grid>
+
+                {/* Right Column - Main Content */}
+                <Grid item xs={12} md={8} width={{ xl: "78%", md: "55%", lg: "78%", xs: "100%" }}>
+                  <Tabs
+                    value={activeTab}
+                    onChange={handleTabChange}
+                    variant="scrollable"
+                    scrollButtons="auto"
+                    sx={{
+                      borderBottom: 1,
+                      borderColor: 'divider',
+                      bgcolor: safeAlpha(theme.palette.primary.main, 0.02),
+                    }}
+                  >
+                    {tabs.map((tab, index) => (
+                      <Tab
+                        key={index}
+                        value={index}
+                        icon={tab.icon}
+                        label={tab.label}
+                        iconPosition="start"
+                        sx={{
+                          minHeight: 60,
+                          '&.Mui-selected': {
+                            color: theme.palette.primary.main,
+                            fontWeight: 'bold',
+                          },
+                        }}
+                      />
+                    ))}
+                  </Tabs>
+                  <Zoom in={true} timeout={400}>
+                    <Paper sx={{ borderRadius: 3, overflow: 'hidden', boxShadow: theme.shadows[4], mb: 3 }}>
+
+                      <Box sx={{ p: { xs: 2, sm: 3 } }}>
+                        {activeTab === 0 && (
+                          <>
+                            {/* Profile Update Status Banner */}
+                            {editMode && (
+                              <Alert
+                                severity="info"
+                                icon={<Update />}
+                                sx={{ mb: 3, borderRadius: 2 }}
+                              >
+                                <AlertTitle>Editing Mode Active</AlertTitle>
+                                All changes will be saved together in a single API call when you click "Save All Changes".
+                              </Alert>
+                            )}
+
+                            <Box sx={{ mb: 4 }}>
+                              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                                <Typography variant="h6" fontWeight="bold">
+                                  Basic Information
+                                </Typography>
+                              </Box>
+
+                              <Grid container spacing={2}>
+                                {[
+                                  { field: 'name', label: 'Full Name' },
+                                  { field: 'title', label: 'Job Title' },
+                                  { field: 'company', label: 'Company' },
+                                  { field: 'location', label: 'Location' },
+                                  { field: 'email', label: 'Email' },
+                                  { field: 'phone', label: 'Phone' },
+                                  { field: 'github', label: 'github' },
+                                  { field: 'linkedin', label: 'linkedIn' },
+                                  { field: 'education', label: 'education' },
+                                  { field: 'website', label: 'website' },
+                                  { field: 'status', label: 'status' },
+                                  { field: 'role', label: 'role' },
+                                  { field: 'roleType', label: 'roleType' },
+                                ].map((item) => (
+                                  <Grid item xs={12} sm={6} key={item.field}>
+                                    <TextField
+                                      fullWidth
+                                      label={item.label}
+                                      value={editedProfileData?.[item.field] || currentProfileData[item.field] || ''}
+                                      onChange={(e) => handleInputChange(item.field, e.target.value)}
+                                      disabled={!editMode}
+                                      size="small"
+                                      InputProps={{
+                                        sx: { borderRadius: 2 },
+                                      }}
+                                    />
+                                  </Grid>
+                                ))}
+                              </Grid>
+                            </Box>
+
+                            {/* <Divider sx={{ my: 4 }}>
                           <Chip label="About" size="small" />
                         </Divider> */}
 
-                        <Box sx={{ mb: 4 }}>
-                          <Typography variant="h6" gutterBottom fontWeight="bold" sx={{ mb: 3 }}>
-                            Bio
-                          </Typography>
-                          <TextField
-                            fullWidth
-                            multiline
-                            rows={4}
-                            value={editedProfileData?.bio || currentProfileData.bio || ''}
-                            onChange={(e) => handleInputChange('bio', e.target.value)}
-                            disabled={!editMode}
-                            size="small"
-                            InputProps={{
-                              sx: { borderRadius: 2 },
-                            }}
-                            helperText={editMode ? "Briefly describe yourself and your experience" : ""}
-                          />
-                        </Box>
+                            <Box sx={{ mb: 4 }}>
+                              <Typography variant="h6" gutterBottom fontWeight="bold" sx={{ mb: 3 }}>
+                                Bio
+                              </Typography>
+                              <TextField
+                                fullWidth
+                                multiline
+                                rows={4}
+                                value={editedProfileData?.bio || currentProfileData.bio || ''}
+                                onChange={(e) => handleInputChange('bio', e.target.value)}
+                                disabled={!editMode}
+                                size="small"
+                                InputProps={{
+                                  sx: { borderRadius: 2 },
+                                }}
+                                helperText={editMode ? "Briefly describe yourself and your experience" : ""}
+                              />
+                            </Box>
 
-                        {/* <Divider sx={{ my: 4 }}>
+                            {/* <Divider sx={{ my: 4 }}>
                           <Chip label="Skills & Expertise" size="small" />
                         </Divider> */}
 
-                        <Box sx={{ mb: 4 }}>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                            <Box>
-                              <Typography variant="h6" fontWeight="bold">
-                                Skills
-                              </Typography>
-                              <Typography variant="caption" color="text.secondary">
-                                {tempSkills.length} skills • {editMode ? 'Edit mode' : 'View mode'}
-                              </Typography>
-                            </Box>
-                            {editMode && (
-                              <Button
-                                startIcon={<Add />}
-                                size="small"
-                                onClick={handleAddSkill}
-                                sx={{ borderRadius: 2 }}
-                              >
-                                Add Skill
-                              </Button>
-                            )}
-                          </Box>
-
-                          {editMode && (
-                            <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-                              <TextField
-                                fullWidth
-                                size="small"
-                                placeholder="Enter a new skill (e.g., GraphQL)"
-                                value={newSkill}
-                                onChange={(e) => setNewSkill(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && handleAddSkill()}
-                                InputProps={{
-                                  sx: { borderRadius: 2 },
-                                  endAdornment: (
-                                    <Tooltip title="Press Enter to add">
-                                      <ArrowForward sx={{ color: 'text.disabled' }} />
-                                    </Tooltip>
-                                  ),
-                                }}
-                              />
-                              <Button
-                                variant="contained"
-                                onClick={handleAddSkill}
-                                sx={{ borderRadius: 2, minWidth: 100 }}
-                                disabled={!newSkill.trim()}
-                              >
-                                Add
-                              </Button>
-                            </Box>
-                          )}
-
-                          <Grid container spacing={2}>
-                            {tempSkills.map((skill) => {
-                              const skillColor = getSkillColor(skill.level);
-                              return (
-                                <Grid item xs={12} sm={6} md={4} key={skill.id}>
-                                  <Card sx={{ borderRadius: 2, transition: 'all 0.3s ease' }}>
-                                    <CardContent sx={{ p: 2 }}>
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                                        <Typography variant="subtitle1" fontWeight="bold">
-                                          {skill.skillName}
-                                          {skill.isNew && (
-                                            <Chip
-                                              label="New"
-                                              size="small"
-                                              color="success"
-                                              sx={{ ml: 1, height: 16, fontSize: '0.6rem' }}
-                                            />
-                                          )}
-                                        </Typography>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                          {editMode && (
-                                            <>
-                                              <Tooltip title="Remove skill">
-                                                <IconButton
-                                                  size="small"
-                                                  onClick={() => handleRemoveSkill(skill.id)}
-                                                >
-                                                  <Delete fontSize="small" />
-                                                </IconButton>
-                                              </Tooltip>
-                                              <Select
-                                                value={skill.level}
-                                                onChange={(e) => handleUpdateSkillLevel(skill.id, e.target.value)}
-                                                size="small"
-                                                sx={{ minWidth: 120 }}
-                                                disabled={!editMode}
-                                              >
-                                                <MenuItem value="Beginner">Beginner</MenuItem>
-                                                <MenuItem value="Intermediate">Intermediate</MenuItem>
-                                                <MenuItem value="Advanced">Advanced</MenuItem>
-                                                <MenuItem value="Expert">Expert</MenuItem>
-                                              </Select>
-                                            </>
-                                          )}
-                                          {!editMode && (
-                                            <Chip
-                                              label={skill.level}
-                                              size="small"
-                                              sx={{
-                                                bgcolor: safeAlpha(skillColor, 0.1),
-                                                color: skillColor,
-                                                fontWeight: 'bold',
-                                              }}
-                                            />
-                                          )}
-                                        </Box>
-                                      </Box>
-
-                                      {editMode && (
-                                        <Box sx={{ mb: 1 }}>
-                                          <LinearProgress
-                                            variant="determinate"
-                                            value={(['Beginner', 'Intermediate', 'Advanced', 'Expert'].indexOf(skill.level) + 1) * 25}
-                                            sx={{
-                                              height: 6,
-                                              borderRadius: 3,
-                                              bgcolor: safeAlpha(skillColor, 0.1),
-                                              '& .MuiLinearProgress-bar': {
-                                                bgcolor: skillColor,
-                                              },
-                                            }}
-                                          />
-                                        </Box>
-                                      )}
-
-                                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        {editMode ? (
-                                          <Chip
-                                            label={skill.level}
-                                            size="small"
-                                            sx={{
-                                              bgcolor: safeAlpha(skillColor, 0.1),
-                                              color: skillColor,
-                                              fontWeight: 'bold',
-                                            }}
-                                          />
-                                        ) : (
-                                          <Typography variant="caption" color="text.secondary">
-                                            Level: {skill.level}
-                                          </Typography>
-                                        )}
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                          <Typography variant="caption" color="text.secondary">
-                                            &nbsp;{skill.yearsExperience} year{skill.yearsExperience > 1 ? 's' : ''}
-                                          </Typography>
-                                        </Box>
-                                      </Box>
-                                    </CardContent>
-                                  </Card>
-                                </Grid>
-                              );
-                            })}
-                          </Grid>
-                        </Box>
-                      </>
-                    )}
-
-                    {activeTab === 1 && (
-                      <Box>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                          <Typography variant="h6" fontWeight="bold">
-                            Security Settings
-                          </Typography>
-                        </Box>
-
-                        <Grid container spacing={3}>
-                          <Grid item xs={12}>
-                            <Card sx={{ borderRadius: 2 }}>
-                              <CardContent>
-                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                                  <Box>
-                                    <Typography variant="subtitle1" fontWeight="bold">
-                                      Password
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Change your account password
-                                    </Typography>
-                                  </Box>
+                            <Box sx={{ mb: 4 }}>
+                              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                                <Box>
+                                  <Typography variant="h6" fontWeight="bold">
+                                    Skills
+                                  </Typography>
+                                  <Typography variant="caption" color="text.secondary">
+                                    {tempSkills.length} skills • {editMode ? 'Edit mode' : 'View mode'}
+                                  </Typography>
+                                </Box>
+                                {editMode && (
                                   <Button
-                                    variant="outlined"
-                                    onClick={() => setChangePasswordDialogOpen(true)}
-                                    disabled={!editMode}
+                                    startIcon={<Add />}
+                                    size="small"
+                                    onClick={handleAddSkill}
+                                    sx={{ borderRadius: 2 }}
                                   >
-                                    Change Password
+                                    Add Skill
+                                  </Button>
+                                )}
+                              </Box>
+
+                              {editMode && (
+                                <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+                                  <TextField
+                                    fullWidth
+                                    size="small"
+                                    placeholder="Enter a new skill (e.g., GraphQL)"
+                                    value={newSkill}
+                                    onChange={(e) => setNewSkill(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && handleAddSkill()}
+                                    InputProps={{
+                                      sx: { borderRadius: 2 },
+                                      endAdornment: (
+                                        <Tooltip title="Press Enter to add">
+                                          <ArrowForward sx={{ color: 'text.disabled' }} />
+                                        </Tooltip>
+                                      ),
+                                    }}
+                                  />
+                                  <Button
+                                    variant="contained"
+                                    onClick={handleAddSkill}
+                                    sx={{ borderRadius: 2, minWidth: 100 }}
+                                    disabled={!newSkill.trim()}
+                                  >
+                                    Add
                                   </Button>
                                 </Box>
+                              )}
 
-                                <Alert severity="info" sx={{ mt: 2, borderRadius: 2 }}>
-                                  Password changes will be saved together with other profile updates.
-                                </Alert>
-                              </CardContent>
-                            </Card>
-                          </Grid>
+                              <Grid container spacing={2}>
+                                {tempSkills.map((skill) => {
+                                  const skillColor = getSkillColor(skill.level);
+                                  return (
+                                    <Grid item xs={12} sm={6} md={4} key={skill.id}>
+                                      <Card sx={{ borderRadius: 2, transition: 'all 0.3s ease' }}>
+                                        <CardContent sx={{ p: 2 }}>
+                                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                                            <Typography variant="subtitle1" fontWeight="bold">
+                                              {skill.skillName}
+                                              {skill.isNew && (
+                                                <Chip
+                                                  label="New"
+                                                  size="small"
+                                                  color="success"
+                                                  sx={{ ml: 1, height: 16, fontSize: '0.6rem' }}
+                                                />
+                                              )}
+                                            </Typography>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                              {editMode && (
+                                                <>
+                                                  <Tooltip title="Remove skill">
+                                                    <IconButton
+                                                      size="small"
+                                                      onClick={() => handleRemoveSkill(skill.id)}
+                                                    >
+                                                      <Delete fontSize="small" />
+                                                    </IconButton>
+                                                  </Tooltip>
+                                                  <Select
+                                                    value={skill.level ?? ''}
+                                                    onChange={(e) => handleUpdateSkillLevel(skill.id, e.target.value)}
+                                                    size="small"
+                                                    sx={{ minWidth: 120 }}
+                                                    disabled={!editMode}
+                                                  >
+                                                    <MenuItem value="Beginner">Beginner</MenuItem>
+                                                    <MenuItem value="Intermediate">Intermediate</MenuItem>
+                                                    <MenuItem value="Advanced">Advanced</MenuItem>
+                                                    <MenuItem value="Expert">Expert</MenuItem>
+                                                  </Select>
+                                                </>
+                                              )}
+                                              {!editMode && (
+                                                <Chip
+                                                  label={skill.level}
+                                                  size="small"
+                                                  sx={{
+                                                    bgcolor: safeAlpha(skillColor, 0.1),
+                                                    color: skillColor,
+                                                    fontWeight: 'bold',
+                                                  }}
+                                                />
+                                              )}
+                                            </Box>
+                                          </Box>
 
-                          <Grid item xs={12}>
-                            <Card sx={{ borderRadius: 2 }}>
-                              <CardContent>
-                                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                  <Box>
-                                    <Typography variant="subtitle1" fontWeight="bold">
-                                      Two-Factor Authentication
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                      Add an extra layer of security to your account
-                                    </Typography>
-                                  </Box>
-                                  <FormControlLabel
-                                    control={
-                                      <Switch
-                                        checked={editedProfileData?.twoFactorEnabled ?? currentProfileData.twoFactorEnabled}
-                                        onChange={(e) => handleTwoFactorToggle(e.target.checked)}
-                                        color="primary"
+                                          {editMode && (
+                                            <Box sx={{ mb: 1 }}>
+                                              <LinearProgress
+                                                variant="determinate"
+                                                value={(['Beginner', 'Intermediate', 'Advanced', 'Expert'].indexOf(skill.level) + 1) * 25}
+                                                sx={{
+                                                  height: 6,
+                                                  borderRadius: 3,
+                                                  bgcolor: safeAlpha(skillColor, 0.1),
+                                                  '& .MuiLinearProgress-bar': {
+                                                    bgcolor: skillColor,
+                                                  },
+                                                }}
+                                              />
+                                            </Box>
+                                          )}
+
+                                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            {editMode ? (
+                                              <Chip
+                                                label={skill.level}
+                                                size="small"
+                                                sx={{
+                                                  bgcolor: safeAlpha(skillColor, 0.1),
+                                                  color: skillColor,
+                                                  fontWeight: 'bold',
+                                                }}
+                                              />
+                                            ) : (
+                                              <Typography variant="caption" color="text.secondary">
+                                                Level: {skill.level}
+                                              </Typography>
+                                            )}
+                                            {/* <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                              <Typography variant="caption" color="text.secondary">
+                                                &nbsp;{skill.yearsExperience} year{skill.yearsExperience > 1 ? 's' : ''}
+                                              </Typography>
+                                            </Box> */}
+                                          </Box>
+                                        </CardContent>
+                                      </Card>
+                                    </Grid>
+                                  );
+                                })}
+                              </Grid>
+                            </Box>
+                          </>
+                        )}
+
+                        {activeTab === 1 && (
+                          <Box>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                              <Typography variant="h6" fontWeight="bold">
+                                Security Settings
+                              </Typography>
+                            </Box>
+
+                            <Grid container spacing={3}>
+                              <Grid item xs={12}>
+                                <Card sx={{ borderRadius: 2 }}>
+                                  <CardContent>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                                      <Box>
+                                        <Typography variant="subtitle1" fontWeight="bold">
+                                          Password
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                          Change your account password
+                                        </Typography>
+                                      </Box>
+                                      <Button
+                                        variant="outlined"
+                                        onClick={() => setChangePasswordDialogOpen(true)}
                                         disabled={!editMode}
+                                      >
+                                        Change Password
+                                      </Button>
+                                    </Box>
+
+                                    <Alert severity="info" sx={{ mt: 2, borderRadius: 2 }}>
+                                      Password changes will be saved together with other profile updates.
+                                    </Alert>
+                                  </CardContent>
+                                </Card>
+                              </Grid>
+
+                              <Grid item xs={12}>
+                                <Card sx={{ borderRadius: 2 }}>
+                                  <CardContent>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                      <Box>
+                                        <Typography variant="subtitle1" fontWeight="bold">
+                                          Two-Factor Authentication
+                                        </Typography>
+                                        <Typography variant="body2" color="text.secondary">
+                                          Add an extra layer of security to your account
+                                        </Typography>
+                                      </Box>
+                                      <FormControlLabel
+                                        control={
+                                          <Switch
+                                            checked={editedProfileData?.twoFactorEnabled ?? currentProfileData.twoFactorEnabled}
+                                            onChange={(e) => handleTwoFactorToggle(e.target.checked)}
+                                            color="primary"
+                                            disabled={!editMode}
+                                          />
+                                        }
+                                        label=""
                                       />
-                                    }
-                                    label=""
-                                  />
-                                </Box>
-                                {currentProfileData.twoFactorEnabled ? (
-                                  <Alert severity="success" sx={{ mt: 2, borderRadius: 2 }}>
-                                    <AlertTitle>2FA Active</AlertTitle>
-                                    Two-factor authentication is currently protecting your account.
-                                  </Alert>
-                                ) : (
-                                  <Alert severity="warning" sx={{ mt: 2, borderRadius: 2 }}>
-                                    <AlertTitle>2FA Not Active</AlertTitle>
-                                    Enable two-factor authentication for enhanced security.
-                                  </Alert>
-                                )}
-                              </CardContent>
-                            </Card>
-                          </Grid>
-                        </Grid>
+                                    </Box>
+                                    {currentProfileData.twoFactorEnabled ? (
+                                      <Alert severity="success" sx={{ mt: 2, borderRadius: 2 }}>
+                                        <AlertTitle>2FA Active</AlertTitle>
+                                        Two-factor authentication is currently protecting your account.
+                                      </Alert>
+                                    ) : (
+                                      <Alert severity="warning" sx={{ mt: 2, borderRadius: 2 }}>
+                                        <AlertTitle>2FA Not Active</AlertTitle>
+                                        Enable two-factor authentication for enhanced security.
+                                      </Alert>
+                                    )}
+                                  </CardContent>
+                                </Card>
+                              </Grid>
+                            </Grid>
+                          </Box>
+                        )}
                       </Box>
-                    )}
-                  </Box>
-                </Paper>
-              </Zoom>
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
+                    </Paper>
+                  </Zoom>
+                </Grid>
+              </Grid>
+            </Container>
+          </Box>
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion
+        defaultExpanded
+        sx={{
+          m: 3,
+          boxShadow: 4,
+          borderRadius: 3,
+          '&:before': { display: 'none' } // Remove the default divider line
+        }}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMore />}
+          sx={{
+            bgcolor: 'primary.light',
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+            minHeight: 40,
+            '&.Mui-expanded': {
+              minHeight: 40,
+              borderBottom: '1px solid',
+              bgcolor: 'primary.dark',
+              borderColor: 'divider'
+            }
+          }}
+        >
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            pr: 2,
+
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <CalendarToday sx={{
+                color: 'white',
+                fontSize: { xs: 24, sm: 28 },
+                // display: { xs: 'none', sm: 'block' } // Hide icon on xs
+              }} />
+
+              <Typography variant="h6" fontWeight="bold" color="white" sx={{
+                fontSize: { xs: '1rem', sm: '1.25rem' }
+              }}>
+                Leave Management
+              </Typography>
+
+              <Chip
+                label={`${leaves.length} Leaves`}
+                size="small"
+                sx={{
+                  bgcolor: 'white',
+                  color: 'primary.main',
+                  fontWeight: 'bold',
+                  display: { xs: 'none', sm: 'flex' },
+                  fontSize: { sm: '0.75rem', md: '0.875rem' }
+                }}
+              />
+
+              {/* Show only count on small screens */}
+              <Chip
+                label={leaves.length}
+                size="small"
+                sx={{
+                  bgcolor: 'white',
+                  color: 'primary.main',
+                  fontWeight: 'bold',
+                  display: { xs: 'flex', sm: 'none' },
+                  minWidth: '28px',
+                  height: '28px',
+                  '& .MuiChip-label': {
+                    px: 0.5
+                  }
+                }}
+              />
+            </Box>
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails sx={{ p: 3 }}>
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 3,
+            flexWrap: 'wrap',
+            gap: 2
+          }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <TextField
+                placeholder="Search leaves..."
+                size="small"
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                sx={{ width: 300 }}
+              />
+              {/* <Tooltip title="Filter">
+                <IconButton>
+                  <FilterList />
+                </IconButton>
+              </Tooltip> */}
+            </Box>
+
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              {selectedLeaves.length > 0 && (
+                <Typography variant="body2" color="textSecondary" sx={{ alignSelf: 'center', mr: 1 }}>
+                  {selectedLeaves.length} selected
+                </Typography>
+              )}
+            </Box>
+          </Box>
+
+          {/* DataGrid */}
+          <Paper
+            sx={{
+              height: 500,
+              width: '88.3%',
+              borderRadius: 2,
+              overflow: 'hidden',
+              margin: '0px 6%'
+            }}
+          >
+            <DataGrid
+
+              // checkboxSelection
+              disableRowSelectionOnClick
+              rows={filteredLeaves}
+              columns={columns}
+              getRowId={(row) => row.leaveId}
+              paginationModel={paginationModel}
+              onPaginationModelChange={setPaginationModel}
+              pageSizeOptions={[5, 10, 25, 50]}
+              sx={{
+                height: 500,
+                border: 'none',
+                '& .MuiDataGrid-columnHeader': {
+                  backgroundColor: '#224e67ff !important',
+                },
+                '& .MuiDataGrid-columnHeaderTitle': {
+                  color: '#fdfafaff !important',
+                  fontWeight: 'bold !important',
+                },
+              }}
+            />
+          </Paper>
+        </AccordionDetails>
+      </Accordion>
 
       {/* Change Password Dialog */}
       <Dialog
@@ -1305,6 +1811,19 @@ const Profile = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
+
+      {/* Dialog for viewing/editing leave */}
+      <LeaveFormDialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        onSubmit={handleFormSubmit}
+        initialData={currentLeave}
+        title={currentLeave ? 'View Leave Details' : 'Add Leave'}
+        submitText={currentLeave ? 'Update' : 'Add'}
+        showStatusField={!!currentLeave}
+        mode="dialog"
+        viewMode={viewMode}
+      />
     </Box>
   );
 };

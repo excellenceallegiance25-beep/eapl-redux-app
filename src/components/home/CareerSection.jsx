@@ -67,7 +67,7 @@ const CareerSection = () => {
     // Move the function definition inside useEffect
     const loadConfigs = async () => {
       const result = await dispatch(getJobOpeningsList());
-      console.log('Configurations loaded successfully', 'success');
+      // console.log('Configurations loaded successfully', 'success');
       if (result.type === "JOB_OPENING_LIST") {
         setOpenings(result.payload);
       }
@@ -128,7 +128,7 @@ const CareerSection = () => {
               </Stack>
 
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                <Button
+                {/* <Button
                   variant="contained"
                   color="primary"
                   size={isMobile ? "medium" : "large"}
@@ -143,7 +143,7 @@ const CareerSection = () => {
                   }}
                 >
                   View Open Positions
-                </Button>
+                </Button> */}
                 <Button
                   variant="outlined"
                   size={isMobile ? "medium" : "large"}
@@ -161,7 +161,7 @@ const CareerSection = () => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          {/* <Grid item xs={12} md={6}>
             <Paper
               elevation={0}
               sx={{
@@ -243,7 +243,7 @@ const CareerSection = () => {
                 ))}
               </Stack>
             </Paper>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Container>
     </Box>

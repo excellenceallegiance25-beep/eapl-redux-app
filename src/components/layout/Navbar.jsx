@@ -1,41 +1,39 @@
-import React, { useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import {
+  AppRegistration,
+  Build,
+  Business,
+  ContactMail,
+  Dashboard,
+  Home,
+  Info,
+  Login,
+  Logout,
+  Menu as MenuIcon,
+  Person
+} from '@mui/icons-material';
 import {
   AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  IconButton,
-  Menu,
-  MenuItem,
-  Box,
-  Container,
   Avatar,
-  Tooltip,
+  Box,
+  Button,
+  Container,
   Drawer,
+  IconButton,
   List,
   ListItem,
-  ListItemText,
   ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Tooltip,
+  Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import {
-  Menu as MenuIcon,
-  Home,
-  Info,
-  Build,
-  ShoppingCart,
-  Article,
-  ContactMail,
-  Dashboard,
-  Person,
-  Logout,
-  Login,
-  AppRegistration,
-  Business,
-} from '@mui/icons-material';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '../../redux/slices/authSlice';
 import RegisterPopup from '../auth/RegisterPopup';
 
@@ -43,11 +41,19 @@ const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [registerOpen, setRegisterOpen] = useState(false);
+  const [activePath, setActivePath] = useState('/');
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { isAuthenticated, user } = useSelector((state) => state.auth);
+
+  // Update active path when location changes
+  useEffect(() => {
+    setActivePath(location.pathname);
+  }, [location.pathname]);
 
   // Navigation items for non-authenticated users
   const publicMenuItems = [
@@ -59,10 +65,10 @@ const Navbar = () => {
     { text: 'Contact', path: '/contact', icon: <ContactMail /> },
   ];
 
-  // Get user ID for navigation - if no user, use a default or handle gracefully
+  // Get user ID for navigation
   const userId = user?.id;
 
-  // Navigation items for authenticated users - WITH USER ID IN URL
+  // Navigation items for authenticated users
   const privateMenuItems = [
     { text: 'Dashboard', path: `/dashboard/${userId}`, icon: <Dashboard /> },
     { text: 'Profile', path: `/profile/${userId}`, icon: <Person /> },
@@ -70,6 +76,22 @@ const Navbar = () => {
 
   // Use appropriate menu items based on authentication
   const menuItems = isAuthenticated ? privateMenuItems : publicMenuItems;
+
+  // Helper function to check if a path is active
+  const isActive = (path) => {
+    // For home page exact match
+    if (path === '/') {
+      return activePath === '/';
+    }
+
+    // For dashboard and profile with dynamic userId
+    if (path.includes('/dashboard/') || path.includes('/profile/')) {
+      return activePath.startsWith(path.split('/')[1]); // Check if path starts with 'dashboard' or 'profile'
+    }
+
+    // For other paths
+    return activePath.startsWith(path);
+  };
 
   const handleLogout = () => {
     dispatch(logout());
@@ -100,26 +122,36 @@ const Navbar = () => {
         </Box>
       </Typography>
       <List>
-        {menuItems.map((item) => (
-          <ListItem
-            key={item.text}
-            component={RouterLink}
-            to={item.path}
-            sx={{
-              textDecoration: 'none',
-              color: 'inherit',
-              '&:hover': {
-                backgroundColor: 'action.hover',
-              }
-            }}
-          >
-            <ListItemIcon sx={{ color: 'primary.main' }}>{item.icon}</ListItemIcon>
-            <ListItemText
-              primary={item.text}
-              primaryTypographyProps={{ fontWeight: 'medium' }}
-            />
-          </ListItem>
-        ))}
+        {menuItems.map((item) => {
+          const active = isActive(item.path);
+          return (
+            <ListItem
+              key={item.text}
+              component={RouterLink}
+              to={item.path}
+              sx={{
+                textDecoration: 'none',
+                color: active ? 'primary.main' : 'inherit',
+                backgroundColor: active ? 'rgba(25, 118, 210, 0.08)' : 'transparent',
+                borderLeft: active ? `4px solid ${theme.palette.primary.main}` : 'none',
+                '&:hover': {
+                  backgroundColor: 'action.hover',
+                }
+              }}
+            >
+              <ListItemIcon sx={{ color: active ? 'primary.main' : 'inherit' }}>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText
+                primary={item.text}
+                primaryTypographyProps={{
+                  fontWeight: active ? 'bold' : 'medium',
+                  color: active ? 'primary.main' : 'inherit'
+                }}
+              />
+            </ListItem>
+          );
+        })}
         {!isAuthenticated ? (
           <>
             <ListItem
@@ -127,18 +159,23 @@ const Navbar = () => {
               to="/login"
               sx={{
                 textDecoration: 'none',
-                color: 'inherit',
+                color: activePath === '/login' ? 'primary.main' : 'inherit',
+                backgroundColor: activePath === '/login' ? 'rgba(25, 118, 210, 0.08)' : 'transparent',
+                borderLeft: activePath === '/login' ? `4px solid ${theme.palette.primary.main}` : 'none',
                 '&:hover': {
                   backgroundColor: 'action.hover',
                 }
               }}
             >
-              <ListItemIcon sx={{ color: 'primary.main' }}>
+              <ListItemIcon sx={{ color: activePath === '/login' ? 'primary.main' : 'inherit' }}>
                 <Login />
               </ListItemIcon>
               <ListItemText
                 primary="Login"
-                primaryTypographyProps={{ fontWeight: 'medium' }}
+                primaryTypographyProps={{
+                  fontWeight: activePath === '/login' ? 'bold' : 'medium',
+                  color: activePath === '/login' ? 'primary.main' : 'inherit'
+                }}
               />
             </ListItem>
             <ListItem
@@ -149,7 +186,8 @@ const Navbar = () => {
               sx={{
                 cursor: 'pointer',
                 '&:hover': {
-                  backgroundColor: 'action.hover',
+                  backgroundColor: 'secondary.light',
+                  color: 'white',
                 }
               }}
             >
@@ -243,7 +281,7 @@ const Navbar = () => {
                 flexGrow: 1,
                 fontWeight: 700,
                 textDecoration: 'none',
-                color: 'primary.main',
+                color: activePath === '/' ? 'primary.main' : 'primary.main',
                 display: 'flex',
                 alignItems: 'center',
                 fontSize: { xs: '1rem', sm: '1.25rem' },
@@ -267,47 +305,52 @@ const Navbar = () => {
                 {/* Show menu items for non-authenticated users */}
                 {!isAuthenticated && (
                   <Box sx={{ display: 'flex', gap: 1 }}>
-                    {publicMenuItems.map((item) => (
-                      <Button
-                        key={item.text}
-                        component={RouterLink}
-                        to={item.path}
-                        color="inherit"
-                        sx={{
-                          color: 'text.primary',
-                          '&:hover': {
-                            color: 'primary.main',
-                            backgroundColor: 'action.hover'
-                          }
-                        }}
-                      >
-                        {item.text}
-                      </Button>
-                    ))}
+                    {publicMenuItems.map((item) => {
+                      const active = isActive(item.path);
+                      return (
+                        <Button
+                          key={item.text}
+                          component={RouterLink}
+                          to={item.path}
+                          sx={{
+                            color: active ? 'primary.main' : 'text.primary',
+                            fontWeight: active ? 'bold' : 'normal',
+                            '&:hover': {
+                              color: 'primary.main',
+                              backgroundColor: 'action.hover'
+                            }
+                          }}
+                        >
+                          {item.text}
+                        </Button>
+                      );
+                    })}
                   </Box>
                 )}
 
-                {/* Show only Dashboard and Profile for authenticated users WITH USER ID */}
+                {/* Show only Dashboard and Profile for authenticated users */}
                 {isAuthenticated && (
                   <Box sx={{ display: 'flex', gap: 1 }}>
-                    {privateMenuItems.map((item) => (
-                      <Button
-                        key={item.text}
-                        component={RouterLink}
-                        to={item.path}
-                        color="inherit"
-                        startIcon={item.icon}
-                        sx={{
-                          color: 'text.primary',
-                          '&:hover': {
-                            color: 'primary.main',
-                            backgroundColor: 'action.hover'
-                          }
-                        }}
-                      >
-                        {item.text}
-                      </Button>
-                    ))}
+                    {privateMenuItems.map((item) => {
+                      const active = isActive(item.path);
+                      return (
+                        <Button
+                          key={item.text}
+                          component={RouterLink}
+                          to={item.path}
+                          sx={{
+                            color: active ? 'primary.main' : 'text.primary',
+                            fontWeight: active ? 'bold' : 'normal',
+                            '&:hover': {
+                              color: 'primary.main',
+                              backgroundColor: 'action.hover'
+                            }
+                          }}
+                        >
+                          {item.text}
+                        </Button>
+                      );
+                    })}
                   </Box>
                 )}
 
@@ -355,7 +398,11 @@ const Navbar = () => {
                           component={RouterLink}
                           to={`/profile/${userId}`}
                           onClick={handleClose}
-                          sx={{ py: 1.5 }}
+                          sx={{
+                            py: 1.5,
+                            color: activePath.includes('/profile/') ? 'primary.main' : 'inherit',
+                            fontWeight: activePath.includes('/profile/') ? 'bold' : 'normal',
+                          }}
                         >
                           <Person sx={{ mr: 2, color: 'primary.main' }} />
                           <Box>
@@ -395,6 +442,7 @@ const Navbar = () => {
                         startIcon={<Login />}
                         sx={{
                           borderWidth: 2,
+                          fontWeight: activePath === '/login' ? 'bold' : 'normal',
                           '&:hover': {
                             borderWidth: 2,
                             backgroundColor: 'primary.light',

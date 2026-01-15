@@ -242,6 +242,16 @@ const RegisterPopup = ({ open, onClose }) => {
       message: '',
       type: null
     });
+    setFormData({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      company: '',
+      password: '',
+      confirmPassword: '',
+      acceptTerms: false,
+    });
     onClose();
   };
 
@@ -336,6 +346,7 @@ const RegisterPopup = ({ open, onClose }) => {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
+                    placeholder="Pramod"
                     label="First Name"
                     name="firstName"
                     value={formData.firstName}
@@ -357,6 +368,7 @@ const RegisterPopup = ({ open, onClose }) => {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
+                    placeholder="Kumar"
                     label="Last Name"
                     name="lastName"
                     value={formData.lastName}
@@ -378,6 +390,7 @@ const RegisterPopup = ({ open, onClose }) => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
+                    placeholder="eapl@gmail.com"
                     label="Email Address"
                     name="email"
                     type="email"
@@ -402,10 +415,11 @@ const RegisterPopup = ({ open, onClose }) => {
                     fullWidth
                     label="Phone Number (Optional)"
                     name="phone"
+                    type="tel"
                     value={formData.phone}
                     onChange={(e) => {
-                      const formatted = formatPhoneNumber(e.target.value);
-                      handleChange({ target: { name: 'phone', value: formatted } });
+                      // const formatted = formatPhoneNumber(e.target.value);
+                      handleChange({ target: { name: 'phone', value: e.target.value } });
                     }}
                     error={!!errors.phone}
                     helperText={errors.phone}
@@ -417,7 +431,7 @@ const RegisterPopup = ({ open, onClose }) => {
                         </InputAdornment>
                       ),
                     }}
-                    placeholder="(123) 456-7890"
+                    placeholder="00 000 000 00"
                   />
                 </Grid>
 
@@ -425,6 +439,7 @@ const RegisterPopup = ({ open, onClose }) => {
                   <TextField
                     fullWidth
                     label="Company Name"
+                    placeholder="E A PVT LTD"
                     name="company"
                     value={formData.company}
                     onChange={handleChange}
@@ -447,6 +462,7 @@ const RegisterPopup = ({ open, onClose }) => {
                     <InputLabel>Password *</InputLabel>
                     <OutlinedInput
                       type={showPassword ? 'text' : 'password'}
+                      placeholder="Abcd@2025"
                       name="password"
                       value={formData.password}
                       onChange={handleChange}

@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import TrustIndicators from './TrustIndicators';
 import home_background from '../../assets/images/home_bg.avif';
+import { Link as RouterLink } from 'react-router-dom';
 
 const HeroSection = () => {
   const theme = useTheme();
@@ -134,7 +135,30 @@ const HeroSection = () => {
               justifyContent="center"
               sx={{ mb: { xs: 6, md: 8 } }}
             >
+
+              {/* Version 1.0  1_0_EAPL_2026*/}
               <Button
+                variant="contained"
+                color="secondary"
+                size={isMobile ? "medium" : "large"}
+                endIcon={<ArrowForward />}
+                // onClick={handleGetStarted}
+                component={RouterLink}
+                to="/contact"
+                sx={{
+                  py: { xs: 1.5, md: 2 },
+                  px: { xs: 3, md: 4 },
+                  fontSize: { xs: '1rem', md: '1.1rem' },
+                  fontWeight: 'bold',
+                  borderRadius: 2,
+                  minWidth: { xs: '100%', sm: 200 },
+                }}
+              >
+                Start Free Trial
+              </Button>
+              {/* Version 1.0 1_0_EAPL_2026*/}
+
+              {/* <Button
                 variant="contained"
                 color="secondary"
                 size={isMobile ? "medium" : "large"}
@@ -150,8 +174,9 @@ const HeroSection = () => {
                 }}
               >
                 Start Free Trial
-              </Button>
-              <Button
+              </Button> */}
+
+              {/* <Button
                 variant="outlined"
                 color="inherit"
                 size={isMobile ? "medium" : "large"}
@@ -166,7 +191,7 @@ const HeroSection = () => {
                 }}
               >
                 Watch Demo
-              </Button>
+              </Button> */}
             </Stack>
 
             {/* <TrustIndicators /> */}

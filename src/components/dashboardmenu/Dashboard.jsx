@@ -1,67 +1,61 @@
 // components/dashboardmenu/Dashboard.jsx
-import React, { useState, useEffect, Profiler } from 'react';
-import { useSelector } from 'react-redux';
-import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import {
+    AccountTree,
+    ArrowForward,
+    Business,
+    CalendarToday,
+    CheckCircle,
+    ChevronLeft,
+    Close,
+    Dashboard as DashboardIcon,
+    Group,
+    KeyboardArrowDown,
+    Logout,
+    Menu as MenuIcon,
+    Notifications,
+    PendingActions,
+    PendingActions as PendingIcon,
+    People,
+    Person,
+    Work
+} from '@mui/icons-material';
+import {
+    alpha,
+    AppBar,
+    Avatar,
+    Badge,
     Box,
+    Button,
+    Card,
+    CardContent,
+    Chip,
+    Container,
     Drawer,
+    Grid,
+    IconButton,
     List,
     ListItem,
     ListItemIcon,
     ListItemText,
-    Avatar,
-    Typography,
-    Chip,
-    AppBar,
-    Toolbar,
-    IconButton,
-    Badge,
-    Stack,
-    Container,
-    Button,
-    Card,
-    CardContent,
-    Grid,
     Paper,
-    useTheme,
+    Stack,
+    Toolbar,
+    Typography,
     useMediaQuery,
-    Divider,
-    alpha,
-    Hidden
+    useTheme
 } from '@mui/material';
-import {
-    Menu as MenuIcon,
-    Notifications,
-    Dashboard as DashboardIcon,
-    Assignment,
-    CalendarToday,
-    Person,
-    People,
-    PendingActions,
-    Business,
-    AccountTree,
-    Logout,
-    ArrowForward,
-    CheckCircle,
-    PendingActions as PendingIcon,
-    Group,
-    Work,
-    AccessTime,
-    ChevronLeft,
-    Close,
-    MoreVert,
-    KeyboardArrowDown,
-    Home,
-    BusinessCenter,
-    SupervisorAccount
-} from '@mui/icons-material';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 
 // Import child components
+import Profile from '../../pages/Profile';
+import { logout } from '../../redux/slices/authSlice';
 import { EmployeeManagementPage } from './EmployeeManagementPage';
 import { LeaveManagementPage } from './LeaveManagementPage';
-import { ServicesManagementPage } from './ServicesManagementPage';
 import { PartnersManagementPage } from './PartnersManagementPage';
-import Profile from '../../pages/Profile';
+import { ServicesManagementPage } from './ServicesManagementPage';
+import { LeaveRequestPage } from './LeaveRequestPage';
 
 const DashboardSidebar = ({ open, onClose, role, userName, mobileOpen, handleDrawerToggle }) => {
     const userRole = role || 'employee';
@@ -70,10 +64,18 @@ const DashboardSidebar = ({ open, onClose, role, userName, mobileOpen, handleDra
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'lg'));
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const handleLogout = () => {
+        dispatch(logout());
+        navigate('/');
+        // setAnchorEl(null);
+    };
+
     const commonItems = [
         { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-        { text: 'My Projects', icon: <Assignment />, path: '/dashboard/my-projects' },
-        { text: 'Leave Application', icon: <CalendarToday />, path: '/dashboard/leave' },
+        // { text: 'My Projects', icon: <Assignment />, path: '/dashboard/my-projects' },
+        { text: 'Leave Application', icon: <CalendarToday />, path: '/dashboard/leave-request' },
         { text: 'My Profile', icon: <Person />, path: '/dashboard/profile' },
     ];
 
@@ -171,7 +173,6 @@ const DashboardSidebar = ({ open, onClose, role, userName, mobileOpen, handleDra
                         const isActive = location.pathname === item.path;
                         return (
                             <ListItem
-                                button
                                 key={item.text}
                                 component={RouterLink}
                                 to={item.path}
@@ -216,8 +217,11 @@ const DashboardSidebar = ({ open, onClose, role, userName, mobileOpen, handleDra
                     fullWidth
                     variant="outlined"
                     startIcon={<Logout />}
-                    component={RouterLink}
-                    to="/"
+                    // component={RouterLink}
+                    // to="/"
+                    onClick={() => {
+                        handleLogout();
+                    }}
                     sx={{
                         justifyContent: 'flex-start',
                         textTransform: 'none',
@@ -765,6 +769,8 @@ const Dashboard = () => {
                 return 'Dashboard';
             case path.includes('employees'):
                 return 'Employee Management';
+            case path.includes('/leave-request'):
+                return 'Leave Application';
             case path.includes('leave-management'):
                 return 'Leave Management';
             case path.includes('services'):
@@ -780,6 +786,8 @@ const Dashboard = () => {
         switch (path) {
             case '/dashboard/employees':
                 return <EmployeeManagementPage />;
+            case '/dashboard/leave-request':
+                return <LeaveRequestPage />;
             case '/dashboard/leave-management':
                 return <LeaveManagementPage />;
             case '/dashboard/services':
@@ -898,7 +906,7 @@ const Dashboard = () => {
                     p: 3,
                     overflowY: 'auto',
                     overflowX: 'hidden',
-                    '-webkit-overflow-scrolling': 'touch'
+                    WebkitOverflowScrolling: 'touch'
                 }}>
                     {renderContent()}
                 </Box>
@@ -909,4 +917,4 @@ const Dashboard = () => {
 
 // Export Dashboard as default and also export child components
 export default Dashboard;
-export { EmployeeManagementPage, LeaveManagementPage, ServicesManagementPage, PartnersManagementPage };
+export { EmployeeManagementPage, LeaveManagementPage, PartnersManagementPage, ServicesManagementPage };

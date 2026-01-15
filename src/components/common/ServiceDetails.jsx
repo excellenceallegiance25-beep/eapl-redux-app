@@ -18,31 +18,17 @@ import {
   ListItemIcon,
   Card,
   CardContent,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Tabs,
   Tab,
-  Breadcrumbs,
-  Link,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  MenuItem,
   Alert,
   CircularProgress,
   Divider,
+  Fade,
+  Tooltip,
 } from '@mui/material';
 import {
   ArrowBack,
   Edit,
-  Download,
-  Share,
   Timeline,
   People,
   AttachMoney,
@@ -52,12 +38,17 @@ import {
   Error,
   Warning,
   Pending,
-  Comment,
-  Attachment,
   Person,
   Phone,
   Email,
   LocationOn,
+  Language,
+  Business,
+  ConnectWithoutContact,
+  Speed,
+  Star,
+  TrendingUp,
+  Security,
   Cloud,
   Code,
   DesignServices,
@@ -66,14 +57,7 @@ import {
   Web,
   Smartphone,
   Storage,
-  Security,
-  Save,
-  Close,
-  Language,
-  Business,
-  ConnectWithoutContact,
 } from '@mui/icons-material';
-import { Link as RouterLink } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { getApplicationServicesList } from '../../services/AppConfigAction';
 
@@ -92,279 +76,118 @@ const serviceIcons = {
   'Default': Cloud,
 };
 
-// ========== INDEPENDENT ARRAYS ==========
-
-// Service Details Array (enhanced version of your DB data)
-const servicesArray = [
-  {
-    id: 1,
-    title: "Cloud Solutions",
-    description: "Enterprise cloud infrastructure with auto-scaling and global CDN.",
-    icon: "☁️",
-    color: "#2196F3",
-    features: "AWS/Azure,Migration,DevOps",
-    category: "Cloud",
-    details: "We provide end-to-end cloud solutions including migration strategy, implementation, and ongoing management. Our team ensures 99.9% uptime and optimal performance.",
-    price: "$5000/month",
-    duration: "Ongoing",
-    status: "active",
-    progress: 85,
-    startDate: "2024-01-15",
-    endDate: "2024-06-30",
-    budget: "$45,200",
-    spent: "$38,420",
-    teamLead: "Alex Johnson",
-    client: "TechCorp Inc.",
-    priority: "high",
-    contactPerson: "John Smith",
-    contactEmail: "john@techcorp.com",
-    contactPhone: "+1 (555) 123-4567",
-    location: "San Francisco, CA",
-    website: "https://techcorp.com",
-    serviceTeam: [1, 2, 3], // References teamMembers array IDs
-    servicePartners: [101, 102], // References partners array IDs
-    externalSources: [
-      { type: "website", url: "https://aws.amazon.com/solutions/" },
-      { type: "api", url: "https://api.cloudproviders.com/services" }
-    ]
-  },
-  {
-    id: 2,
-    title: "Software Development",
-    description: "Custom applications with modern frameworks and best practices.",
-    icon: "💻",
-    color: "#673AB7",
-    features: "Web Apps,Mobile Apps,APIs",
-    category: "Development",
-    details: "From concept to deployment, we build robust and scalable software solutions using Agile methodology.",
-    price: "$15,000",
-    duration: "3 months",
-    status: "active",
-    progress: 65,
-    startDate: "2024-02-01",
-    endDate: "2024-04-30",
-    budget: "$15,000",
-    spent: "$9,750",
-    teamLead: "Maria Garcia",
-    client: "StartUp Inc.",
-    priority: "medium",
-    contactPerson: "Jane Doe",
-    contactEmail: "jane@startup.com",
-    contactPhone: "+1 (555) 987-6543",
-    location: "Remote",
-    website: "https://startup.com",
-    serviceTeam: [4, 5],
-    servicePartners: [103]
-  },
-  {
-    id: 3,
-    title: "Cybersecurity",
-    description: "Complete security solutions with threat detection and compliance.",
-    icon: "🔒",
-    color: "#F44336",
-    features: "Pen Testing,Encryption,Monitoring",
-    category: "Security",
-    details: "Protect your digital assets with our advanced security solutions including 24/7 monitoring.",
-    price: "$8,000/month",
-    duration: "Ongoing",
-    status: "active",
-    progress: 90,
-    startDate: "2023-11-01",
-    endDate: "2024-10-31",
-    budget: "$96,000",
-    spent: "$72,000",
-    teamLead: "Robert Chen",
-    client: "SecureBank Ltd.",
-    priority: "high",
-    contactPerson: "Mike Johnson",
-    contactEmail: "mike@securebank.com",
-    contactPhone: "+1 (555) 456-1234",
-    location: "Chicago, IL",
-    serviceTeam: [6, 7]
-  }
-];
-
-// Team Members Array (independent)
-const teamMembersArray = [
-  {
-    id: 1,
-    name: "Alex Johnson",
-    role: "Cloud Architect",
-    avatar: "AJ",
-    status: "online",
-    email: "alex@company.com",
-    phone: "+1 (555) 111-2222",
-    expertise: ["AWS", "Azure", "DevOps"],
-    services: [1], // Service IDs they work on
-    joinDate: "2020-03-15"
-  },
-  {
-    id: 2,
-    name: "Sarah Chen",
-    role: "DevOps Engineer",
-    avatar: "SC",
-    status: "online",
-    email: "sarah@company.com",
-    phone: "+1 (555) 222-3333",
-    expertise: ["Docker", "Kubernetes", "CI/CD"],
-    services: [1],
-    joinDate: "2021-06-01"
-  },
-  {
-    id: 3,
-    name: "Mike Wilson",
-    role: "Security Specialist",
-    avatar: "MW",
-    status: "away",
-    email: "mike@company.com",
-    phone: "+1 (555) 333-4444",
-    expertise: ["Security", "Compliance"],
-    services: [1, 3],
-    joinDate: "2019-11-20"
-  },
-  {
-    id: 4,
-    name: "Maria Garcia",
-    role: "Project Manager",
-    avatar: "MG",
-    status: "online",
-    email: "maria@company.com",
-    phone: "+1 (555) 444-5555",
-    expertise: ["Agile", "Scrum", "Project Management"],
-    services: [2],
-    joinDate: "2022-01-10"
-  },
-  {
-    id: 5,
-    name: "Tom Brown",
-    role: "Frontend Developer",
-    avatar: "TB",
-    status: "online",
-    email: "tom@company.com",
-    phone: "+1 (555) 555-6666",
-    expertise: ["React", "JavaScript", "UI/UX"],
-    services: [2],
-    joinDate: "2023-02-15"
-  }
-];
-
-// Partners Array (independent)
-const partnersArray = [
-  {
-    id: 101,
-    name: "Amazon Web Services",
-    type: "Cloud Provider",
-    logo: "AWS",
-    website: "https://aws.amazon.com",
-    contact: "partners@amazon.com",
-    partnershipDate: "2020-01-15",
-    services: [1], // Service IDs they partner on
-    description: "Official AWS partner providing cloud infrastructure solutions"
-  },
-  {
-    id: 102,
-    name: "Microsoft Azure",
-    type: "Cloud Provider",
-    logo: "Azure",
-    website: "https://azure.microsoft.com",
-    contact: "partner@microsoft.com",
-    partnershipDate: "2021-03-20",
-    services: [1],
-    description: "Microsoft Gold Partner for cloud solutions"
-  },
-  {
-    id: 103,
-    name: "GitHub",
-    type: "Development Tools",
-    logo: "GitHub",
-    website: "https://github.com",
-    contact: "partnerships@github.com",
-    partnershipDate: "2022-05-10",
-    services: [2],
-    description: "Code repository and collaboration platform partner"
-  }
-];
-
-// External Sources Array
-const externalSourcesArray = [
-  {
-    id: 1001,
-    serviceId: 1,
-    type: "documentation",
-    url: "https://docs.aws.amazon.com/",
-    title: "AWS Documentation",
-    lastUpdated: "2024-03-01"
-  },
-  {
-    id: 1002,
-    serviceId: 1,
-    type: "api",
-    url: "https://api.status.cloud/",
-    title: "Cloud Status API",
-    lastUpdated: "2024-02-15"
-  }
-];
-
-// ========== COMPONENT ==========
-
 const ServiceDetails = () => {
   const { serviceId } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState(0);
-  const [serviceData, setServiceData] = useState([]);
+  const [serviceData, setServiceData] = useState(null);
   const [teamMembers, setTeamMembers] = useState([]);
   const [partners, setPartners] = useState([]);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [editData, setEditData] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const dispatch = useDispatch();
+
   useEffect(() => {
-    const fetchServiceData = () => {
-      setLoading(true);
-      // Simulate API call
-      setTimeout(async () => {
-        const foundService = servicesArray.find(service => service.id.toString() === serviceId);
+    const fetchServiceDetails = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch services list from your API/Redux
         const result = await dispatch(getApplicationServicesList());
-        console.log('Configurations loaded successfully');
 
         if (result?.type === 'APPCONFIG_INIT') {
-          const foundServiceapi = result.payload.find(
+          // Find the specific service by ID
+          const foundService = result.payload.find(
             service => String(service.id) === String(serviceId)
           );
 
-          setServiceData(foundServiceapi || null);
+          if (foundService) {
+            setServiceData(foundService);
+
+            // In a real app, you would fetch related team members and partners
+            // based on the service ID from separate API calls
+            // For now, we'll use mock data or simulate
+            simulateRelatedData(foundService);
+          } else {
+            setError('Service not found');
+          }
+        } else {
+          setError('Failed to load service data');
         }
-
-
-        if (foundService) {
-          // setServiceData(foundService);
-          setEditData(foundService);
-
-          // Fetch related team members
-          const serviceTeamIds = foundService.serviceTeam || [];
-          const relatedTeamMembers = teamMembersArray.filter(member =>
-            serviceTeamIds.includes(member.id)
-          );
-          setTeamMembers(relatedTeamMembers);
-
-          // Fetch related partners
-          const servicePartnerIds = foundService.servicePartners || [];
-          const relatedPartners = partnersArray.filter(partner =>
-            servicePartnerIds.includes(partner.id)
-          );
-          setPartners(relatedPartners);
-        }
-
+      } catch (err) {
+        console.error('Error fetching service details:', err);
+        setError('Error loading service details');
+      } finally {
         setLoading(false);
-      }, 500);
+      }
     };
 
-    fetchServiceData();
+    fetchServiceDetails();
   }, [serviceId, dispatch]);
 
+  const simulateRelatedData = (service) => {
+    // Mock team members data (in real app, fetch from API)
+    const mockTeamMembers = [
+      {
+        id: 1,
+        name: "Alex Johnson",
+        role: "Lead Engineer",
+        avatar: "AJ",
+        status: "online",
+        email: "alex@company.com",
+        expertise: ["Architecture", "DevOps", "Cloud"],
+        rating: 4.8
+      },
+      {
+        id: 2,
+        name: "Sarah Chen",
+        role: "Security Specialist",
+        avatar: "SC",
+        status: "online",
+        email: "sarah@company.com",
+        expertise: ["Security", "Compliance", "Audit"],
+        rating: 4.9
+      },
+      {
+        id: 3,
+        name: "Mike Wilson",
+        role: "Support Engineer",
+        avatar: "MW",
+        status: "away",
+        email: "mike@company.com",
+        expertise: ["Support", "Maintenance", "Monitoring"],
+        rating: 4.7
+      }
+    ];
+
+    // Mock partners data
+    const mockPartners = [
+      {
+        id: 101,
+        name: "Amazon Web Services",
+        type: "Cloud Provider",
+        logo: "AWS",
+        partnership: "Strategic Partner",
+        since: "2022"
+      },
+      {
+        id: 102,
+        name: "Microsoft",
+        type: "Technology Partner",
+        logo: "MS",
+        partnership: "Gold Partner",
+        since: "2021"
+      }
+    ];
+
+    setTeamMembers(mockTeamMembers);
+    setPartners(mockPartners);
+  };
+
   const getStatusIcon = (status) => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
       case 'completed': return <CheckCircle color="success" />;
       case 'active':
       case 'in-progress': return <Timeline color="primary" />;
@@ -375,7 +198,7 @@ const ServiceDetails = () => {
   };
 
   const getStatusColor = (status) => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
       case 'completed':
       case 'active': return 'success';
       case 'in-progress': return 'primary';
@@ -389,549 +212,784 @@ const ServiceDetails = () => {
     setActiveTab(newValue);
   };
 
-  const handleEditOpen = () => {
-    setEditData(serviceData);
-    setEditDialogOpen(true);
-  };
-
-  const handleEditClose = () => {
-    setEditDialogOpen(false);
-  };
-
-  const handleSaveEdit = () => {
-    // In real app, this would update the DB via API
-    alert('Service updated successfully! (In real app, this would save to database)');
-    setServiceData(editData);
-    setEditDialogOpen(false);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const fetchExternalData = () => {
-    // Simulate fetching from external API
-    const externalSources = externalSourcesArray.filter(source =>
-      source.serviceId === serviceData.id
-    );
-
-    if (externalSources.length > 0) {
-      alert(`Found ${externalSources.length} external sources for this service.\nFirst source: ${externalSources[0].title}`);
-    } else {
-      alert('No external sources found for this service.');
-    }
+  const getIconColor = (category) => {
+    const colors = {
+      'Cloud': '#2196F3',
+      'Development': '#673AB7',
+      'Security': '#F44336',
+      'Analytics': '#4CAF50',
+      'Mobile': '#FF9800',
+      'Transformation': '#009688',
+      'IoT': '#9C27B0',
+      'Blockchain': '#795548',
+      'Design': '#E91E63',
+      'Support': '#00BCD4',
+      'Default': '#2196F3'
+    };
+    return colors[category] || colors['Default'];
   };
 
   if (loading) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-        <CircularProgress />
+      <Container maxWidth="lg" sx={{
+        py: 4,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '80vh'
+      }}>
+        <Box textAlign="center">
+          <CircularProgress size={60} thickness={4} sx={{ mb: 3 }} />
+          <Typography variant="h6" color="text.secondary">
+            Loading service details...
+          </Typography>
+        </Box>
       </Container>
     );
   }
 
-  if (!serviceData) {
+  if (error || !serviceData) {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Alert severity="error">Service not found</Alert>
-        <Button onClick={() => navigate('/services')} startIcon={<ArrowBack />} sx={{ mt: 2 }}>
-          Back to Services
-        </Button>
+        <Fade in>
+          <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 3 }}>
+            <Error sx={{ fontSize: 60, color: 'error.main', mb: 2 }} />
+            <Typography variant="h5" gutterBottom color="error">
+              {error || 'Service not found'}
+            </Typography>
+            <Typography variant="body1" color="text.secondary" paragraph>
+              The service you're looking for doesn't exist or may have been removed.
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={() => navigate('/services')}
+              startIcon={<ArrowBack />}
+              sx={{ mt: 2 }}
+            >
+              Back to Services
+            </Button>
+          </Paper>
+        </Fade>
       </Container>
     );
   }
 
   const IconComponent = serviceIcons[serviceData.category] || serviceIcons.Default;
+  const iconColor = getIconColor(serviceData.category);
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      {/* Breadcrumb Navigation */}
-      {/* <Breadcrumbs sx={{ mb: 3 }}>
-        <Link component={RouterLink} to="/dashboard" color="inherit">
-          Dashboard
-        </Link>
-        <Link component={RouterLink} to="/services" color="inherit">
-          Services
-        </Link>
-        <Typography color="text.primary">{serviceData.title}</Typography>
-      </Breadcrumbs> */}
+    <Fade in={!loading}>
+      <Container maxWidth="lg" sx={{ py: 4 }}>
+        {/* Header Section */}
+        <Paper sx={{
+          p: 4,
+          mb: 4,
+          borderRadius: 3,
+          background: `linear-gradient(135deg, ${iconColor}15 0%, ${iconColor}05 100%)`,
+          borderLeft: `6px solid ${iconColor}`,
+        }}>
+          <Box display="flex" alignItems="flex-start" justifyContent="space-between" flexWrap="wrap" gap={3}>
+            <Box flex={1} minWidth={300}>
+              <Box display="flex" alignItems="center" gap={2} mb={3}>
+                <IconButton
+                  onClick={() => navigate('/services')}
+                  sx={{
+                    bgcolor: 'background.paper',
+                    '&:hover': { bgcolor: 'action.hover' }
+                  }}
+                >
+                  <ArrowBack />
+                </IconButton>
+                <Typography variant="h4" fontWeight="bold" component="h1">
+                  {serviceData.title}
+                </Typography>
+              </Box>
 
-      {/* Header */}
-      <Paper sx={{ p: 3, mb: 3, borderRadius: 2 }}>
-        <Box display="flex" alignItems="flex-start" justifyContent="space-between">
-          <Box>
-            <Box display="flex" alignItems="center" gap={2} mb={1}>
-              <IconButton onClick={() => navigate('/services')}>
-                <ArrowBack />
-              </IconButton>
-              <Avatar sx={{ bgcolor: serviceData.color || 'primary.main' }}>
-                <IconComponent />
-              </Avatar>
-              <Typography variant="h4" fontWeight="bold">
-                {serviceData.title}
+              <Typography variant="h6" color="text.secondary" paragraph sx={{ mb: 3 }}>
+                {serviceData.description}
               </Typography>
-              <Chip
-                label={serviceData.status}
-                color={getStatusColor(serviceData.status)}
-                size="small"
-              />
-            </Box>
-            <Typography variant="body1" color="text.secondary" paragraph>
-              {serviceData.description}
-            </Typography>
 
-            <Stack direction="row" spacing={3} alignItems="center" flexWrap="wrap" gap={2}>
-              <Box>
-                <Typography variant="caption" color="text.secondary">
-                  Category
-                </Typography>
-                <Chip
-                  label={serviceData.category}
-                  size="small"
-                  sx={{ ml: 1 }}
-                  icon={<IconComponent />}
-                />
-              </Box>
-              <Box>
-                <Typography variant="caption" color="text.secondary">
-                  Price
-                </Typography>
-                <Typography variant="body2" sx={{ ml: 1, fontWeight: 'medium', color: 'primary.main' }}>
-                  {serviceData.price || 'Custom Quote'}
-                </Typography>
-              </Box>
-              <Box>
-                <Typography variant="caption" color="text.secondary">
-                  Client
-                </Typography>
-                <Typography variant="body2" sx={{ ml: 1, fontWeight: 'medium' }}>
-                  {serviceData.client}
-                </Typography>
-              </Box>
-              {serviceData.website && (
-                <Box>
-                  <Button
-                    size="small"
-                    startIcon={<Language />}
-                    href={serviceData.website}
-                    target="_blank"
-                  >
-                    Visit Website
-                  </Button>
-                </Box>
-              )}
-            </Stack>
-          </Box>
-
-          <Stack direction="row" spacing={1}>
-            <Button variant="outlined" startIcon={<Edit />} onClick={handleEditOpen}>
-              Edit
-            </Button>
-            <Button variant="contained" onClick={fetchExternalData} startIcon={<Language />}>
-              Get External Data
-            </Button>
-          </Stack>
-        </Box>
-      </Paper>
-
-      {/* Tabs */}
-      <Paper sx={{ mb: 3, borderRadius: 2 }}>
-        <Tabs value={activeTab} onChange={handleTabChange} variant="scrollable">
-          <Tab icon={<Timeline />} label="Overview" />
-          <Tab icon={<People />} label="Team" />
-          <Tab icon={<ConnectWithoutContact />} label="Partners" />
-          <Tab icon={<AttachMoney />} label="Finance" />
-          <Tab icon={<Comment />} label="Details" />
-        </Tabs>
-      </Paper>
-
-      {/* Tab Content */}
-      {activeTab === 0 && (
-        <Grid container spacing={3}>
-          {/* Service Details */}
-          <Grid item xs={12} md={8}>
-            <Card sx={{ height: '100%' }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom fontWeight="bold">
-                  Service Details
-                </Typography>
-                <Typography paragraph>
-                  {serviceData.details}
-                </Typography>
-
-                <Divider sx={{ my: 2 }} />
-
-                <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                  Features
-                </Typography>
-                <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
-                  {serviceData.features?.split(',').map((feature, index) => (
-                    <Chip
-                      key={index}
-                      label={feature.trim()}
-                      variant="outlined"
-                      sx={{ backgroundColor: serviceData.color + '20' }}
-                    />
-                  ))}
-                </Stack>
-
-                <Divider sx={{ my: 2 }} />
-
-                <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                  Progress
-                </Typography>
-                <Box>
-                  <Box display="flex" justifyContent="space-between" mb={1}>
-                    <Typography variant="body2" color="text.secondary">
-                      Completion
+              <Grid container spacing={3}>
+                {/* <Grid item xs={12} sm={6} md={3}>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                      STATUS
                     </Typography>
-                    <Typography variant="body2" fontWeight="bold">
-                      {serviceData.progress || 0}%
+                    <Chip
+                      icon={getStatusIcon(serviceData.status)}
+                      label={serviceData.status?.toUpperCase()}
+                      color={getStatusColor(serviceData.status)}
+                      sx={{ fontWeight: 600 }}
+                    />
+                  </Box>
+                </Grid> */}
+
+                <Grid item xs={12} sm={6} md={3}>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                      CATEGORY
+                    </Typography>
+                    <Chip
+                      icon={<IconComponent sx={{ fontSize: 16 }} />}
+                      label={serviceData.category}
+                      sx={{
+                        bgcolor: `${iconColor}20`,
+                        color: iconColor,
+                        fontWeight: 600
+                      }}
+                    />
+                  </Box>
+                </Grid>
+
+                {/* <Grid item xs={12} sm={6} md={3}>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                      PRICE
+                    </Typography>
+                    <Typography variant="h6" color="primary" fontWeight="bold">
+                      {'$' + serviceData.price || 'Custom Quote'}
                     </Typography>
                   </Box>
-                  <LinearProgress
-                    variant="determinate"
-                    value={serviceData.progress || 0}
-                    sx={{ height: 10, borderRadius: 5 }}
-                  />
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
+                </Grid> */}
 
-          {/* Contact & Dates */}
-          <Grid item xs={12} md={4}>
-            <Card sx={{ height: '100%' }}>
-              <CardContent>
-                <Typography variant="h6" gutterBottom fontWeight="bold">
-                  Contact & Schedule
-                </Typography>
+                {/* <Grid item xs={12} sm={6} md={3}>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                      PROGRESS
+                    </Typography>
+                    <Box display="flex" alignItems="center" gap={2}>
+                      <Box flex={1}>
+                        <LinearProgress
+                          variant="determinate"
+                          value={serviceData.progress || 0}
+                          sx={{
+                            height: 8,
+                            borderRadius: 4,
+                            bgcolor: `${iconColor}20`,
+                            '& .MuiLinearProgress-bar': {
+                              bgcolor: iconColor,
+                            }
+                          }}
+                        />
+                      </Box>
+                      <Typography variant="body1" fontWeight="bold">
+                        {serviceData.progress || 0}%
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid> */}
+              </Grid>
+            </Box>
 
-                <List>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Person />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Contact"
-                      secondary={serviceData.contactPerson || 'Not specified'}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Email />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Email"
-                      secondary={serviceData.contactEmail || 'Not specified'}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Phone />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Phone"
-                      secondary={serviceData.contactPhone || 'Not specified'}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <LocationOn />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Location"
-                      secondary={serviceData.location || 'Not specified'}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <CalendarToday />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Start Date"
-                      secondary={serviceData.startDate || 'Not specified'}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <CalendarToday />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="End Date"
-                      secondary={serviceData.endDate || 'Not specified'}
-                    />
-                  </ListItem>
-                </List>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      )}
+            <Avatar sx={{
+              width: 120,
+              height: 120,
+              bgcolor: iconColor,
+              fontSize: 40
+            }}>
+              <IconComponent sx={{ fontSize: 60 }} />
+            </Avatar>
+          </Box>
+        </Paper>
 
-      {/* Team Tab */}
-      {activeTab === 1 && (
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom fontWeight="bold">
+        {/* Tabs Navigation */}
+        {/* <Paper sx={{ mb: 4, borderRadius: 2, overflow: 'hidden' }}>
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            variant="scrollable"
+            sx={{
+              '& .MuiTab-root': {
+                minHeight: 60,
+                fontSize: '0.95rem',
+                fontWeight: 500,
+              }
+            }}
+          >
+            <Tab icon={<Timeline />} label="Overview" />
+            <Tab icon={<People />} label={`Team (${teamMembers.length})`} />
+            <Tab icon={<ConnectWithoutContact />} label={`Partners (${partners.length})`} />
+            <Tab icon={<AttachMoney />} label="Pricing & Budget" />
+            <Tab icon={<Speed />} label="Performance" />
+          </Tabs>
+        </Paper> */}
+
+        {/* Tab Content */}
+        <Box sx={{ mb: 4 }}>
+          {activeTab === 0 && (
+            <Grid container spacing={4}>
+              {/* Service Details Card */}
+              <Grid item xs={12} md={8}>
+                <Card sx={{ height: '100%', borderRadius: 3 }}>
+                  <CardContent sx={{ p: 4 }}>
+                    <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ mb: 3 }}>
+                      Service Overview
+                    </Typography>
+
+                    <Typography variant="body1" paragraph sx={{ lineHeight: 1.8, mb: 3 }}>
+                      {serviceData.details || serviceData.description}
+                    </Typography>
+
+                    <Divider sx={{ my: 3 }} />
+
+                    <Typography variant="h6" gutterBottom fontWeight="bold" sx={{ mb: 2 }}>
+                      Key Features
+                    </Typography>
+                    <Grid container spacing={2}>
+                      {serviceData.features?.split(',').map((feature, index) => (
+                        <Grid item xs={12} sm={6} key={index}>
+                          <Paper sx={{
+                            p: 2,
+                            borderRadius: 2,
+                            bgcolor: `${iconColor}08`,
+                            border: `1px solid ${iconColor}20`,
+                          }}>
+                            <Box display="flex" alignItems="center" gap={2}>
+                              <Star sx={{ color: iconColor, fontSize: 20 }} />
+                              <Typography fontWeight="medium">
+                                {feature.trim()}
+                              </Typography>
+                            </Box>
+                          </Paper>
+                        </Grid>
+                      ))}
+                    </Grid>
+
+                    {/* <Divider sx={{ my: 3 }} />
+
+                    <Typography variant="h6" gutterBottom fontWeight="bold" sx={{ mb: 2 }}>
+                      Timeline
+                    </Typography>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} sm={6}>
+                        <Paper sx={{ p: 2, borderRadius: 2 }}>
+                          <Box display="flex" alignItems="center" gap={2}>
+                            <CalendarToday sx={{ color: iconColor }} />
+                            <Box>
+                              <Typography variant="caption" color="text.secondary">
+                                Start Date
+                              </Typography>
+                              <Typography fontWeight="medium">
+                                {serviceData.startDate || 'Not specified'}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </Paper>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Paper sx={{ p: 2, borderRadius: 2 }}>
+                          <Box display="flex" alignItems="center" gap={2}>
+                            <CalendarToday sx={{ color: iconColor }} />
+                            <Box>
+                              <Typography variant="caption" color="text.secondary">
+                                End Date
+                              </Typography>
+                              <Typography fontWeight="medium">
+                                {serviceData.endDate || 'Not specified'}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </Paper>
+                      </Grid>
+                    </Grid> */}
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              {/* Contact & Quick Info Card */}
+              <Grid item xs={12} md={4}>
+                <Card sx={{ height: '100%', borderRadius: 3 }}>
+                  <CardContent sx={{ p: 4 }}>
+                    <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ mb: 1 }}>
+                      Contact Information
+                    </Typography>
+
+                    <List disablePadding>
+                      <ListItem sx={{ px: 0, py: 2 }}>
+                        <ListItemIcon sx={{ minWidth: 40 }}>
+                          <Person sx={{ color: iconColor }} />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary="Contact Person"
+                          secondary={
+                            <Typography fontWeight="medium" color="text.primary">
+                              {serviceData.contactPerson || 'Excellence HR'}
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                      <ListItem sx={{ px: 0, py: 2 }}>
+                        <ListItemIcon sx={{ minWidth: 40 }}>
+                          <Email sx={{ color: iconColor }} />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary="Email Address"
+                          secondary={
+                            <Typography fontWeight="medium" color="text.primary">
+                              {serviceData.contactEmail || 'eapl.techhub@gmail.com'}
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                      <ListItem sx={{ px: 0, py: 2 }}>
+                        <ListItemIcon sx={{ minWidth: 40 }}>
+                          <Phone sx={{ color: iconColor }} />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary="Phone Number"
+                          secondary={
+                            <Typography fontWeight="medium" color="text.primary">
+                              {serviceData.contactPhone || '+91 6289534780'}
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                      <ListItem sx={{ px: 0, py: 2 }}>
+                        <ListItemIcon sx={{ minWidth: 40 }}>
+                          <LocationOn sx={{ color: iconColor }} />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary="Location"
+                          secondary={
+                            <Typography fontWeight="medium" color="text.primary">
+                              {serviceData.location || '1st floor, 1/16, Basanta Rd., Nitai Nagar, Mukundapur, Kolkata, West Bengal 700099'}
+                            </Typography>
+                          }
+                        />
+                      </ListItem>
+                    </List>
+
+                    {/* <Divider sx={{ my: 3 }} /> */}
+
+                    {/* <Typography variant="h6" gutterBottom fontWeight="bold">
+                      Additional Information
+                    </Typography>
+                    <Stack spacing={2}>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">
+                          Client Company
+                        </Typography>
+                        <Typography fontWeight="medium">
+                          {serviceData.client || 'Not specified'}
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">
+                          Service Duration
+                        </Typography>
+                        <Typography fontWeight="medium">
+                          {serviceData.duration || 'Not specified'}
+                        </Typography>
+                      </Box>
+                      {serviceData.website && (
+                        <Box>
+                          <Button
+                            fullWidth
+                            variant="outlined"
+                            startIcon={<Language />}
+                            href={serviceData.website}
+                            target="_blank"
+                            sx={{ mt: 1 }}
+                          >
+                            Visit Client Website
+                          </Button>
+                        </Box>
+                      )}
+                    </Stack> */}
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+          )}
+
+          {/* Team Tab */}
+          {activeTab === 1 && (
+            <Card sx={{ borderRadius: 3 }}>
+              <CardContent sx={{ p: 4 }}>
+                <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ mb: 3 }}>
                   Team Members
                 </Typography>
+
                 {teamMembers.length > 0 ? (
                   <Grid container spacing={3}>
                     {teamMembers.map((member) => (
                       <Grid item xs={12} sm={6} md={4} key={member.id}>
-                        <Paper sx={{ p: 2 }}>
-                          <Box display="flex" alignItems="center" gap={2}>
-                            <Avatar sx={{ bgcolor: serviceData.color || 'primary.main' }}>
+                        <Paper sx={{
+                          p: 3,
+                          borderRadius: 3,
+                          height: '100%',
+                          transition: 'all 0.3s ease',
+                          '&:hover': {
+                            transform: 'translateY(-4px)',
+                            boxShadow: 4,
+                          }
+                        }}>
+                          <Box display="flex" alignItems="center" gap={2} mb={2}>
+                            <Avatar sx={{
+                              bgcolor: iconColor,
+                              width: 56,
+                              height: 56,
+                              fontSize: 20
+                            }}>
                               {member.avatar}
                             </Avatar>
-                            <Box>
-                              <Typography fontWeight="bold">
+                            <Box flex={1}>
+                              <Typography variant="h6" fontWeight="bold">
                                 {member.name}
                               </Typography>
                               <Typography variant="body2" color="text.secondary">
                                 {member.role}
                               </Typography>
-                              <Typography variant="caption" color="text.secondary">
-                                {member.email}
-                              </Typography>
-                              <Stack direction="row" spacing={1} mt={1}>
-                                <Chip
-                                  label={member.status}
-                                  size="small"
-                                  color={member.status === 'online' ? 'success' : 'default'}
-                                />
-                                {member.expertise?.slice(0, 2).map((skill, idx) => (
-                                  <Chip key={idx} label={skill} size="small" variant="outlined" />
-                                ))}
-                              </Stack>
                             </Box>
                           </Box>
+
+                          <Box mb={2}>
+                            <Chip
+                              label={member.status}
+                              size="small"
+                              color={member.status === 'online' ? 'success' : 'default'}
+                              sx={{ mb: 2 }}
+                            />
+                          </Box>
+
+                          <Typography variant="body2" color="text.secondary" paragraph>
+                            {member.email}
+                          </Typography>
+
+                          <Typography variant="subtitle2" gutterBottom>
+                            Expertise:
+                          </Typography>
+                          <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
+                            {member.expertise?.map((skill, idx) => (
+                              <Chip
+                                key={idx}
+                                label={skill}
+                                size="small"
+                                variant="outlined"
+                                sx={{ borderColor: iconColor }}
+                              />
+                            ))}
+                          </Stack>
                         </Paper>
                       </Grid>
                     ))}
                   </Grid>
                 ) : (
-                  <Typography color="text.secondary">No team members assigned</Typography>
+                  <Alert severity="info" sx={{ borderRadius: 2 }}>
+                    No team members assigned to this service.
+                  </Alert>
                 )}
               </CardContent>
             </Card>
-          </Grid>
-        </Grid>
-      )}
+          )}
 
-      {/* Partners Tab */}
-      {activeTab === 2 && (
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom fontWeight="bold">
+          {/* Partners Tab */}
+          {activeTab === 2 && (
+            <Card sx={{ borderRadius: 3 }}>
+              <CardContent sx={{ p: 4 }}>
+                <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ mb: 3 }}>
                   Partners & Collaborators
                 </Typography>
+
                 {partners.length > 0 ? (
                   <Grid container spacing={3}>
                     {partners.map((partner) => (
-                      <Grid item xs={12} sm={6} md={4} key={partner.id}>
-                        <Card>
-                          <CardContent>
-                            <Typography variant="h6" gutterBottom>
-                              {partner.name}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary" paragraph>
-                              {partner.description}
-                            </Typography>
-                            <Typography variant="caption" display="block" gutterBottom>
-                              Type: {partner.type}
-                            </Typography>
-                            <Typography variant="caption" display="block" gutterBottom>
-                              Partner since: {partner.partnershipDate}
-                            </Typography>
-                            <Button
-                              size="small"
-                              href={partner.website}
-                              target="_blank"
-                              startIcon={<Language />}
-                            >
-                              Visit Website
-                            </Button>
-                          </CardContent>
-                        </Card>
+                      <Grid item xs={12} md={6} key={partner.id}>
+                        <Paper sx={{
+                          p: 3,
+                          borderRadius: 3,
+                          height: '100%',
+                          border: `2px solid ${iconColor}30`,
+                        }}>
+                          <Box display="flex" alignItems="center" gap={3} mb={2}>
+                            <Avatar sx={{
+                              bgcolor: iconColor,
+                              width: 60,
+                              height: 60,
+                              fontSize: 24,
+                              fontWeight: 'bold'
+                            }}>
+                              {partner.logo}
+                            </Avatar>
+                            <Box flex={1}>
+                              <Typography variant="h6" fontWeight="bold">
+                                {partner.name}
+                              </Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                {partner.type}
+                              </Typography>
+                            </Box>
+                          </Box>
+
+                          <Box mb={3}>
+                            <Chip
+                              label={partner.partnership}
+                              sx={{
+                                bgcolor: `${iconColor}20`,
+                                color: iconColor,
+                                fontWeight: 600
+                              }}
+                            />
+                          </Box>
+
+                          <Grid container spacing={2}>
+                            <Grid item xs={6}>
+                              <Typography variant="caption" color="text.secondary">
+                                Partnership Since
+                              </Typography>
+                              <Typography variant="body1" fontWeight="medium">
+                                {partner.since}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                              <Button
+                                fullWidth
+                                variant="contained"
+                                sx={{ bgcolor: iconColor }}
+                                onClick={() => {/* Add partner details action */ }}
+                              >
+                                View Details
+                              </Button>
+                            </Grid>
+                          </Grid>
+                        </Paper>
                       </Grid>
                     ))}
                   </Grid>
                 ) : (
-                  <Typography color="text.secondary">No partners for this service</Typography>
+                  <Alert severity="info" sx={{ borderRadius: 2 }}>
+                    No partners for this service.
+                  </Alert>
                 )}
               </CardContent>
             </Card>
-          </Grid>
-        </Grid>
-      )}
+          )}
 
-      {/* Finance Tab */}
-      {activeTab === 3 && (
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom fontWeight="bold">
-                  Budget Summary
+          {/* Pricing & Budget Tab */}
+          {activeTab === 3 && (
+            <Grid container spacing={4}>
+              <Grid item xs={12} md={6}>
+                <Card sx={{ height: '100%', borderRadius: 3 }}>
+                  <CardContent sx={{ p: 4 }}>
+                    <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ mb: 3 }}>
+                      Financial Overview
+                    </Typography>
+
+                    <List disablePadding>
+                      <ListItem sx={{ px: 0, py: 2.5 }}>
+                        <ListItemIcon sx={{ minWidth: 44 }}>
+                          <AttachMoney sx={{ color: iconColor, fontSize: 28 }} />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={
+                            <Typography variant="h6" color="primary" fontWeight="bold">
+                              {serviceData.price || 'Custom Quote'}
+                            </Typography>
+                          }
+                          secondary="Service Price"
+                        />
+                      </ListItem>
+
+                      <ListItem sx={{ px: 0, py: 2.5 }}>
+                        <ListItemIcon sx={{ minWidth: 44 }}>
+                          <TrendingUp sx={{ color: iconColor, fontSize: 28 }} />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={
+                            <Typography variant="h6" fontWeight="bold">
+                              {serviceData.budget || 'Not specified'}
+                            </Typography>
+                          }
+                          secondary="Total Budget"
+                        />
+                      </ListItem>
+
+                      <ListItem sx={{ px: 0, py: 2.5 }}>
+                        <ListItemIcon sx={{ minWidth: 44 }}>
+                          <AttachMoney sx={{ color: iconColor, fontSize: 28 }} />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={
+                            <Typography variant="h6" fontWeight="bold">
+                              {serviceData.spent || 'Not specified'}
+                            </Typography>
+                          }
+                          secondary="Amount Spent"
+                        />
+                      </ListItem>
+                    </List>
+
+                    <Divider sx={{ my: 3 }} />
+
+                    <Box sx={{ p: 2, bgcolor: 'grey.50', borderRadius: 2 }}>
+                      <Typography variant="body2" color="text.secondary" align="center">
+                        * All prices are exclusive of taxes. Final pricing may vary based on project requirements.
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Card sx={{ height: '100%', borderRadius: 3 }}>
+                  <CardContent sx={{ p: 4 }}>
+                    <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ mb: 3 }}>
+                      Duration & Timeline
+                    </Typography>
+
+                    <Stack spacing={3}>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                          PROJECT DURATION
+                        </Typography>
+                        <Typography variant="h4" fontWeight="bold" color={iconColor}>
+                          {serviceData.duration || 'Not specified'}
+                        </Typography>
+                      </Box>
+
+                      <Box>
+                        <Typography variant="subtitle1" gutterBottom fontWeight="medium">
+                          Timeline Breakdown
+                        </Typography>
+                        <Box display="flex" alignItems="center" justifyContent="space-between">
+                          <Box>
+                            <Typography variant="caption" color="text.secondary">
+                              Start Date
+                            </Typography>
+                            <Typography fontWeight="medium">
+                              {serviceData.startDate || 'Not specified'}
+                            </Typography>
+                          </Box>
+                          <Box>
+                            <Typography variant="caption" color="text.secondary">
+                              End Date
+                            </Typography>
+                            <Typography fontWeight="medium">
+                              {serviceData.endDate || 'Not specified'}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Box>
+
+                      <Box>
+                        <Typography variant="subtitle1" gutterBottom fontWeight="medium">
+                          Current Status
+                        </Typography>
+                        <Box display="flex" alignItems="center" gap={2}>
+                          <LinearProgress
+                            variant="determinate"
+                            value={serviceData.progress || 0}
+                            sx={{
+                              flex: 1,
+                              height: 10,
+                              borderRadius: 5,
+                              bgcolor: `${iconColor}20`,
+                              '& .MuiLinearProgress-bar': {
+                                bgcolor: iconColor,
+                              }
+                            }}
+                          />
+                          <Typography variant="body1" fontWeight="bold">
+                            {serviceData.progress || 0}%
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Stack>
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+          )}
+
+          {/* Performance Tab */}
+          {activeTab === 4 && (
+            <Card sx={{ borderRadius: 3 }}>
+              <CardContent sx={{ p: 4 }}>
+                <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ mb: 3 }}>
+                  Service Performance
                 </Typography>
-                <List>
-                  <ListItem>
-                    <ListItemIcon>
-                      <AttachMoney />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Total Budget"
-                      secondary={serviceData.budget || 'Not specified'}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <AttachMoney />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Amount Spent"
-                      secondary={serviceData.spent || 'Not specified'}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <AttachMoney />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Service Price"
-                      secondary={serviceData.price || 'Custom quote'}
-                    />
-                  </ListItem>
-                </List>
+
+                <Grid container spacing={3}>
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Paper sx={{ p: 3, textAlign: 'center', borderRadius: 3 }}>
+                      <Typography variant="h2" fontWeight="bold" color={iconColor}>
+                        {serviceData.progress || 0}%
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Completion Rate
+                      </Typography>
+                    </Paper>
+                  </Grid>
+
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Paper sx={{ p: 3, textAlign: 'center', borderRadius: 3 }}>
+                      <Typography variant="h2" fontWeight="bold" color="success.main">
+                        4.8
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Client Rating
+                      </Typography>
+                    </Paper>
+                  </Grid>
+
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Paper sx={{ p: 3, textAlign: 'center', borderRadius: 3 }}>
+                      <Typography variant="h2" fontWeight="bold" color="warning.main">
+                        98%
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Uptime
+                      </Typography>
+                    </Paper>
+                  </Grid>
+
+                  <Grid item xs={12} sm={6} md={3}>
+                    <Paper sx={{ p: 3, textAlign: 'center', borderRadius: 3 }}>
+                      <Typography variant="h2" fontWeight="bold" color="info.main">
+                        24/7
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Support
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                </Grid>
               </CardContent>
             </Card>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom fontWeight="bold">
-                  Duration & Timeline
-                </Typography>
-                <List>
-                  <ListItem>
-                    <ListItemIcon>
-                      <AccessTime />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Project Duration"
-                      secondary={serviceData.duration || 'Not specified'}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <CalendarToday />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Start Date"
-                      secondary={serviceData.startDate || 'Not specified'}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <CalendarToday />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="End Date"
-                      secondary={serviceData.endDate || 'Not specified'}
-                    />
-                  </ListItem>
-                </List>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      )}
+          )}
+        </Box>
 
-      {/* Edit Dialog */}
-      <Dialog open={editDialogOpen} onClose={handleEditClose} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          <Box display="flex" alignItems="center" justifyContent="space-between">
-            <Typography variant="h6">Edit Service</Typography>
-            <IconButton onClick={handleEditClose} size="small">
-              <Close />
-            </IconButton>
-          </Box>
-        </DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} sx={{ mt: 1 }}>
-            <TextField
-              fullWidth
-              label="Service Title"
-              name="title"
-              value={editData.title || ''}
-              onChange={handleInputChange}
-            />
-            <TextField
-              fullWidth
-              label="Category"
-              name="category"
-              value={editData.category || ''}
-              onChange={handleInputChange}
-              select
-            >
-              <MenuItem value="Cloud">Cloud</MenuItem>
-              <MenuItem value="Development">Development</MenuItem>
-              <MenuItem value="Security">Security</MenuItem>
-              <MenuItem value="Analytics">Analytics</MenuItem>
-              <MenuItem value="Mobile">Mobile</MenuItem>
-              <MenuItem value="Transformation">Transformation</MenuItem>
-              <MenuItem value="IoT">IoT</MenuItem>
-              <MenuItem value="Blockchain">Blockchain</MenuItem>
-            </TextField>
-            <TextField
-              fullWidth
-              multiline
-              rows={2}
-              label="Description"
-              name="description"
-              value={editData.description || ''}
-              onChange={handleInputChange}
-            />
-            <TextField
-              fullWidth
-              label="Status"
-              name="status"
-              value={editData.status || ''}
-              onChange={handleInputChange}
-              select
-            >
-              <MenuItem value="active">Active</MenuItem>
-              <MenuItem value="pending">Pending</MenuItem>
-              <MenuItem value="completed">Completed</MenuItem>
-              <MenuItem value="inactive">Inactive</MenuItem>
-            </TextField>
-            <TextField
-              fullWidth
-              label="Price"
-              name="price"
-              value={editData.price || ''}
-              onChange={handleInputChange}
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleEditClose}>Cancel</Button>
-          <Button onClick={handleSaveEdit} variant="contained" startIcon={<Save />}>
-            Save Changes
+        {/* Footer Actions */}
+        {/* <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mt: 4, pt: 3, borderTop: 1, borderColor: 'divider' }}>
+          <Button
+            variant="outlined"
+            onClick={() => navigate('/services')}
+            startIcon={<ArrowBack />}
+          >
+            Back to Services
           </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+
+          <Stack direction="row" spacing={2}>
+            <Button
+              variant="contained"
+              startIcon={<Edit />}
+              sx={{ bgcolor: iconColor }}
+              onClick={() => navigate(`/services/${serviceId}/edit`)}
+            >
+              Edit Service
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<Language />}
+              onClick={() => window.open(serviceData.website || '#', '_blank')}
+              disabled={!serviceData.website}
+            >
+              Visit Website
+            </Button>
+          </Stack>
+        </Box> */}
+      </Container>
+    </Fade>
   );
 };
 

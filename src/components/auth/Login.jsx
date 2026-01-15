@@ -56,7 +56,6 @@ const Login = () => {
 
       // Check the action type in the result
       if (result.type === "EMP_COMPLETE_LOGIN_SUCCESS") {
-
         // Validate the payload structure
         if (!result.payload) {
           dispatch(loginFailure('Invalid server response'));
@@ -74,7 +73,7 @@ const Login = () => {
           return;
         }
 
-        // Get user data from the payload - safely
+        // Get user data from the payload
         const userData = result.payload.dataList[0];
 
         // Validate user data has required fields
@@ -89,7 +88,6 @@ const Login = () => {
           name: userData.name || '',
           email: userData.email || formData.email,
           role: userData.role || 'user',
-          // Add other fields with defaults if missing
           phone: userData.phone || '',
           title: userData.title || '',
           status: userData.status !== undefined ? userData.status : true,
@@ -100,18 +98,18 @@ const Login = () => {
           position: userData.position || ''
         };
 
-        // Store in sessionStorage
-        sessionStorage.setItem('authToken', result.payload.token || 'dummy-token');
-        sessionStorage.setItem('userData', JSON.stringify(completeUserData));
+        // ✅ CRITICAL FIX: DO NOT use sessionStorage directly here!
+        // ✅ The authSlice's loginSuccess will handle sessionStorage automatically
 
-        // Update Redux state
+        // Update Redux state - this will save to sessionStorage via authSlice
         dispatch(loginSuccess({
           user: completeUserData,
           token: result.payload.token || 'dummy-token'
         }));
 
         // Navigate to profile
-        navigate(`/profile/${completeUserData.id}`);
+        navigate(`/dashboard/${completeUserData.id}`);
+        // navigate(`/profile/${completeUserData.id}`);
 
       } else if (result.type === "EMP_FAILURE_LOGIN") {
         // Show error from payload

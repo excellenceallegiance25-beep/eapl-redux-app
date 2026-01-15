@@ -178,8 +178,6 @@ export const EmployeeManagementPage = () => {
         setOpenDialog(true);
     };
 
-
-
     const handleDelete = async (id) => {
         const result = await Swal.fire({
             title: 'Are you sure?',
@@ -245,30 +243,6 @@ export const EmployeeManagementPage = () => {
             setSubmitError(error.message || 'Failed to save employee');
         }
     };
-
-    // const handleDelete = async (id) => {
-    //     if (window.confirm('Are you sure you want to delete this employee?')) {
-    //         try {
-    //             const payload = {
-    //                 id: id,
-    //                 indicator: "D",
-    //             };
-
-    //             let result;
-    //             result = await dispatch(updateEmployeeCompleteProfile(payload));
-
-    //             if (result?.type === "EMP_COMPLETE_PROFILE_UPDATE_SUCCESS") {
-    //                 await loadEmployees();
-    //                 // handleCloseDialog();
-    //             } else {
-    //                 setErrors(result.payload?.message || 'Operation failed');
-    //             }
-    //         } catch (error) {
-    //             console.error('Error submitting form:', error);
-    //             setSubmitError(error.message || 'Failed to save employee');
-    //         }
-    //     }
-    // };
 
     const toggleStatus = async (id) => {
         try {
@@ -484,11 +458,24 @@ export const EmployeeManagementPage = () => {
     const columns = [
         {
             field: 'id',
-            headerName: 'ID',
+            headerName: 'EID',
             width: 70,
             type: 'number',
+            headerClassName: 'no-sort-icon',
+            align: 'center',
+            headerAlign: 'center',
             renderCell: (params) => (
-                'EA0' + params.value
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    width: '100%'
+                }}>
+                    <Typography variant="body2" fontWeight="bold" noWrap>
+                        #{params.value}
+                    </Typography>
+                </Box>
             )
         },
         {
@@ -504,16 +491,25 @@ export const EmployeeManagementPage = () => {
                     : undefined;
 
                 return (
-                    <Avatar
-                        src={src}
-                        sx={{
-                            width: 32,
-                            height: 32,
-                            bgcolor: 'primary.main',
-                        }}
-                    >
-                        {!hasImage && <Person />}
-                    </Avatar>
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: '100%',
+                        width: '100%'
+                    }}>
+                        <Avatar
+                            src={src}
+                            sx={{
+                                width: 32,
+                                height: 32,
+                                bgcolor: 'primary.main',
+                                alignContent: 'center',
+                            }}
+                        >
+                            {!hasImage && <Person />}
+                        </Avatar>
+                    </Box>
                 );
             },
         },
@@ -543,7 +539,13 @@ export const EmployeeManagementPage = () => {
             headerName: 'Role',
             width: 120,
             renderCell: (params) => (
-                <Box display="flex" alignItems="center" alignContent="center" gap={1}>
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'left',
+                    height: '100%',
+                    width: '100%'
+                }}>
                     {getRoleIcon(params.value)}
                     <Chip
                         label={params.value}
@@ -581,14 +583,20 @@ export const EmployeeManagementPage = () => {
             alignItems: 'center',
             width: 100,
             renderCell: (params) => (
-                <Box display="flex" alignItems="center" gap={1}>
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    width: '100%'
+                }}>
                     {getStatusIcon(params.value === true ? 'active' : 'inactive')}
-                    {/* <Chip
+                    <Chip
                         label={params.value === true ? 'active' : 'inactive'}
                         color={getStatusColor(params.value === true ? 'active' : 'inactive')}
                         size="small"
                         variant="outlined"
-                    /> */}
+                    />
                 </Box>
             )
         },
@@ -600,14 +608,14 @@ export const EmployeeManagementPage = () => {
             filterable: false,
             renderCell: (params) => (
                 <Stack direction="row" spacing={1}>
-                    <Tooltip title={params.row.status === 'active' ? 'Deactivate' : 'Activate'}>
+                    {/* <Tooltip title={params.row.status === 'active' ? 'Deactivate' : 'Activate'}>
                         <IconButton
                             size="small"
                             onClick={() => toggleStatus(params.row.id)}
                         >
                             {getStatusIcon(params.row.status)}
                         </IconButton>
-                    </Tooltip>
+                    </Tooltip> */}
                     <Tooltip title="Edit">
                         <IconButton
                             size="small"
@@ -631,51 +639,91 @@ export const EmployeeManagementPage = () => {
     ];
 
     return (
-        <Container maxWidth="xl" sx={{ py: 4, height: '100vh' }} disableGutters>
+        <Container maxWidth="xl" disableGutters>
             <Button startIcon={<ArrowBack />} onClick={() => navigate('/dashboard')} sx={{ mb: 3 }}>
                 Back to Dashboard
             </Button>
 
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                <Typography variant="h4">Employee Management</Typography>
-                <TextField
-                    fullWidth
-                    sx={{ maxWidth: { md: 400 } }}
-                    placeholder="Search employees by name, email, role, department, or position..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <Search />
-                            </InputAdornment>
-                        ),
+            <Box
+                display="flex"
+                flexDirection={{ xs: 'column', md: 'row' }}
+                justifyContent="space-between"
+                alignItems={{ xs: 'flex-start', md: 'center' }}
+                gap={2}
+                mb={3}
+            >
+                {/* Title */}
+                <Typography
+                    variant="h4"
+                    sx={{
+                        width: { xs: '100%', md: 'auto' },
+                        mb: { xs: 1, md: 0 }
                     }}
-                />
-                <Button variant="contained" startIcon={<Add />} onClick={() => {
-                    setCurrentEmployee({
-                        name: '',
-                        email: '',
-                        phone: '',
-                        role: '',
-                        department: '',
-                        position: '',
-                        status: true,
-                        profilePicture: null,
-                        profilePictureType: null
-                    });
-                    setImagePreview(null);
-                    setSelectedImage(null);
-                    setErrors({});
-                    setSubmitError('');
-                    setOpenDialog(true);
-                }}>
-                    Add Employee
-                </Button>
+                >
+                    Employee Management
+                </Typography>
+
+                {/* Search field and button container */}
+                <Box
+                    display="flex"
+                    flexDirection={{ xs: 'column', sm: 'row' }}
+                    gap={2}
+                    width={{ xs: '100%', md: 'auto' }}
+                    alignItems={{ xs: 'stretch', sm: 'center' }}
+                >
+                    {/* Search field */}
+                    <TextField
+                        fullWidth
+                        sx={{
+                            maxWidth: { xs: '100%', md: 400 },
+                            minWidth: { xs: '100%', sm: 300 }
+                        }}
+                        placeholder="Search employees by name, email, role, department, or position..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <Search />
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+
+                    {/* Add button */}
+                    <Button
+                        variant="contained"
+                        startIcon={<Add />}
+                        onClick={() => {
+                            setCurrentEmployee({
+                                name: '',
+                                email: '',
+                                phone: '',
+                                role: '',
+                                department: '',
+                                position: '',
+                                status: true,
+                                profilePicture: null,
+                                profilePictureType: null
+                            });
+                            setImagePreview(null);
+                            setSelectedImage(null);
+                            setErrors({});
+                            setSubmitError('');
+                            setOpenDialog(true);
+                        }}
+                        sx={{
+                            whiteSpace: 'nowrap',
+                            width: '100%'
+                        }}
+                    >
+                        Add Employee
+                    </Button>
+                </Box>
             </Box>
 
             {/* DataGrid */}
-            <Box sx={{ height: 'calc(100vh - 250px)', width: '100%' }}>
+            <Box sx={{ height: 'calc(100vh - 350px)', width: '100%' }}>
                 <DataGrid
                     rows={filteredEmployees}
                     columns={columns}
@@ -700,6 +748,8 @@ export const EmployeeManagementPage = () => {
                         },
                     }}
                     sx={{
+                        height: 'calc(100vh - 250px)',
+                        border: 'none',
                         '& .MuiDataGrid-cell:focus': {
                             outline: 'none',
                         },
@@ -709,6 +759,16 @@ export const EmployeeManagementPage = () => {
                         '& .MuiDataGrid-row:hover': {
                             backgroundColor: 'action.hover',
                         },
+                        '& .MuiDataGrid-columnHeader': {
+                            backgroundColor: '#224e67ff !important',
+                        },
+                        '& .MuiDataGrid-columnHeaderTitle': {
+                            color: '#fdfafaff !important',
+                            fontWeight: 'bold !important',
+                        },
+                        '& .no-sort-icon .MuiDataGrid-iconButtonContainer, & .no-sort-icon .MuiDataGrid-menuIcon': {
+                            display: 'none'
+                        }
                     }}
                 />
             </Box>
@@ -719,9 +779,9 @@ export const EmployeeManagementPage = () => {
                 onClose={handleCloseDialog}
                 maxWidth="md"
                 fullWidth
-                PaperProps={{
-                    sx: { minHeight: '60vh' }
-                }}
+            // PaperProps={{
+            //     sx: { minHeight: '60vh' }
+            // }}
             >
                 <DialogTitle>
                     {currentEmployee.id ? `Edit Employee: ${currentEmployee.name}` : 'Add New Employee'}
@@ -813,7 +873,7 @@ export const EmployeeManagementPage = () => {
                         <Grid container spacing={2}>
                             <Grid item xs={12} md={6}>
                                 <Select
-                                    value={currentEmployee.department}
+                                    value={currentEmployee.department ?? ''}
                                     onChange={(e) => setCurrentEmployee({ ...currentEmployee, department: e.target.value })}
                                     fullWidth
                                     margin="normal"
@@ -855,7 +915,7 @@ export const EmployeeManagementPage = () => {
                             </Grid>
                             <Grid item xs={12} md={6}>
                                 <Select
-                                    value={currentEmployee.role}
+                                    value={currentEmployee.role ?? ''}
                                     onChange={(e) => setCurrentEmployee({ ...currentEmployee, role: e.target.value })}
                                     fullWidth
                                     margin="normal"

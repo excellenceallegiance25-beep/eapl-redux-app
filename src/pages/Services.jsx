@@ -1,23 +1,16 @@
 import {
   Analytics,
-  Api,
   ArrowForward,
   CheckCircle,
   Cloud,
   Code,
-  ExpandMore,
   Rocket,
   Security,
-  Settings,
   Smartphone,
-  Storage,
   SupportAgent,
   ViewList
 } from '@mui/icons-material';
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Box,
   Button,
   Card,
@@ -34,13 +27,12 @@ import {
   Tabs,
   Typography,
   alpha,
+  useMediaQuery,
   useTheme
 } from '@mui/material';
-import { ArrowBackIos, ArrowForwardIos } from '@mui/icons-material';
 import React, { useEffect, useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import PageHeader from '../components/common/PageHeader';
 import { useDispatch } from 'react-redux';
+import { Link as RouterLink } from 'react-router-dom';
 import { getApplicationServicesList } from '../services/AppConfigAction';
 
 import chart_bg from '../assets/images/chart.jpg';
@@ -57,25 +49,159 @@ import workinghuman_bg from '../assets/images/workinghuman.jpg';
 import workingonlaptop_bg from '../assets/images/workingonlaptop.jpg';
 
 const Services = () => {
+
   const theme = useTheme();
   const [tabValue, setTabValue] = useState(0);
   const [viewAll, setViewAll] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+  const isLargeDesktop = useMediaQuery(theme.breakpoints.up('lg'));
 
   const [services, setServices] = useState([]);
   const dispatch = useDispatch();
   useEffect(() => {
-    // Move the function definition inside useEffect
     const loadConfigs = async () => {
       const result = await dispatch(getApplicationServicesList());
-      console.log('Configurations loaded successfully', 'success');
+      // console.log('Configurations loaded successfully', 'success');
+
       if (result.type === "APPCONFIG_INIT") {
-        setServices(result.payload);
+        // console.log('Raw services data:', result.payload); // Debug log
+
+        // Process services to ensure they have colors and proper icon format
+        const processedServices = result.payload.map(service => {
+          // console.log('Processing service:', service.title, 'icon:', service.icon); // Debug log
+
+          // Check if icon is base64 data without data URL prefix
+          let processedIcon = service.icon;
+
+          // If icon exists and looks like base64 (but not a full data URL)
+          if (service.icon &&
+            !service.icon.startsWith('data:') &&
+            !service.icon.startsWith('http') &&
+            service.icon.length > 100) { // Base64 strings are usually long
+
+            // Check if it's likely base64 (contains alphanumeric chars, +, /, =)
+            const base64Pattern = /^[A-Za-z0-9+/=]+$/;
+            if (base64Pattern.test(service.icon)) {
+              // Determine image type
+              const iconType = service.iconType || 'image/png'; // Default to PNG
+              processedIcon = `data:${iconType};base64,${service.icon}`;
+              // console.log('Converted to data URL:', processedIcon.substring(0, 50) + '...');
+            }
+          }
+
+          return {
+            ...service,
+            icon: processedIcon,
+            color: getServiceColor(service)
+          };
+        });
+
+        // console.log('Processed services:', processedServices);
+        setServices(processedServices.filter(service =>
+          service.status === true
+        ));
       }
     };
-
     loadConfigs();
-  }, [dispatch]); // Only dispatch is needed as dependency
+  }, [dispatch]);
+
+  // Function to get color based on service category or title
+  const getServiceColor = (service) => {
+    // Try to get color from service data
+    if (service.color && isValidColor(service.color)) {
+      return service.color;
+    }
+
+    // Fallback: Generate color based on category or title
+    const category = service.category || service.title || '';
+
+    const colorMap = {
+      'Cloud': '#2196F3',
+      'Development': '#673AB7',
+      'Security': '#F44336',
+      'Analytics': '#4CAF50',
+      'Mobile': '#FF9800',
+      'Transformation': '#9C27B0',
+      'IoT': '#00BCD4',
+      'Blockchain': '#FF5722',
+      'Testing': '#607D8B',
+      'Design': '#E91E63',
+      'Consulting': '#3F51B5',
+      'Software': '#673AB7',
+      'Digital': '#9C27B0',
+      'DevOps': '#795548',
+      'Quality': '#607D8B',
+      'UI/UX': '#E91E63',
+    };
+
+    // Find matching color
+    for (const [key, color] of Object.entries(colorMap)) {
+      if (category.toLowerCase().includes(key.toLowerCase())) {
+        return color;
+      }
+    }
+
+    // Default fallback colors based on hash of title
+    const defaultColors = [
+      '#2196F3', '#673AB7', '#F44336', '#4CAF50', '#FF9800',
+      '#9C27B0', '#00BCD4', '#FF5722', '#607D8B', '#E91E63',
+      '#3F51B5', '#795548'
+    ];
+
+    if (service.title) {
+      const hash = service.title.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      return defaultColors[hash % defaultColors.length];
+    }
+
+    return '#1976d2'; // MUI primary color as final fallback
+  };
+
+  const safeAlpha = (color, opacity) => {
+    const safeColor = getSafeColor(color);
+    return alpha(safeColor, opacity); // <-- Call MUI's safeAlpha function
+  };
+
+  // Add this helper function after your other helper functions
+  const isImageUrl = (str) => {
+    if (!str) return false;
+
+    // Check if it's a base64 image
+    if (str.startsWith('data:image/')) return true;
+
+    // Check if it's a URL
+    if (str.startsWith('http://') || str.startsWith('https://')) return true;
+
+    // Check for common image file extensions
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp', '.bmp'];
+    return imageExtensions.some(ext =>
+      str.toLowerCase().includes(ext.toLowerCase())
+    );
+  };
+
+  // Add these helper functions at the top of your component (after the imports)
+  const isValidColor = (color) => {
+    if (!color) return false;
+
+    // Check for valid hex colors
+    if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(color)) return true;
+
+    // Check for rgb/rgba
+    if (/^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/.test(color)) return true;
+    if (/^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(0|1|0\.\d+)\)$/.test(color)) return true;
+
+    // Check for hsl/hsla
+    if (/^hsl\((\d{1,3}),\s*(\d{1,3})%,\s*(\d{1,3})%\)$/.test(color)) return true;
+    if (/^hsla\((\d{1,3}),\s*(\d{1,3})%,\s*(\d{1,3})%,\s*(0|1|0\.\d+)\)$/.test(color)) return true;
+
+    return false;
+  };
+
+  const getSafeColor = (color, defaultColor = '#1976d2') => {
+    return isValidColor(color) ? color : defaultColor;
+  };
 
   // Header image
   const headerImage = 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=2000&q=80';
@@ -310,7 +436,7 @@ const Services = () => {
             </Typography>
 
             <Typography
-              variant="h4"
+              variant="h6"
               sx={{
                 fontSize: { xs: '1.2rem', md: '1.5rem', lg: '1.75rem' },
                 mb: 4,
@@ -384,7 +510,7 @@ const Services = () => {
                     transition: 'all 0.3s',
                     '&:hover': {
                       color: category.color,
-                      bgcolor: alpha(category.color, 0.05),
+                      bgcolor: safeAlpha(category.color, 0.05),
                     },
                   }}
                 />
@@ -399,7 +525,7 @@ const Services = () => {
                       width: 80,
                       height: 80,
                       borderRadius: '50%',
-                      bgcolor: alpha(serviceCategories[tabValue].color, 0.1),
+                      bgcolor: safeAlpha(serviceCategories[tabValue].color, 0.1),
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -431,6 +557,7 @@ const Services = () => {
                     sx={{
                       display: 'flex',
                       justifyContent: 'center',
+                      perspective: '1000px',
                     }}>
                     <Card
                       onMouseEnter={() => setHoveredCard(index)}
@@ -441,48 +568,127 @@ const Services = () => {
                         position: 'relative',
                         overflow: 'hidden',
                         border: 'none',
-                        borderRadius: 3,
-                        backgroundImage: `
-                                            linear-gradient(
-                                                to bottom,
-                                                rgba(0, 0, 0, 0.85) 0%,
-                                                rgba(0, 0, 0, 0.7) 30%,
-                                                rgba(0, 0, 0, 0.4) 70%,
-                                                rgba(0, 0, 0, 0.2) 100%
-                                            ),
-                                            url(${getServiceBackground(service.title)})
-                                        `,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                        borderRadius: 4,
+                        background: `linear-gradient(45deg, rgba(0, 0, 0, 0.95) 0%,rgba(0, 0, 0, 0.7) 50%,rgba(0, 0, 0, 0.4) 100%),url(${getServiceBackground(service.title)})`,
+                        backgroundSize: 'cover, cover',
+                        backgroundPosition: 'center, center',
+                        backgroundRepeat: 'no-repeat',
+                        transformStyle: 'preserve-3d',
+                        transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                         cursor: 'pointer',
+                        '&:before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          background: `linear-gradient(45deg, ${safeAlpha(service.color, 0)} 0%,${safeAlpha(service.color, 0.1)} 50%,${safeAlpha(service.color, 0.3)} 100%)`,
+                          opacity: 0,
+                          transition: 'opacity 0.5s ease',
+                          zIndex: 1,
+                        },
                         '&:hover': {
-                          transform: 'translateY(-12px) scale(1.02)',
-                          boxShadow: `0 20px 40px ${alpha(service.color, 0.3)}`,
+                          transform: 'translateY(-16px) rotateX(5deg) scale(1.03)',
+                          boxShadow: `0 25px 50px -12px ${safeAlpha(service.color, 0.4)},0 0 40px ${safeAlpha(service.color, 0.2)} inset`,
+                          '&:before': {
+                            opacity: 1,
+                          },
                           '& .service-overlay': {
                             opacity: 1,
+                            transform: 'scale(1.1)',
+                          },
+                          '& .service-icon': {
+                            transform: 'scale(1.1) rotate(5deg)',
+                            boxShadow: `0 0 40px ${safeAlpha(service.color, 0.5)},inset 0 0 20px ${safeAlpha('#fff', 0.2)}`,
                           },
                           '& .service-stats': {
                             transform: 'translateY(0)',
                             opacity: 1,
                           },
+                          '& .service-title': {
+                            transform: 'translateY(-4px)',
+                          },
+                          '& .service-features': {
+                            transform: 'translateY(-2px)',
+                          },
                         },
+                        '&:after': {
+                          content: '""',
+                          position: 'absolute',
+                          top: -2,
+                          left: -2,
+                          right: -2,
+                          bottom: -2,
+                          background: `linear-gradient(45deg, ${safeAlpha(service.color, 0.5)}, ${safeAlpha(service.color, 0.2)}, transparent 70%)`,
+                          borderRadius: 'inherit',
+                          zIndex: -1,
+                          opacity: 0,
+                          transition: 'opacity 0.5s ease',
+                        },
+                        '&:hover:after': {
+                          opacity: 1,
+                        },
+                        ...(isImageUrl(service.icon) && {
+                          background: `linear-gradient(45deg, rgba(0, 0, 0, 0.9) 0%,rgba(0, 0, 0, 0.6) 50%,rgba(0, 0, 0, 0.3) 100%),url('${service.icon}')`,
+                        }),
                       }}
                     >
-                      {/* Overlay */}
+                      {/* Animated Gradient Border Effect */}
                       <Box
-                        className="service-overlay"
                         sx={{
                           position: 'absolute',
                           top: 0,
                           left: 0,
                           right: 0,
                           bottom: 0,
-                          background: `linear-gradient(to bottom, ${alpha(service.color, 0.2)}, ${alpha(service.color, 0.8)})`,
-                          opacity: hoveredCard === index ? 1 : 0.7,
-                          transition: 'opacity 0.3s ease',
+                          background: `linear-gradient(45deg, 
+              transparent 40%, 
+              ${safeAlpha(service.color, 0.1)} 50%, 
+              transparent 60%)`,
+                          backgroundSize: '300% 300%',
+                          animation: 'shimmer 3s infinite linear',
+                          borderRadius: 'inherit',
+                          opacity: 0,
+                          transition: 'opacity 0.5s ease',
+                          pointerEvents: 'none',
                         }}
+                        className="service-overlay"
                       />
+
+                      {/* Floating Particles Effect */}
+                      <Box
+                        sx={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          overflow: 'hidden',
+                          opacity: hoveredCard === index ? 0.6 : 0,
+                          transition: 'opacity 0.5s ease',
+                          pointerEvents: 'none',
+                          zIndex: 1,
+                        }}
+                      >
+                        {[...Array(8)].map((_, i) => (
+                          <Box
+                            key={i}
+                            sx={{
+                              position: 'absolute',
+                              width: 4,
+                              height: 4,
+                              background: safeAlpha('#fff', 0.8),
+                              borderRadius: '50%',
+                              top: `${Math.random() * 100}%`,
+                              left: `${Math.random() * 100}%`,
+                              animation: `float ${2 + Math.random() * 3}s infinite ease-in-out`,
+                              animationDelay: `${Math.random() * 2}s`,
+                              filter: 'blur(1px)',
+                            }}
+                          />
+                        ))}
+                      </Box>
 
                       <CardContent sx={{
                         position: 'relative',
@@ -491,93 +697,262 @@ const Services = () => {
                         display: 'flex',
                         flexDirection: 'column',
                         color: 'white',
+                        padding: 3,
                       }}>
-                        {/* Icon */}
-                        <Box
+
+                        {/* Icon with Enhanced Glow */}
+                        {/* <Box
+                          className="service-icon"
                           sx={{
                             width: SYMMETRICAL_CARD_CONFIG.iconSize,
                             height: SYMMETRICAL_CARD_CONFIG.iconSize,
-                            fontSize: SYMMETRICAL_CARD_CONFIG.iconFontSize,
-                            borderRadius: 2,
-                            bgcolor: alpha('#fff', 0.2),
-                            backdropFilter: 'blur(10px)',
+                            borderRadius: '24px',
+                            background: `
+                radial-gradient(circle at 30% 30%, 
+                  ${safeAlpha(service.color, 0.8)}, 
+                  ${safeAlpha(service.color, 0.4)})`,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            mb: 2,
-                            transition: 'all 0.3s',
-                            transform: hoveredCard === index ? 'scale(1.1) rotate(5deg)' : 'scale(1)',
+                            fontSize: SYMMETRICAL_CARD_CONFIG.iconFontSize,
+                            color: 'white',
+                            mb: 3,
+                            transition: 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                            flexShrink: 0,
+                            mx: 'auto',
+                            backdropFilter: 'blur(20px) saturate(200%)',
+                            border: `2px solid ${safeAlpha('#fff', 0.2)}`,
+                            boxShadow: `
+                inset 0 0 30px ${safeAlpha('#fff', 0.15)},
+                0 10px 40px ${safeAlpha(service.color, 0.4)},
+                0 0 60px ${safeAlpha(service.color, 0.2)}
+              `,
+                            overflow: 'hidden',
+                            position: 'relative',
+                            '&:before': {
+                              content: '""',
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              background: `radial-gradient(circle at center, 
+                  ${safeAlpha('#fff', 0.1)} 0%, 
+                  transparent 70%
+                )`,
+                              opacity: 0,
+                              transition: 'opacity 0.3s ease',
+                            },
+                            '&:hover:before': {
+                              opacity: 1,
+                            },
                           }}
                         >
-                          {service.icon}
-                        </Box>
+                          <Typography sx={{
+                            fontSize: '2.5rem',
+                            color: 'white',
+                            fontWeight: 'bold',
+                            zIndex: 1,
+                            textShadow: `
+                0 2px 10px ${safeAlpha(service.color, 0.5)},
+                0 0 20px ${safeAlpha('#fff', 0.3)}
+              `,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '100%',
+                            height: '100%',
+                          }}>
+                            {service.title?.charAt(0) || '📊'}
+                          </Typography>
+                        </Box> */}
 
-                        {/* Title and Category */}
-                        <Box sx={{ mb: 1 }}>
-                          <Typography variant="h5" fontWeight="bold" gutterBottom>
+                        {/* Title with Gradient Text */}
+                        <Box sx={{ mb: 2, textAlign: 'center' }}>
+                          <Typography
+                            className="service-title"
+                            variant="h5"
+                            fontWeight="800"
+                            gutterBottom
+                            sx={{
+                              background: `linear-gradient(45deg, 
+                  #fff 30%, 
+                  ${safeAlpha(service.color, 0.9)} 70%
+                )`,
+                              WebkitBackgroundClip: 'text',
+                              WebkitTextFillColor: 'transparent',
+                              backgroundClip: 'text',
+                              transition: 'all 0.3s ease',
+                              letterSpacing: '-0.5px',
+                            }}
+                          >
                             {service.title}
                           </Typography>
+
+                          {/* Enhanced Category Chip */}
                           <Chip
                             label={service.category}
                             size="small"
                             sx={{
-                              bgcolor: alpha('#fff', 0.2),
+                              bgcolor: safeAlpha(service.color, 0.2),
                               color: 'white',
-                              backdropFilter: 'blur(10px)',
-                              fontWeight: 500,
+                              backdropFilter: 'blur(20px)',
+                              fontWeight: 600,
+                              border: `1px solid ${safeAlpha('#fff', 0.3)}`,
+                              boxShadow: `0 4px 12px ${safeAlpha(service.color, 0.2)}`,
+                              transition: 'all 0.3s ease',
+                              '&:hover': {
+                                bgcolor: safeAlpha(service.color, 0.3),
+                                transform: 'translateY(-2px)',
+                              },
                             }}
                           />
                         </Box>
 
-                        {/* Description */}
-                        <Typography variant="body2" sx={{
-                          flex: 1,
-                          opacity: 0.9,
-                          lineHeight: 1.6,
-                          mb: 2,
-                        }}>
+                        {/* Description with Fade Effect */}
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            flex: 1,
+                            opacity: 0.95,
+                            lineHeight: 1.7,
+                            mb: 3,
+                            textAlign: 'center',
+                            fontSize: '0.95rem',
+                            textShadow: '0 1px 2px rgba(0,0,0,0.3)',
+                            position: 'relative',
+                            '&:after': {
+                              content: '""',
+                              position: 'absolute',
+                              bottom: -8,
+                              left: '25%',
+                              width: '50%',
+                              height: 2,
+                              background: `linear-gradient(90deg, 
+                  transparent, 
+                  ${safeAlpha(service.color, 0.5)}, 
+                  transparent
+                )`,
+                              opacity: 0.6,
+                            },
+                          }}
+                        >
                           {service.description}
                         </Typography>
 
-                        {/* Features */}
-                        <Box sx={{ mb: 2 }}>
-                          {service.features.split(',').map((feature, idx) => (
+                        {/* Features with Hover Effects */}
+                        <Box
+                          className="service-features"
+                          sx={{
+                            mb: 3,
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            justifyContent: 'center',
+                            gap: 1,
+                            transition: 'all 0.3s ease',
+                          }}
+                        >
+                          {service.features.split(',').slice(0, 3).map((feature, idx) => (
                             <Chip
                               key={idx}
-                              label={feature}
+                              label={feature.trim()}
                               size="small"
                               sx={{
-                                mr: 0.5,
-                                mb: 0.5,
-                                bgcolor: alpha('#fff', 0.1),
+                                bgcolor: safeAlpha('#fff', 0.05),
                                 color: 'white',
-                                border: '1px solid',
-                                borderColor: alpha('#fff', 0.2),
-                                fontSize: '0.7rem',
+                                border: `1px solid ${safeAlpha('#fff', 0.15)}`,
+                                fontSize: '0.75rem',
+                                fontWeight: 500,
+                                backdropFilter: 'blur(10px)',
+                                transition: 'all 0.3s ease',
+                                '&:hover': {
+                                  bgcolor: safeAlpha(service.color, 0.3),
+                                  borderColor: safeAlpha(service.color, 0.6),
+                                  transform: 'translateY(-2px)',
+                                  boxShadow: `0 4px 8px ${safeAlpha(service.color, 0.2)}`,
+                                },
                               }}
                             />
                           ))}
+                          {service.features.split(',').length > 3 && (
+                            <Chip
+                              label={`+${service.features.split(',').length - 3}`}
+                              size="small"
+                              sx={{
+                                bgcolor: safeAlpha('#000', 0.4),
+                                color: safeAlpha('#fff', 0.7),
+                                fontSize: '0.7rem',
+                              }}
+                            />
+                          )}
                         </Box>
 
-                        {/* Button */}
+                        {/* Enhanced Button with Icon Animation */}
                         <Button
                           fullWidth
                           component={RouterLink}
                           to={`/services/${service.id}`}
-                          variant="outlined"
-                          size="small"
+                          variant="contained"
+                          size="medium"
                           endIcon={<ArrowForward />}
                           sx={{
-                            borderColor: alpha('#fff', 0.3),
+                            background: `linear-gradient(135deg, 
+      ${safeAlpha(service.color, 0.9)} 0%, 
+      ${safeAlpha((service.color, 15), 0.9)} 100%
+    )`,
+                            border: 'none',
                             color: 'white',
-                            backdropFilter: 'blur(10px)',
+                            fontWeight: 600,
+                            padding: '12px 28px',
+                            borderRadius: 2.5,
+                            textTransform: 'none',
+                            fontSize: '0.95rem',
+                            letterSpacing: '0.3px',
+                            boxShadow: `0 6px 16px ${safeAlpha(service.color, 0.25)}`,
+                            transition: 'all 0.3s ease',
+                            position: 'relative',
+                            overflow: 'hidden',
+
                             '&:hover': {
-                              borderColor: 'white',
-                              bgcolor: alpha('#fff', 0.1),
+                              transform: 'translateY(-2px)',
+                              boxShadow: `0 12px 24px ${safeAlpha(service.color, 0.35)}`,
+                              background: `linear-gradient(135deg, 
+        ${safeAlpha((service.color, 5), 0.95)} 0%, 
+        ${safeAlpha(service.color, 0.95)} 100%
+      )`,
+
+                              '& .button-shine': {
+                                transform: 'translateX(100%)',
+                              }
                             },
+
+                            '&:active': {
+                              transform: 'translateY(0)',
+                              boxShadow: `0 4px 12px ${safeAlpha(service.color, 0.2)}`,
+                            }
                           }}
                         >
-                          See More
+                          {/* Shine effect */}
+                          <Box
+                            className="button-shine"
+                            sx={{
+                              position: 'absolute',
+                              top: 0,
+                              left: '-100%',
+                              width: '50%',
+                              height: '100%',
+                              background: `linear-gradient(90deg, 
+        transparent, 
+        ${safeAlpha('#fff', 0.15)}, 
+        transparent
+      )`,
+                              transition: 'transform 0.6s ease',
+                            }}
+                          />
+
+                          <Box sx={{ position: 'relative', zIndex: 1 }}>
+                            Explore Service
+                          </Box>
                         </Button>
                       </CardContent>
                     </Card>
@@ -590,7 +965,7 @@ const Services = () => {
 
         {/* Service Packages Section */}
         <Box sx={{ mb: 8 }}>
-          <Typography variant="h2" align="center" gutterBottom fontWeight="bold">
+          <Typography variant={isMobile ? "h4" : isTablet ? "h3" : "h2"} align="center" gutterBottom fontWeight="bold">
             Choose Your Plan
           </Typography>
           <Typography variant="h5" align="center" color="text.secondary" paragraph sx={{ mb: 4 }}>
@@ -610,7 +985,7 @@ const Services = () => {
                     transition: 'all 0.3s',
                     '&:hover': {
                       transform: 'translateY(-8px)',
-                      boxShadow: `0 15px 30px ${alpha(pkg.color, 0.2)}`,
+                      boxShadow: `0 15px 30px ${safeAlpha(pkg.color, 0.2)}`,
                     }
                   }}
                 >
@@ -684,7 +1059,7 @@ const Services = () => {
                         borderColor: pkg.color,
                         color: pkg.recommended ? 'white' : pkg.color,
                         '&:hover': {
-                          bgcolor: pkg.recommended ? alpha(pkg.color, 0.9) : alpha(pkg.color, 0.05),
+                          bgcolor: pkg.recommended ? safeAlpha(pkg.color, 0.9) : safeAlpha(pkg.color, 0.05),
                         },
                         fontWeight: 'bold',
                         py: 1.5,
@@ -702,7 +1077,7 @@ const Services = () => {
 
         {/* Our Process Section */}
         <Box sx={{ mb: 8 }}>
-          <Typography variant="h2" align="center" gutterBottom fontWeight="bold">
+          <Typography variant={isMobile ? "h4" : isTablet ? "h3" : "h2"} align="center" gutterBottom fontWeight="bold">
             How We Work
           </Typography>
           <Typography variant="h5" align="center" color="text.secondary" paragraph sx={{ mb: 4 }}>
@@ -871,7 +1246,7 @@ const Services = () => {
                             width: 60,
                             height: 60,
                             borderRadius: '50%',
-                            bgcolor: alpha(step.color, 0.1),
+                            bgcolor: safeAlpha(step.color, 0.1),
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -985,3 +1360,4 @@ const Services = () => {
 };
 
 export default Services;
+

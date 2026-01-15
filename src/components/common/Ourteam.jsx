@@ -29,7 +29,7 @@ const Ourteam = () => {
         // Move the function definition inside useEffect
         const loadConfigs = async () => {
             const result = await dispatch(getEmployeeList());
-            console.log('Configurations loaded successfully', 'success');
+            // console.log('Configurations loaded successfully', 'success');
             if (result.type === "EMP_LIST") {
                 setLeadershipTeam(result.payload);
             }

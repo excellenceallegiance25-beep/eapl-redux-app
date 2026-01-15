@@ -1,21 +1,21 @@
 // redux/slices/authSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
-// Helper function to safely parse localStorage data
-const getLocalStorageItem = (key, defaultValue = null) => {
+// Helper function for sessionStorage
+const getSessionStorageItem = (key, defaultValue = null) => {
   try {
-    const item = localStorage.getItem(key);
+    const item = sessionStorage.getItem(key);
     return item ? JSON.parse(item) : defaultValue;
   } catch (error) {
-    console.error(`Error parsing localStorage item "${key}":`, error);
+    console.error(`Error parsing sessionStorage item "${key}":`, error);
     return defaultValue;
   }
 };
 
 const initialState = {
-  user: getLocalStorageItem('user'),
-  token: localStorage.getItem('token') || null,
-  isAuthenticated: !!localStorage.getItem('token'),
+  user: getSessionStorageItem('user'),
+  token: sessionStorage.getItem('token') || null,
+  isAuthenticated: !!sessionStorage.getItem('token'),
   loading: false,
   error: null,
 };
@@ -34,7 +34,6 @@ const authSlice = createSlice({
 
       const fullUser = action.payload.user;
 
-      // ✅ MINIMAL USER OBJECT
       const safeUser = {
         id: fullUser.id,
         name: fullUser.name,
@@ -46,10 +45,11 @@ const authSlice = createSlice({
       state.token = action.payload.token;
 
       try {
-        localStorage.setItem('token', action.payload.token);
-        localStorage.setItem('user', JSON.stringify(safeUser));
+        // Store in sessionStorage (clears when browser closes)
+        sessionStorage.setItem('token', action.payload.token);
+        sessionStorage.setItem('user', JSON.stringify(safeUser));
       } catch (error) {
-        console.error('Error storing auth data in localStorage:', error);
+        console.error('Error storing auth data in sessionStorage:', error);
       }
     },
     loginFailure: (state, action) => {
@@ -61,10 +61,10 @@ const authSlice = createSlice({
       state.token = null;
       state.isAuthenticated = false;
       try {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
       } catch (error) {
-        console.error('Error removing auth data from localStorage:', error);
+        console.error('Error removing auth data from sessionStorage:', error);
       }
     },
     registerStart: (state) => {

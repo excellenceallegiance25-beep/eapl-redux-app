@@ -476,7 +476,7 @@ const Products = () => {
           url: window.location.href,
         });
       } catch (error) {
-        console.log('Error sharing:', error);
+        // console.log('Error sharing:', error);
       }
     } else {
       navigator.clipboard.writeText(`${product.name} - ${window.location.href}`);
@@ -697,7 +697,7 @@ const Products = () => {
               <FormControl fullWidth size="medium">
                 <InputLabel>Category</InputLabel>
                 <Select
-                  value={category}
+                  value={category ?? ''}
                   label="Category"
                   onChange={(e) => setCategory(e.target.value)}
                 >
@@ -713,7 +713,7 @@ const Products = () => {
               <FormControl fullWidth size="medium">
                 <InputLabel>Sort By</InputLabel>
                 <Select
-                  value={sortBy}
+                  value={sortBy ?? ''}
                   label="Sort By"
                   onChange={(e) => setSortBy(e.target.value)}
                 >

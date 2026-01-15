@@ -1,6 +1,5 @@
 import { Box } from '@mui/material';
 import AchievementsSection from '../components/home/AchievementsSection';
-import CareerSection from '../components/home/CareerSection';
 import CTASection from '../components/home/CTASection';
 import HeroSection from '../components/home/HeroSection';
 import PartnersSection from '../components/home/PartnersSection';

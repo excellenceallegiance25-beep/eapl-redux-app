@@ -3,11 +3,9 @@ import {
   ArrowForward,
   CheckCircle,
   Error,
-  MoreVert,
   Notifications,
   Pending,
   Refresh,
-  Security,
   Storage,
   Timeline,
   TrendingDown,
@@ -29,13 +27,13 @@ import {
   LinearProgress,
   Paper,
   Stack,
-  Typography,
   Tab,
   Tabs,
+  Typography,
 } from '@mui/material';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
-import { useState } from 'react';
 
 const Dashboards = () => {
   const { user } = useSelector((state) => state.auth);

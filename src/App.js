@@ -36,6 +36,7 @@ import { ServicesManagementPage } from './components/dashboardmenu/ServicesManag
 import { PartnersManagementPage } from './components/dashboardmenu/PartnersManagementPage';
 import ForgotPassword from './components/auth/ForgotPassword';
 import { LoadingProvider } from './context/SkeletonWrapper';
+import { LeaveRequestPage } from './components/dashboardmenu/LeaveRequestPage';
 
 // Create theme
 const theme = createTheme({
@@ -140,6 +141,14 @@ function App() {
                   <LeaveManagementPage />
                 </ProtectedRoute>
               } />
+
+              <Route path="/leave-request" element={
+                <ProtectedRoute>
+                  <LeaveRequestPage />
+                </ProtectedRoute>
+              } />
+              {/* <Route path="/leave/new" element={<QuickLeaveRequest />} /> */}
+              {/* <Route path="/request-leave" element={<QuickLeaveRequest />} /> */}
 
               <Route path="/employees" element={
                 <ProtectedRoute>
