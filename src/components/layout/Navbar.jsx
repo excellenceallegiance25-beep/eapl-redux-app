@@ -9,7 +9,8 @@ import {
   Login,
   Logout,
   Menu as MenuIcon,
-  Person
+  Person,
+  Public
 } from '@mui/icons-material';
 import {
   AppBar,
@@ -36,6 +37,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '../../redux/slices/authSlice';
 import RegisterPopup from '../auth/RegisterPopup';
+import EAPLfavicon from '../../assets/images/EAPLfavicon.jpg';
+import eaplRotatingLogo from '../../assets/images/eaplRotatingLogo.gif';
 
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -113,14 +116,105 @@ const Navbar = () => {
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
-        <Box component="span" sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-          Excellence Allegiance
+      {/* Logo/Brand Section - Enhanced Responsive */}
+      <Box sx={{
+        py: { xs: 1.5, sm: 2 },
+        px: { xs: 1, sm: 2 },
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: { xs: 1, sm: 1.5 },
+        borderBottom: 1,
+        borderColor: 'divider',
+        // backgroundColor: 'grey.50',
+        flexShrink: 0
+      }}>
+        {/* Logo Image */}
+        <Box
+          component="img"
+          src={eaplRotatingLogo}
+          alt="Company Logo"
+          sx={{
+            width: {
+              xs: 40,   // Extra small phones
+              xss: 45,  // Small phones
+              sm: 50,   // Phones/Tablets
+              md: 55,   // Tablets
+              lg: 60,   // Laptops
+            },
+            height: 'auto',
+            aspectRatio: '1.5', // Adjust based on your logo's aspect ratio
+            maxHeight: {
+              xs: 30,
+              sm: 35,
+              md: 40,
+            },
+            flexShrink: 0,
+            objectFit: 'contain',
+            display: 'block',
+          }}
+        />
+
+        {/* Company Name */}
+        <Box sx={{
+          textAlign: 'left',
+          lineHeight: 1.2,
+          minWidth: 0, // Enables text truncation
+        }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 700,
+              fontSize: {
+                xs: '0.875rem',  // Mobile: 14px
+                sm: '1rem',      // Tablet: 16px
+                md: '1.125rem',  // Laptop: 18px
+              },
+              color: 'primary.main',
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              gap: 0.5,
+              mb: 0.25,
+            }}
+          >
+            <Box component="span" sx={{
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}>
+              Excellence Allegiance
+            </Box>
+            <Box component="span" sx={{
+              color: 'secondary.main',
+              fontSize: '0.9em',
+              fontWeight: 600,
+              whiteSpace: 'nowrap',
+            }}>
+              Pvt Ltd
+            </Box>
+          </Typography>
+
+          {/* Optional Tagline */}
+          {/* <Typography
+            variant="caption"
+            sx={{
+              color: 'text.secondary',
+              fontSize: {
+                xs: '0.65rem',  // Mobile: 10.4px
+                sm: '0.75rem',  // Tablet: 12px
+              },
+              fontStyle: 'italic',
+              display: 'block',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            Driving Excellence Forward
+          </Typography> */}
         </Box>
-        <Box component="span" sx={{ color: 'secondary.main', ml: 0.5 }}>
-          Pvt Ltd
-        </Box>
-      </Typography>
+      </Box>
       <List>
         {menuItems.map((item) => {
           const active = isActive(item.path);
@@ -251,11 +345,12 @@ const Navbar = () => {
   return (
     <>
       <AppBar
-        position="sticky"
+        position="fixed"
         elevation={2}
         sx={{
           background: 'white',
           borderBottom: `1px solid ${theme.palette.divider}`,
+          zIndex: theme.zIndex.drawer + 1,
         }}
       >
         <Container maxWidth="xl">
@@ -284,18 +379,117 @@ const Navbar = () => {
                 color: activePath === '/' ? 'primary.main' : 'primary.main',
                 display: 'flex',
                 alignItems: 'center',
-                fontSize: { xs: '1rem', sm: '1.25rem' },
+                fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem', lg: '1.25rem' },
+                gap: { xs: 1, sm: 1.5, md: 2 }, // Responsive gap between logo and text
+                flexWrap: 'nowrap',
+                minWidth: 0, // Allows text truncation on small screens
               }}
             >
-              <Business sx={{ mr: 1, fontSize: { xs: '1.5rem', sm: '2rem' } }} />
-              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                Excellence Allegiance
-                <Box component="span" sx={{ color: 'secondary.main', ml: 0.5 }}>
-                  Pvt Ltd
+              {/* Logo Image */}
+              <Box
+                component="img"
+                src={EAPLfavicon}
+                alt="Company Logo"
+                sx={{
+                  // Responsive sizing with aspect ratio preservation
+                  width: {
+                    xs: 40,    // Extra small phones: 40px
+                    xss: 45,   // Small phones: 45px
+                    sm: 50,    // Phones: 50px
+                    md: 60,    // Tablets: 60px
+                    lg: 70,    // Laptops: 70px
+                    xl: 90,    // Desktops: 80px
+                  },
+                  height: 'auto',
+                  aspectRatio: '1.5', // Adjust based on your logo aspect ratio (width/height)
+                  maxHeight: {
+                    xs: 30,
+                    sm: 35,
+                    md: 40,
+                    lg: 45,
+                    xl: 80,
+                  },
+                  flexShrink: 0, // Prevents logo from shrinking
+                  objectFit: 'contain',
+                  display: 'block',
+
+                  // Add subtle hover effect
+                  transition: 'transform 0.2s ease',
+                  '&:hover': {
+                    transform: 'scale(1.05)',
+                  },
+                }}
+              />
+
+              {/* Company Name - Responsive text handling */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexWrap: 'nowrap',
+                  minWidth: 0, // Enables text truncation
+                  overflow: 'hidden',
+                }}
+              >
+                {/* Full name for medium screens and up */}
+                <Box
+                  sx={{
+                    display: { xs: 'none', md: 'block' },
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  Excellence Allegiance
+                  <Box
+                    component="span"
+                    sx={{
+                      color: 'secondary.main',
+                      ml: 0.5,
+                      fontWeight: 600,
+                    }}
+                  >
+                    Pvt Ltd
+                  </Box>
                 </Box>
-              </Box>
-              <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
-                EA Pvt Ltd
+
+                {/* Shortened name for small screens (tablets) */}
+                <Box
+                  sx={{
+                    display: { xs: 'none', sm: 'block', md: 'none' },
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  Excellence Allegiance
+                  <Box
+                    component="span"
+                    sx={{
+                      color: 'secondary.main',
+                      ml: 0.5,
+                      fontWeight: 600,
+                    }}
+                  >
+                    Pvt Ltd
+                  </Box>
+                </Box>
+
+                {/* Very short name for mobile */}
+                <Box
+                  sx={{
+                    display: { xs: 'block', sm: 'none' },
+                    whiteSpace: 'nowrap',
+                    fontWeight: 600,
+                  }}
+                >
+                  <Box component="span" sx={{ color: 'primary.main' }}>
+                    EA
+                  </Box>
+                  <Box component="span" sx={{ color: 'secondary.main', ml: 0.25 }}>
+                    Pvt Ltd
+                  </Box>
+                </Box>
               </Box>
             </Typography>
 

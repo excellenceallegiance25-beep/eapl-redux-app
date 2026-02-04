@@ -39,6 +39,10 @@ const CTASection = () => {
                 radial-gradient(circle at 20% 80%, rgba(117, 100, 177, 0.1) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(153, 99, 99, 0.05) 0%, transparent 50%)
             `,
+        background: 'linear-gradient(45deg,#162a3a,#2f5d7c,#8faec2, #d97b6a)',
+        background: 'linear-gradient(15deg,#162a3a 0%,#2f5d7c 40%,#8faec2 75%,#d97b6a 100%)',
+
+
         position: 'relative',
         overflow: 'hidden',
         color: 'white',

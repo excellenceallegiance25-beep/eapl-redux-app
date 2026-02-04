@@ -1,82 +1,74 @@
-// components/dashboardmenu/Dashboard.jsx
 import {
     AccountTree,
-    ArrowForward,
     Business,
     CalendarToday,
-    CheckCircle,
     ChevronLeft,
     Close,
     Dashboard as DashboardIcon,
-    Group,
-    KeyboardArrowDown,
     Logout,
     Menu as MenuIcon,
-    Notifications,
     PendingActions,
-    PendingActions as PendingIcon,
     People,
-    Person,
-    Work
+    Person
 } from '@mui/icons-material';
 import {
     alpha,
     AppBar,
-    Avatar,
-    Badge,
     Box,
     Button,
-    Card,
-    CardContent,
     Chip,
-    Container,
     Drawer,
-    Grid,
     IconButton,
     List,
     ListItem,
     ListItemIcon,
     ListItemText,
-    Paper,
     Stack,
     Toolbar,
     Typography,
     useMediaQuery,
     useTheme
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-
-// Import child components
+import EAPLfavicon from '../../assets/images/EAPLfavicon.jpg';
+import eaplRotatingLogo from '../../assets/images/eaplRotatingLogo.gif';
 import Profile from '../../pages/Profile';
 import { logout } from '../../redux/slices/authSlice';
+import useLoading from '../../redux/slices/useLoading';
+import DashboardHome from './DashboardHome';
 import { EmployeeManagementPage } from './EmployeeManagementPage';
 import { LeaveManagementPage } from './LeaveManagementPage';
+import { LeaveRequestPage } from './LeaveRequestPage';
+import NotificationBell from './NotificationBell';
 import { PartnersManagementPage } from './PartnersManagementPage';
 import { ServicesManagementPage } from './ServicesManagementPage';
-import { LeaveRequestPage } from './LeaveRequestPage';
+import NotificationDrawer from './NotificationDrawer';
 
 const DashboardSidebar = ({ open, onClose, role, userName, mobileOpen, handleDrawerToggle }) => {
     const userRole = role || 'employee';
+    const { user } = useSelector((state) => state.auth);
     const theme = useTheme();
     const location = useLocation();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'lg'));
+    const { showLoader, hideLoader, withLoader } = useLoading(); // Get loading functions
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const handleLogout = () => {
+        showLoader(EAPLfavicon, 80);
         dispatch(logout());
         navigate('/');
-        // setAnchorEl(null);
+        setTimeout(hideLoader, 500);
     };
 
     const commonItems = [
-        { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-        // { text: 'My Projects', icon: <Assignment />, path: '/dashboard/my-projects' },
+        { text: 'Notices', icon: <DashboardIcon />, path: `/dashboard` },
+        // { text: 'Dashboard', icon: <DashboardIcon />, path: `/dashboard/${user?.id}` },
         { text: 'Leave Application', icon: <CalendarToday />, path: '/dashboard/leave-request' },
-        { text: 'My Profile', icon: <Person />, path: '/dashboard/profile' },
+        { text: 'My Information', icon: <Person />, path: '/dashboard/profile' },
     ];
 
     const adminItems = [
@@ -93,10 +85,9 @@ const DashboardSidebar = ({ open, onClose, role, userName, mobileOpen, handleDra
 
     const drawerContent = (
         <>
-            {/* Sidebar Header */}
             <Box sx={{
                 p: 3,
-                background: 'linear-gradient(135deg, #1976d2 0%, #0d47a1 100%)',
+                background: 'linear-gradient(180deg, #b0e1fa 48%, #08548b 74%)',
                 color: 'white',
                 position: 'relative',
                 textAlign: "center",
@@ -117,16 +108,146 @@ const DashboardSidebar = ({ open, onClose, role, userName, mobileOpen, handleDra
                         <Close />
                     </IconButton>
                 )}
-                <Box display="flex" alignItems="center" gap={2}>
-                    {/* <Avatar sx={{
-                        bgcolor: 'white',
-                        color: '#1976d2',
-                        width: { xs: 48, md: 56 },
-                        height: { xs: 48, md: 56 },
-                        fontSize: { xs: '1.2rem', md: '1.5rem' }
-                    }}>
-                        {userName ? userName.charAt(0).toUpperCase() : 'U'}
-                    </Avatar> */}
+
+                {/* <Box
+                    component="img"
+                    src={eaplRotatingLogo}
+                    alt="Loading"
+                    sx={{
+                        width: 100,
+                        mixBlendMode: "multiply",
+                    }}
+                /> */}
+
+                <Box
+                    sx={{
+                        position: "relative",
+                        height: 120,
+                        // top: 5,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    {/* Glow Aura */}
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            inset: -10,
+                            borderRadius: "50%",
+                            background: `
+        radial-gradient(
+          circle,
+          rgba(143,174,194,0.45) 0%,
+          rgba(47,93,124,0.35) 45%,
+          transparent 70%
+        )
+      `,
+                            filter: "blur(18px)",
+                            animation: "pulseGlow 2.6s ease-in-out infinite",
+                        }}
+                    />
+
+                    {/* Orbit Ring 1 */}
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            width: 130,
+                            height: 130,
+                            borderRadius: "50%",
+                            border: "1px dotted rgba(77, 118, 146, 0.55)",
+                            background: `
+        radial-gradient(
+          circle,
+          rgba(255,255,255,0.15),
+          rgba(47,93,124,0.35)
+        )
+      `,
+                            background: 'radial- gradient(circle, rgb(255 0 0 / 0 %), rgb(0 29 48 / 16 %))',
+                            backdropFilter: "blur(4px)",
+                            animation: "spinCW 20s linear infinite",
+                        }}
+                    />
+
+                    {/* Orbit Ring 2 */}
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            width: 95,
+                            height: 95,
+                            borderRadius: "50%",
+                            border: "2px dotted rgba(180,210,225,0.6)",
+                            background: `
+        radial-gradient(
+          circle,
+          rgba(233,241,246,0.35),
+          rgba(143,174,194,0.4)
+        )
+      `,
+                            animation: "spinCCW 5.6s linear infinite",
+                        }}
+                    />
+
+                    {/* Orbit Ring 3 */}
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            width: 60,
+                            height: 60,
+                            borderRadius: "50%",
+                            border: "1px dotted rgba(233,241,246,0.6)",
+                            background: `
+        radial-gradient(
+          circle,
+          rgba(255,255,255,0.6),
+          rgba(143,174,194,0.55)
+        )
+      `,
+                            animation: "spinCW 6.1s linear infinite",
+                        }}
+                    />
+
+                    {/* Center Logo */}
+                    <Box
+                        component="img"
+                        src={eaplRotatingLogo}
+                        alt="Loading"
+                        sx={{
+                            width: 96,
+                            zIndex: 2,
+                            animation: "floatLogo 1.8s ease-in-out infinite",
+                            // filter: "drop-shadow(0 6px 14px rgba(47,93,124,0.35))",
+                            mixBlendMode: "multiply",
+                        }}
+                    />
+
+                    {/* Animations */}
+                    <style>
+                        {`
+      @keyframes spinCW {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+
+      @keyframes spinCCW {
+        from { transform: rotate(360deg); }
+        to { transform: rotate(0deg); }
+      }
+
+      @keyframes floatLogo {
+        0%, 100% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-6px) scale(1.05); }
+      }
+
+      @keyframes pulseGlow {
+        0%, 100% { opacity: 0.55; }
+        50% { opacity: 1; }
+      }
+    `}
+                    </style>
+                </Box>
+
+                <Box display="flex" alignItems="center" gap={2} >
                     <Box sx={{ flex: 1, minWidth: 0 }}>
                         <Typography
                             variant={isMobile ? "subtitle1" : "h6"}
@@ -143,7 +264,6 @@ const DashboardSidebar = ({ open, onClose, role, userName, mobileOpen, handleDra
                             label={userRole.toUpperCase()}
                             size="small"
                             sx={{
-                                // mt: 1,
                                 ml: 1,
                                 backgroundColor: alpha(theme.palette.common.white, 0.2),
                                 color: 'white',
@@ -156,18 +276,11 @@ const DashboardSidebar = ({ open, onClose, role, userName, mobileOpen, handleDra
                 </Box>
             </Box>
 
-            {/* Navigation Menu */}
-            <Box sx={{ p: 2, flexGrow: 1 }}>
-                {/* <Typography variant="caption" sx={{
-                    px: 2,
-                    mb: 1,
-                    color: 'text.secondary',
-                    fontWeight: 500,
-                    display: 'block',
-                    fontSize: '0.75rem'
-                }}>
-                    MAIN MENU
-                </Typography> */}
+            <Box sx={{
+                p: 2,
+                background: 'linear-gradient(180deg, #276d9e 0%, rgba(112, 65, 158, 0.8) 100%)',
+                flexGrow: 1
+            }}>
                 <List sx={{ px: 1 }}>
                     {menuItems.map((item) => {
                         const isActive = location.pathname === item.path;
@@ -179,46 +292,62 @@ const DashboardSidebar = ({ open, onClose, role, userName, mobileOpen, handleDra
                                 onClick={isMobile ? handleDrawerToggle : undefined}
                                 sx={{
                                     mb: 0.5,
-                                    borderRadius: 1.5,
+                                    borderRadius: 2,
                                     px: { xs: 1.5, md: 2 },
-                                    py: { xs: 1, md: 1.5 },
+                                    py: { xs: 1, md: 1.3 },
+
+                                    // ACTIVE STATE
+                                    backgroundColor: isActive
+                                        ? 'rgba(255,255,255,0.12)'
+                                        : 'transparent',
+
+                                    // TEXT COLOR
+                                    color: isActive ? '#ffffff' : 'rgba(230,238,246,0.85)',
+
+                                    transition: 'all 0.25s ease',
+
+                                    // HOVER STATE
                                     '&:hover': {
-                                        backgroundColor: alpha(theme.palette.primary.main, 0.08),
+                                        backgroundColor: 'rgba(255,255,255,0.08)',
+                                        transform: 'translateX(2px)',
                                     },
-                                    backgroundColor: isActive ? alpha(theme.palette.primary.main, 0.12) : 'transparent',
-                                    color: isActive ? theme.palette.primary.main : 'text.primary',
+
+                                    // ICON STYLE
                                     '& .MuiListItemIcon-root': {
-                                        color: isActive ? theme.palette.primary.main : 'text.secondary',
+                                        minWidth: { xs: 36, md: 40 },
+                                        justifyContent: 'center',
+                                        color: isActive ? '#4fc3f7' : 'rgba(230,238,246,0.7)',
+                                        transition: 'color 0.25s ease',
                                     },
                                 }}
                             >
-                                <ListItemIcon sx={{
-                                    minWidth: { xs: 36, md: 40 },
-                                    justifyContent: 'center'
-                                }}>
+                                <ListItemIcon>
                                     {item.icon}
                                 </ListItemIcon>
+
                                 <ListItemText
                                     primary={item.text}
                                     primaryTypographyProps={{
-                                        fontWeight: 500,
-                                        fontSize: { xs: '0.85rem', md: '0.95rem' }
+                                        fontWeight: isActive ? 600 : 500,
+                                        fontSize: { xs: '0.85rem', md: '0.95rem' },
+                                        letterSpacing: '0.3px',
                                     }}
                                 />
                             </ListItem>
+
                         );
                     })}
                 </List>
             </Box>
 
-            {/* Sidebar Footer */}
-            <Box sx={{ p: 2, borderTop: '1px solid rgba(0, 0, 0, 0.08)' }}>
+            <Box sx={{
+                p: 2, borderTop: '1px solid rgba(0, 0, 0, 0.08)',
+                backgroundColor: 'rgba(114, 91, 171, 0.8)'
+            }}>
                 <Button
                     fullWidth
                     variant="outlined"
                     startIcon={<Logout />}
-                    // component={RouterLink}
-                    // to="/"
                     onClick={() => {
                         handleLogout();
                     }}
@@ -228,7 +357,13 @@ const DashboardSidebar = ({ open, onClose, role, userName, mobileOpen, handleDra
                         fontWeight: 500,
                         py: 1.25,
                         borderRadius: 1.5,
-                        fontSize: { xs: '0.85rem', md: '0.95rem' }
+                        fontSize: { xs: '0.85rem', md: '0.95rem' },
+                        background: 'linear-gradient(180deg, #001b35 0%, rgba(112, 65, 158, 0.8) 100%)',
+                        color: 'white',
+                        '&:hover': {
+                            background: 'linear-gradient(180deg, rgba(112, 65, 158, 0.8) 0%,#001b35 100%)',
+                            transform: 'translateX(2px)',
+                        },
                     }}
                 >
                     Logout
@@ -237,7 +372,6 @@ const DashboardSidebar = ({ open, onClose, role, userName, mobileOpen, handleDra
         </>
     );
 
-    // Mobile drawer
     if (isMobile) {
         return (
             <Drawer
@@ -261,7 +395,6 @@ const DashboardSidebar = ({ open, onClose, role, userName, mobileOpen, handleDra
         );
     }
 
-    // Desktop/Tablet persistent drawer
     return (
         <Drawer
             variant="persistent"
@@ -280,19 +413,6 @@ const DashboardSidebar = ({ open, onClose, role, userName, mobileOpen, handleDra
                     }),
                     overflowX: 'hidden',
                     overflowY: 'auto',
-                    '&::-webkit-scrollbar': {
-                        width: 6,
-                    },
-                    '&::-webkit-scrollbar-track': {
-                        background: '#f1f1f1',
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                        background: '#888',
-                        borderRadius: 3,
-                    },
-                    '&::-webkit-scrollbar-thumb:hover': {
-                        background: '#555',
-                    },
                 },
             }}
         >
@@ -301,438 +421,17 @@ const DashboardSidebar = ({ open, onClose, role, userName, mobileOpen, handleDra
     );
 };
 
-const DashboardHome = ({ userName, userRole, navigate }) => {
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
-
-    // Sample data for dashboard
-    const dashboardStats = {
-        pendingLeaves: 5,
-        approvedLeaves: 12,
-        totalEmployees: 24,
-        activeProjects: 8,
-    };
-
-    const pendingRequests = [
-        { id: 1, employee: 'Jane Smith', type: 'Vacation', days: 5, date: '2024-01-20' },
-        { id: 2, employee: 'Mike Johnson', type: 'Sick Leave', days: 2, date: '2024-01-18' },
-    ];
-
-    const recentActivities = [
-        { id: 1, action: 'Leave approved', user: 'John Doe', time: '2 hours ago' },
-        { id: 2, action: 'New employee added', user: 'Admin', time: '4 hours ago' },
-    ];
-
-    // Quick links for admin
-    const quickLinks = [
-        { title: 'Employees', icon: <People />, path: '/dashboard/employees', color: '#1976d2' },
-        { title: 'Leave Management', icon: <PendingActions />, path: '/dashboard/leave-management', color: '#dc004e' },
-        { title: 'Services', icon: <Business />, path: '/dashboard/services', color: '#ed6c02' },
-        { title: 'Partners', icon: <AccountTree />, path: '/dashboard/partners', color: '#2e7d32' },
-    ];
-
-    const StatCard = ({ value, label, icon, color }) => (
-        <Card sx={{
-            height: '100%',
-            borderRadius: 2,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-            transition: 'all 0.3s ease',
-            border: '1px solid',
-            borderColor: 'divider',
-            '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: '0 6px 20px rgba(0,0,0,0.1)',
-            }
-        }}>
-            <CardContent sx={{ p: { xs: 2, sm: 2.5, md: 3 } }}>
-                <Box display="flex" alignItems="center" justifyContent="space-between">
-                    <Box>
-                        <Typography
-                            variant={isMobile ? "h4" : "h3"}
-                            fontWeight="bold"
-                            color={color}
-                            gutterBottom
-                            sx={{ fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' } }}
-                        >
-                            {value}
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            fontWeight="medium"
-                            sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' } }}
-                        >
-                            {label}
-                        </Typography>
-                    </Box>
-                    <Box sx={{
-                        backgroundColor: alpha(color, 0.1),
-                        borderRadius: 2,
-                        p: { xs: 1, md: 1.5 },
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        {React.cloneElement(icon, {
-                            sx: {
-                                fontSize: { xs: 24, md: 32 },
-                                color: color
-                            }
-                        })}
-                    </Box>
-                </Box>
-            </CardContent>
-        </Card>
-    );
-
-    return (
-        <Box sx={{
-            flex: 1,
-            // p: { xs: 1.5, sm: 2, md: 3 },
-            backgroundColor: '#f5f5f5',
-            minHeight: '100vh',
-            overflowX: 'hidden'
-        }}>
-            <Container maxWidth="xl" disableGutters>
-                {/* Welcome Section */}
-                <Box sx={{ mb: { xs: 3, md: 4 } }}>
-                    <Typography
-                        variant={isMobile ? "h5" : "h4"}
-                        fontWeight="bold"
-                        gutterBottom
-                        sx={{ fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2.125rem' } }}
-                    >
-                        Welcome back, {userName}!
-                    </Typography>
-                    <Typography
-                        variant="body1"
-                        color="text.secondary"
-                        sx={{ fontSize: { xs: '0.9rem', md: '1rem' } }}
-                    >
-                        Here's what's happening with your account today.
-                    </Typography>
-                </Box>
-
-                {/* Stats Cards */}
-                <Grid container spacing={{ xs: 2, sm: 3 }} sx={{ mb: { xs: 3, md: 4 } }}>
-                    <Grid item xs={6} sm={6} md={3}>
-                        <StatCard
-                            value={dashboardStats.pendingLeaves}
-                            label="Pending Leaves"
-                            icon={<PendingIcon />}
-                            color={theme.palette.warning.main}
-                        />
-                    </Grid>
-
-                    <Grid item xs={6} sm={6} md={3}>
-                        <StatCard
-                            value={dashboardStats.approvedLeaves}
-                            label="Approved Leaves"
-                            icon={<CheckCircle />}
-                            color={theme.palette.success.main}
-                        />
-                    </Grid>
-
-                    <Grid item xs={6} sm={6} md={3}>
-                        <StatCard
-                            value={dashboardStats.totalEmployees}
-                            label="Total Employees"
-                            icon={<Group />}
-                            color={theme.palette.info.main}
-                        />
-                    </Grid>
-
-                    <Grid item xs={6} sm={6} md={3}>
-                        <StatCard
-                            value={dashboardStats.activeProjects}
-                            label="Active Projects"
-                            icon={<Work />}
-                            color={theme.palette.secondary.main}
-                        />
-                    </Grid>
-                </Grid>
-
-                {/* Two Column Layout */}
-                <Grid container spacing={{ xs: 2, sm: 3 }}>
-                    {/* Left Column - Quick Links & Pending Requests */}
-                    <Grid item xs={12} lg={8}>
-                        {/* Quick Links for Admin */}
-                        {userRole.toLowerCase() === 'admin' && (
-                            <Card sx={{
-                                mb: { xs: 2, sm: 3 },
-                                borderRadius: 2,
-                                boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-                                border: '1px solid',
-                                borderColor: 'divider'
-                            }}>
-                                <CardContent sx={{ p: { xs: 2, sm: 2.5, md: 3 } }}>
-                                    <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
-                                        <Typography
-                                            variant="h6"
-                                            fontWeight="bold"
-                                            sx={{ fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' } }}
-                                        >
-                                            Quick Links
-                                        </Typography>
-                                        <Button
-                                            size="small"
-                                            endIcon={<ArrowForward />}
-                                            onClick={() => navigate('/dashboard')}
-                                            sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
-                                        >
-                                            More
-                                        </Button>
-                                    </Box>
-                                    <Grid container spacing={{ xs: 1, sm: 2 }}>
-                                        {quickLinks.map((link, index) => (
-                                            <Grid item xs={6} sm={3} key={index}>
-                                                <Button
-                                                    fullWidth
-                                                    variant="contained"
-                                                    onClick={() => navigate(link.path)}
-                                                    sx={{
-                                                        height: { xs: 70, sm: 80, md: 100 },
-                                                        flexDirection: 'column',
-                                                        backgroundColor: link.color,
-                                                        borderRadius: 1.5,
-                                                        p: { xs: 1, sm: 1.5 },
-                                                        minHeight: 'auto',
-                                                        '&:hover': {
-                                                            backgroundColor: alpha(link.color, 0.9),
-                                                        }
-                                                    }}
-                                                >
-                                                    <Box sx={{
-                                                        mb: { xs: 0.5, sm: 1 },
-                                                        '& .MuiSvgIcon-root': {
-                                                            fontSize: { xs: 20, sm: 24, md: 30 }
-                                                        }
-                                                    }}>
-                                                        {link.icon}
-                                                    </Box>
-                                                    <Typography
-                                                        variant="caption"
-                                                        fontWeight="bold"
-                                                        sx={{
-                                                            color: 'white',
-                                                            fontSize: { xs: '0.7rem', sm: '0.75rem' }
-                                                        }}
-                                                    >
-                                                        {link.title}
-                                                    </Typography>
-                                                </Button>
-                                            </Grid>
-                                        ))}
-                                    </Grid>
-                                </CardContent>
-                            </Card>
-                        )}
-
-                        {/* Pending Leave Requests */}
-                        <Card sx={{
-                            borderRadius: 2,
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-                            border: '1px solid',
-                            borderColor: 'divider'
-                        }}>
-                            <CardContent sx={{ p: { xs: 2, sm: 2.5, md: 3 } }}>
-                                <Box display="flex" alignItems="center" justifyContent="space-between" mb={{ xs: 2, sm: 3 }}>
-                                    <Typography
-                                        variant="h6"
-                                        fontWeight="bold"
-                                        sx={{ fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' } }}
-                                    >
-                                        Pending Leave Requests
-                                    </Typography>
-                                    <Button
-                                        size="small"
-                                        endIcon={<ArrowForward />}
-                                        onClick={() => navigate('/dashboard/leave-management')}
-                                        sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}
-                                    >
-                                        View All
-                                    </Button>
-                                </Box>
-
-                                {pendingRequests.length > 0 ? (
-                                    <Stack spacing={{ xs: 1.5, sm: 2 }}>
-                                        {pendingRequests.map((request) => (
-                                            <Paper key={request.id} sx={{
-                                                p: { xs: 2, sm: 2.5 },
-                                                borderRadius: 1.5,
-                                                borderLeft: `4px solid ${theme.palette.warning.main}`,
-                                                backgroundColor: 'white'
-                                            }}>
-                                                <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }}
-                                                    alignItems={{ sm: 'center' }} justifyContent="space-between" gap={{ xs: 1.5, sm: 2 }}>
-                                                    <Box flex={1}>
-                                                        <Typography
-                                                            variant="body1"
-                                                            fontWeight="medium"
-                                                            sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}
-                                                        >
-                                                            {request.employee}
-                                                        </Typography>
-                                                        <Typography
-                                                            variant="body2"
-                                                            color="text.secondary"
-                                                            sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
-                                                        >
-                                                            {request.type} • {request.days} days
-                                                        </Typography>
-                                                        <Typography
-                                                            variant="caption"
-                                                            color="text.secondary"
-                                                            sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
-                                                        >
-                                                            Applied on: {request.date}
-                                                        </Typography>
-                                                    </Box>
-                                                    <Stack
-                                                        direction={{ xs: 'row', sm: 'row' }}
-                                                        spacing={1}
-                                                        sx={{ width: { xs: '100%', sm: 'auto' } }}
-                                                    >
-                                                        <Button
-                                                            size="small"
-                                                            color="success"
-                                                            variant="contained"
-                                                            startIcon={<CheckCircle />}
-                                                            fullWidth={isMobile}
-                                                            sx={{
-                                                                fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                                                                py: { xs: 0.5, sm: 0.75 }
-                                                            }}
-                                                        >
-                                                            Approve
-                                                        </Button>
-                                                        <Button
-                                                            size="small"
-                                                            color="error"
-                                                            variant="outlined"
-                                                            startIcon={<Close />}
-                                                            fullWidth={isMobile}
-                                                            sx={{
-                                                                fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                                                                py: { xs: 0.5, sm: 0.75 }
-                                                            }}
-                                                        >
-                                                            Reject
-                                                        </Button>
-                                                    </Stack>
-                                                </Box>
-                                            </Paper>
-                                        ))}
-                                    </Stack>
-                                ) : (
-                                    <Box textAlign="center" py={{ xs: 3, sm: 4 }}>
-                                        <CheckCircle sx={{
-                                            fontSize: { xs: 48, sm: 60 },
-                                            color: 'success.main',
-                                            opacity: 0.3,
-                                            mb: 2
-                                        }} />
-                                        <Typography
-                                            variant="body1"
-                                            color="text.secondary"
-                                            sx={{ fontSize: { xs: '0.9rem', sm: '1rem' } }}
-                                        >
-                                            No pending leave requests
-                                        </Typography>
-                                    </Box>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </Grid>
-
-                    {/* Right Column - Recent Activities */}
-                    <Grid item xs={12} lg={4}>
-                        {/* Recent Activities */}
-                        <Card sx={{
-                            borderRadius: 2,
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-                            border: '1px solid',
-                            borderColor: 'divider',
-                            height: '100%'
-                        }}>
-                            <CardContent sx={{ p: { xs: 2, sm: 2.5, md: 3 } }}>
-                                <Typography
-                                    variant="h6"
-                                    fontWeight="bold"
-                                    gutterBottom
-                                    sx={{ fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' } }}
-                                >
-                                    Recent Activities
-                                </Typography>
-                                <Stack spacing={{ xs: 2, sm: 2.5 }}>
-                                    {recentActivities.map((activity) => (
-                                        <Box key={activity.id} display="flex" alignItems="flex-start" gap={{ xs: 1.5, sm: 2 }}>
-                                            <Avatar sx={{
-                                                width: { xs: 32, sm: 40 },
-                                                height: { xs: 32, sm: 40 },
-                                                bgcolor: 'primary.light',
-                                                fontSize: { xs: '0.875rem', sm: '1rem' }
-                                            }}>
-                                                {activity.user.charAt(0)}
-                                            </Avatar>
-                                            <Box flex={1}>
-                                                <Typography
-                                                    variant="body2"
-                                                    fontWeight="medium"
-                                                    sx={{ fontSize: { xs: '0.85rem', sm: '0.875rem' } }}
-                                                >
-                                                    {activity.action}
-                                                </Typography>
-                                                <Typography
-                                                    variant="caption"
-                                                    color="text.secondary"
-                                                    sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
-                                                >
-                                                    By {activity.user}
-                                                </Typography>
-                                                <Typography
-                                                    variant="caption"
-                                                    color="text.secondary"
-                                                    display="block"
-                                                    sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
-                                                >
-                                                    {activity.time}
-                                                </Typography>
-                                            </Box>
-                                        </Box>
-                                    ))}
-                                </Stack>
-                                <Button
-                                    fullWidth
-                                    variant="text"
-                                    size="small"
-                                    sx={{
-                                        mt: 2,
-                                        fontSize: { xs: '0.75rem', sm: '0.875rem' }
-                                    }}
-                                    endIcon={<KeyboardArrowDown />}
-                                >
-                                    Show More
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid>
-            </Container>
-        </Box>
-    );
-};
+<DashboardHome />
 
 const Dashboard = () => {
     const { user } = useSelector((state) => state.auth);
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [notificationDrawerOpen, setNotificationDrawerOpen] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-    const isTablet = useMediaQuery(theme.breakpoints.between('md', 'lg'));
 
     const currentUser = user || {
         name: 'Pramod Kumar W',
@@ -743,7 +442,6 @@ const Dashboard = () => {
     const userRole = currentUser.role;
     const userName = currentUser.name;
 
-    // Auto-close sidebar on mobile by default
     useEffect(() => {
         if (isMobile) {
             setSidebarOpen(false);
@@ -760,13 +458,21 @@ const Dashboard = () => {
         }
     };
 
-    // Get current path to determine which component to render
+    const handleNotificationClick = () => {
+        setNotificationDrawerOpen(true);
+    };
+
+    const handleNotificationDrawerClose = () => {
+        setNotificationDrawerOpen(false);
+    };
+
     const path = location.pathname;
 
     const getPageTitle = () => {
         switch (true) {
             case path === '/dashboard':
-                return 'Dashboard';
+                // return 'Dashboard';
+                return 'Notices';
             case path.includes('employees'):
                 return 'Employee Management';
             case path.includes('/leave-request'):
@@ -777,6 +483,8 @@ const Dashboard = () => {
                 return 'Services Management';
             case path.includes('partners'):
                 return 'Partners Management';
+            case path.includes('profile'):
+                return 'My Information';
             default:
                 return 'Dashboard';
         }
@@ -806,7 +514,13 @@ const Dashboard = () => {
         <Box sx={{
             display: 'flex',
             minHeight: '100vh',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            background: `radial-gradient(circle at 20% 80%, rgba(197, 163, 232, 0.8) 0%, rgba(255,255,255,0.8) 20%, transparent 20%),
+                        radial-gradient(circle at 80% 20%, rgba(8, 196, 229, 0.8) 0%, rgba(255,255,255,0.8) 20%, transparent 20%),
+                        radial-gradient(circle at 40% 40%, rgba(159, 190, 241, 0.8) 0%, rgba(255,255,255,0.6) 15%, transparent 15%),
+                        linear-gradient(135deg, #9ac9f0, #afd4ef)
+                        `,
+            backgroundAttachment: 'fixed'
         }}>
             <DashboardSidebar
                 open={sidebarOpen}
@@ -817,29 +531,44 @@ const Dashboard = () => {
                 handleDrawerToggle={handleDrawerToggle}
             />
 
+            {/* Notification Drawer */}
+            <NotificationDrawer
+                open={notificationDrawerOpen}
+                onClose={handleNotificationDrawerClose}
+                isMobile={isMobile}
+            />
+
             <Box sx={{
                 flex: 1,
                 display: 'flex',
                 flexDirection: 'column',
-                // ml: {
-                //     xs: 0,
-                //     md: sidebarOpen ? '280px' : '72px'
-                // },
                 transition: theme.transitions.create(['margin'], {
                     easing: theme.transitions.easing.sharp,
                     duration: theme.transitions.duration.leavingScreen,
                 }),
                 width: '100%',
-                minWidth: 0 // Prevent overflow
+                minWidth: 0
             }}>
-                {/* Top App Bar - Responsive */}
                 <AppBar
-                    position="sticky"
+                    position="fixed"
                     elevation={0}
                     sx={{
-                        backgroundColor: 'white',
+                        background: 'linear-gradient(to right, #b0e1fa 10%, rgb(23, 147, 169) 60%)',
                         borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-                        zIndex: theme.zIndex.drawer - 1,
+                        zIndex: theme.zIndex.drawer + 1, // Increased z-index
+                        width: {
+                            xs: '100%',
+                            md: sidebarOpen ? `calc(100% - 280px)` : '100%'
+                        },
+                        ml: {
+                            xs: 0,
+                            md: sidebarOpen ? `280px` : 0
+                        },
+                        transition: theme.transitions.create(['width', 'margin'], {
+                            easing: theme.transitions.easing.sharp,
+                            duration: theme.transitions.duration.leavingScreen,
+                        }),
+
                     }}
                 >
                     <Toolbar sx={{
@@ -852,7 +581,8 @@ const Dashboard = () => {
                             sx={{
                                 mr: 2,
                                 color: 'text.primary',
-                                display: { xs: 'flex', md: 'flex' }
+                                display: { xs: 'flex', md: 'flex' },
+                                color: '#053c54'
                             }}
                             size={isMobile ? "small" : "medium"}
                         >
@@ -869,44 +599,42 @@ const Dashboard = () => {
                             variant="h6"
                             sx={{
                                 flexGrow: 1,
-                                color: 'text.primary',
+                                // color: 'text.primary',
                                 fontWeight: 600,
                                 fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap'
+                                whiteSpace: 'nowrap',
+                                color: '#053c54'
                             }}
                         >
                             {getPageTitle()}
                         </Typography>
 
-                        <Stack direction="row" spacing={{ xs: 0.5, sm: 1 }} alignItems="center">
+                        {/* <Stack direction="row" spacing={{ xs: 0.5, sm: 1 }} alignItems="center">
                             <IconButton size={isMobile ? "small" : "medium"}>
                                 <Badge badgeContent={3} color="error" variant="dot">
                                     <Notifications fontSize={isMobile ? "small" : "medium"} />
                                 </Badge>
                             </IconButton>
-                            {/* <IconButton size={isMobile ? "small" : "medium"}>
-                                <Avatar sx={{
-                                    width: { xs: 32, sm: 36, md: 40 },
-                                    height: { xs: 32, sm: 36, md: 40 },
-                                    bgcolor: 'primary.main',
-                                    fontSize: { xs: '0.875rem', sm: '1rem' }
-                                }}>
-                                    {userName.charAt(0)}
-                                </Avatar>
-                            </IconButton> */}
+                        </Stack> */}
+                        {/* Notification Bell */}
+                        <Stack direction="row" spacing={{ xs: 0.5, sm: 1 }} alignItems="center">
+                            <NotificationBell
+                                isMobile={isMobile}
+                                onClick={handleNotificationClick}
+                            />
                         </Stack>
                     </Toolbar>
                 </AppBar>
 
-                {/* Main Content Area */}
                 <Box sx={{
                     flex: 1,
                     p: 3,
                     overflowY: 'auto',
                     overflowX: 'hidden',
-                    WebkitOverflowScrolling: 'touch'
+                    WebkitOverflowScrolling: 'touch',
+                    // background: 'linear-gradient(135deg, #f8fbff 0%, #eef5ff 100%)'
                 }}>
                     {renderContent()}
                 </Box>
@@ -915,6 +643,6 @@ const Dashboard = () => {
     );
 };
 
-// Export Dashboard as default and also export child components
 export default Dashboard;
 export { EmployeeManagementPage, LeaveManagementPage, PartnersManagementPage, ServicesManagementPage };
+

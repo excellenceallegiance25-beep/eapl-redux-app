@@ -247,7 +247,6 @@ const About = () => {
     }
   };
 
-
   return (
     <Box>
       <PageHeader
@@ -255,15 +254,16 @@ const About = () => {
         subtitle="Empowering digital transformation through innovation and expertise"
         breadcrumbs={[{ label: 'Home', path: '/' }, { label: 'About Us', path: '/about' }]}
         backgroundImage={`linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${innovation})`}
-      // sx={{
-      //   backgroundSize: 'cover',
-      //   backgroundPosition: 'center',
-      //   height: { xs: 400, md: 500 ,xl:600
-      //   },
-      //   display: 'flex',
-      //   alignItems: 'center',
-      //   color: 'white' // Ensure text is white
-      // }}
+        sx={{
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          height: {
+            xs: 400, md: 500, xl: 600
+          },
+          display: 'flex',
+          alignItems: 'center',
+          color: 'white'
+        }}
       />
 
       <Container maxWidth="xl" sx={{ py: 2 }}>
@@ -443,69 +443,148 @@ const About = () => {
         </Grid>
 
         {/* Core Values with Interactive Cards */}
-        <Box sx={{ mb: 10 }}>
-          <Typography variant={isMobile ? "h4" : isTablet ? "h3" : "h2"} align="center" gutterBottom fontWeight="bold" sx={{ mb: 2 }}>
+        <Box
+          component="section"
+          sx={{
+            width: '100vw',
+            position: 'relative',
+            left: '50%',
+            right: '50%',
+            ml: '-50vw',
+            mr: '-50vw',
+
+            mb: 10,
+            py: { xs: 8, md: 10 },
+            px: { xs: 2, sm: 3 },
+            background: 'linear-gradient(135deg, #296374 0%, #1f4e5f 100%)',
+          }}
+        >
+          <Typography
+            variant={isMobile ? "h4" : isTablet ? "h3" : "h2"}
+            align="center"
+            fontWeight="bold"
+            sx={{
+              mb: 2,
+              color: '#fff',
+              letterSpacing: 0.5,
+            }}
+          >
             Our Core Values
           </Typography>
-          <Typography variant="h6" align="center" color="text.secondary" paragraph sx={{ mb: 6 }}>
+
+          <Typography
+            variant="h6"
+            align="center"
+            sx={{
+              mb: 6,
+              color: 'rgba(255,255,255,0.85)',
+              maxWidth: 720,
+              mx: 'auto',
+            }}
+          >
             The principles that guide everything we do
           </Typography>
 
-          <Grid container spacing={4} sx={{ justifyContent: 'center' }}>
+          <Grid
+            container
+            spacing={{ xs: 3, md: 4 }}
+            justifyContent="center"
+            alignItems="stretch"
+            sx={{
+              width: { xs: '100%', sm: '90%', md: '80%' },
+              mx: 'auto', // centers grid container
+            }}
+          >
             {coreValues.map((value, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
-                <Grow in={true} timeout={index * 200}>
+              <Grid
+                item
+                key={index}
+                xs={12}
+                sm={6}
+                md={3}
+                display="flex"
+                justifyContent="center"
+              >
+                <Grow in timeout={index * 200}>
                   <Card
-                    sx={{
-                      height: '100%',
-                      p: 3,
-                      textAlign: 'center',
-                      transition: 'all 0.3s',
-                      cursor: 'pointer',
-                      transform: hoveredCard === index ? 'translateY(-8px)' : 'none',
-                      boxShadow: hoveredCard === index ? theme.shadows[8] : theme.shadows[2],
-                      borderTop: `4px solid ${value.color}`,
-                      position: 'relative',
-                      overflow: 'hidden',
-                      '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: '4px',
-                        background: `linear-gradient(90deg, ${value.color}, transparent)`,
-                        opacity: 0,
-                        transition: 'opacity 0.3s'
-                      },
-                      '&:hover::before': {
-                        opacity: 1
-                      }
-                    }}
                     onMouseEnter={() => setHoveredCard(index)}
                     onMouseLeave={() => setHoveredCard(null)}
+                    sx={{
+                      width: '100%',
+                      maxWidth: 320,
+                      height: '100%',
+                      p: 3.5,
+                      textAlign: 'center', // ✅ text center
+                      cursor: 'pointer',
+                      borderRadius: 3,
+                      backgroundColor: '#ffffff',
+                      transition: 'all 0.35s ease',
+                      boxShadow:
+                        hoveredCard === index
+                          ? '0px 20px 40px rgba(0,0,0,0.15)'
+                          : '0px 6px 16px rgba(0,0,0,0.08)',
+                      transform:
+                        hoveredCard === index
+                          ? 'translateY(-10px)'
+                          : 'translateY(0)',
+                      borderTop: `5px solid ${value.color}`,
+                      position: 'relative',
+                      overflow: 'hidden',
+
+                      '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        inset: 0,
+                        background: `linear-gradient(
+                180deg,
+                ${alpha(value.color, 0.08)},
+                transparent 60%
+              )`,
+                        opacity: hoveredCard === index ? 1 : 0,
+                        transition: 'opacity 0.3s ease',
+                      },
+                    }}
                   >
+                    {/* Icon */}
                     <Box
                       sx={{
-                        width: 80,
-                        height: 80,
+                        width: 84,
+                        height: 84,
                         borderRadius: '50%',
-                        bgcolor: alpha(value.color, 0.1),
+                        bgcolor: alpha(value.color, 0.12),
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        margin: '0 auto 20px',
+                        mx: 'auto', // ✅ icon center
+                        mb: 3,
                         color: value.color,
-                        transition: 'all 0.3s',
-                        transform: hoveredCard === index ? 'scale(1.1)' : 'scale(1)'
+                        transition: 'all 0.35s ease',
+                        transform:
+                          hoveredCard === index ? 'scale(1.15)' : 'scale(1)',
                       }}
                     >
                       {value.icon}
                     </Box>
-                    <Typography variant="h5" gutterBottom fontWeight="bold">
+
+                    {/* Title */}
+                    <Typography
+                      variant="h5"
+                      fontWeight="bold"
+                      align="center"
+                      gutterBottom
+                    >
                       {value.title}
                     </Typography>
-                    <Typography variant="body1" color="text.secondary">
+
+                    {/* Description */}
+                    <Typography
+                      variant="body1"
+                      align="center"
+                      sx={{
+                        color: 'text.secondary',
+                        lineHeight: 1.7,
+                      }}
+                    >
                       {value.description}
                     </Typography>
                   </Card>

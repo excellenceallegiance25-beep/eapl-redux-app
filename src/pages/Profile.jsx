@@ -865,7 +865,7 @@ const Profile = () => {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh' }}>
+    <Box sx={{ minHeight: '90vh', py: 5 }}>
       {/* <PageHeader
         title="My Profile"
         subtitle="Manage your account information and preferences"
@@ -892,7 +892,7 @@ const Profile = () => {
         <AccordionSummary
           expandIcon={<ExpandMore />}
           sx={{
-            bgcolor: 'primary.light',
+            bgcolor: '#6288a6',
             borderTopLeftRadius: 12,
             borderTopRightRadius: 12,
             minHeight: 40,
@@ -1553,7 +1553,7 @@ const Profile = () => {
         <AccordionSummary
           expandIcon={<ExpandMore />}
           sx={{
-            bgcolor: 'primary.light',
+            bgcolor: '#6288a6',
             borderTopLeftRadius: 12,
             borderTopRightRadius: 12,
             minHeight: 40,

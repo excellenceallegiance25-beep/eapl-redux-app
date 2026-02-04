@@ -7,10 +7,10 @@ const Register = () => {
   const [popupOpen, setPopupOpen] = useState(false);
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" sx={{ py: 4 }}>
       <Box
         sx={{
-          minHeight: '80vh',
+          minHeight: '90vh',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -43,9 +43,9 @@ const Register = () => {
           <Typography variant="h4" gutterBottom fontWeight="bold">
             Join Our Tech Community
           </Typography>
-          
+
           <Typography variant="body1" color="text.secondary" paragraph sx={{ mb: 4 }}>
-            Create an account to access exclusive features, track your projects, and 
+            Create an account to access exclusive features, track your projects, and
             connect with our tech experts at Excellence Allegiance.
           </Typography>
 

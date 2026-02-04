@@ -37,6 +37,7 @@ import { PartnersManagementPage } from './components/dashboardmenu/PartnersManag
 import ForgotPassword from './components/auth/ForgotPassword';
 import { LoadingProvider } from './context/SkeletonWrapper';
 import { LeaveRequestPage } from './components/dashboardmenu/LeaveRequestPage';
+import APILoader from './components/common/APILoader';
 
 // Create theme
 const theme = createTheme({
@@ -97,6 +98,7 @@ function App() {
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        <APILoader />
         <Router basename="/eaplui">
           <AppContainer>
             <Routes>

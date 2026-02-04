@@ -38,16 +38,19 @@ import { useDispatch } from 'react-redux';
 import { getEmpAppliedLeaveList, manageLeaveRequest } from '../../services/AppConfigAction';
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
+import eaplRotatingLogo from '../../assets/images/EAPLfavicon.jpg';
+import useLoading from '../../redux/slices/useLoading';
 
 export const LeaveManagementPage = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [leaves, setLeaves] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { showLoader, hideLoader, withLoader } = useLoading(); // Get loading functions
 
     useEffect(() => {
         const loadConfigs = async () => {
-
+            showLoader(eaplRotatingLogo, 0);
             setLoading(true);
             try {
                 await loadLeaveDetails();
@@ -55,6 +58,7 @@ export const LeaveManagementPage = () => {
                 console.error('Error loading data:', error);
             } finally {
                 setLoading(false);
+                hideLoader();
             }
 
             // try {
@@ -511,7 +515,7 @@ export const LeaveManagementPage = () => {
                 gap: 2,
                 mb: 3
             }}>
-                <Typography variant="h4" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
+                <Typography variant="h4" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' }, color: '#053c54' }}>
                     Leave Management
                 </Typography>
 
@@ -548,17 +552,17 @@ export const LeaveManagementPage = () => {
                     <Typography variant="h6" color="primary">{stats.total}</Typography>
                     <Typography variant="body2" color="textSecondary">Total Leaves</Typography>
                 </Paper>
-                <Paper sx={{ p: 1, flex: 1, minWidth: 150, textAlign: 'center', bgcolor: '#fff3e0' }}
+                <Paper sx={{ p: 1, flex: 1, minWidth: 150, textAlign: 'center', bgcolor: '#eadfcf' }}
                     onClick={() => setSearchText(innerText => innerText === 'pending' ? '' : 'pending')}>
                     <Typography variant="h6" color="warning.main">{stats.pending}</Typography>
                     <Typography variant="body2" color="textSecondary">Pending</Typography>
                 </Paper>
-                <Paper sx={{ p: 1, flex: 1, minWidth: 150, textAlign: 'center', bgcolor: '#e8f5e9' }}
+                <Paper sx={{ p: 1, flex: 1, minWidth: 150, textAlign: 'center', bgcolor: '#aedea9' }}
                     onClick={() => setSearchText(innerText => innerText === 'approved' ? '' : 'approved')}>
                     <Typography variant="h6" color="success.main">{stats.approved}</Typography>
                     <Typography variant="body2" color="textSecondary">Approved</Typography>
                 </Paper>
-                <Paper sx={{ p: 1, flex: 1, minWidth: 150, textAlign: 'center', bgcolor: '#ffebee' }}
+                <Paper sx={{ p: 1, flex: 1, minWidth: 150, textAlign: 'center', bgcolor: '#eeb9b9' }}
                     onClick={() => setSearchText(innerText => innerText === 'rejected' ? '' : 'rejected')}>
                     <Typography variant="h6" color="error.main">{stats.rejected}</Typography>
                     <Typography variant="body2" color="textSecondary">Rejected</Typography>
@@ -675,7 +679,7 @@ export const LeaveManagementPage = () => {
 
             <Box sx={{
                 width: '100%',
-                height: { xs: 'calc(100vh-150px)', lg: 'calc(100vh - 400px)' },
+                height: { xs: 'calc(100vh-150px)', lg: 'calc(100vh - 260px)' },
                 overflow: 'hidden',
                 display: 'flex',
                 flexDirection: 'column'
@@ -690,12 +694,11 @@ export const LeaveManagementPage = () => {
                         }
                     }}
                 >
-                    <Table stickyHeader size="small">
+                    <Table stickyHeader size="medium">
                         <TableHead sx={{
-                            backgroundColor: '#75deff',
                             '& .MuiTableCell-head': {
-                                backgroundColor: '#75deff',
-                                color: '#000000',
+                                backgroundColor: '#6288a6',
+                                color: '#ffffff',
                                 fontWeight: 'bold',
                                 fontSize: '14px',
                                 position: 'sticky',

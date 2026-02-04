@@ -41,8 +41,8 @@ const ChatBotWidget = () => {
                     onClick={handleToggleChat}
                     sx={{
                         position: 'fixed',
-                        bottom: 24,
-                        right: 24,
+                        bottom: 60,
+                        right: 10,
                         zIndex: 1000,
                         boxShadow: theme.shadows[8],
                         '&:hover': {

@@ -378,6 +378,8 @@ const Footer = () => {
           component="footer"
           sx={{
             backgroundColor: 'grey.900',
+            background: 'linear-gradient(180deg,#005166 0%, #002440 45%, #000d18 100%)',
+
             color: 'white',
             pt: { xs: 4, md: 6 },
             pb: { xs: 8, md: 4 },

@@ -653,3 +653,260 @@ export const updatePartnersDetails = (param) => async (dispatch) => {
         });
     }
 };
+
+export const resendOTPnewEmployeeRegistration = (param) => async (dispatch) => {
+    try {
+        const response = await fetch(
+            `${cleanApiUrl}/profile/resendOtpNewRegistration?email=${encodeURIComponent(param.email)}&name=${param.firstname}`,
+            {
+                method: "POST",
+                headers: postAuthorizedHeaders
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        return dispatch({
+            type: data.success ? "RESEND_OTP_SUCCESS" : "RESEND_OTP_FAILURE",
+            payload: data
+        });
+    } catch (error) {
+        console.error("Error resending OTP:", error);
+        return dispatch({
+            type: "RESEND_OTP_FAILURE",
+            payload: {
+                success: false,
+                message: error.message || "Failed to resend OTP"
+            }
+        });
+    }
+};
+
+export const sendUserDetailsToManager = (param) => async (dispatch) => {
+    try {
+        const response = await fetch(
+            `${cleanApiUrl}/users/sendUserDetails`,
+            {
+                method: "POST",
+                headers: postAuthorizedHeaders,
+                body: JSON.stringify(param)
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        return dispatch({
+            type: data.success ? "USER_DETAILS_FETCH_SUCCESS" : "USER_DETAILS_FETCH_FAILURE",
+            payload: data
+        });
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        return dispatch({
+            type: "USER_DETAILS_FETCH_FAILURE",
+            payload: error.message
+        });
+    }
+};
+
+export const getNoticesList = (param) => async (dispatch) => {
+    try {
+        const response = await fetch(
+            `${cleanApiUrl}/services/getNoticesList`,
+            {
+                method: "POST",
+                headers: postAuthorizedHeaders,
+                body: JSON.stringify(param)
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return dispatch({
+            type: "NOTICE_LIST",
+            payload: data
+        });
+    } catch (error) {
+        console.error("Error in AppConfigAction.js > getNoticesList:", error);
+        if (DEBUG_MODE) {
+            console.error("Failed URL:", `${cleanApiUrl}/services/getNoticesList`);
+        }
+    }
+};
+
+export const getNoticesAttachmentList = (param) => async (dispatch) => {
+    try {
+        const response = await fetch(
+            `${cleanApiUrl}/services/getNoticesAttachmentList`,
+            {
+                method: "POST",
+                headers: postAuthorizedHeaders,
+                body: JSON.stringify(param)
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return dispatch({
+            type: "NOTICE_ATTACH_FILE_LIST",
+            payload: data
+        });
+    } catch (error) {
+        console.error("Error in AppConfigAction.js > getNoticesAttachmentList:", error);
+        if (DEBUG_MODE) {
+            console.error("Failed URL:", `${cleanApiUrl}/services/getNoticesAttachmentList`);
+        }
+    }
+};
+
+export const getNoticesReadByList = (param) => async (dispatch) => {
+    try {
+        const response = await fetch(
+            `${cleanApiUrl}/services/getNoticesReadByList`,
+            {
+                method: "POST",
+                headers: postAuthorizedHeaders,
+                body: JSON.stringify(param)
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return dispatch({
+            type: "NOTICE_READ_BY_LIST",
+            payload: data
+        });
+    } catch (error) {
+        console.error("Error in AppConfigAction.js > getNoticesReadByList:", error);
+        if (DEBUG_MODE) {
+            console.error("Failed URL:", `${cleanApiUrl}/services/getNoticesReadByList`);
+        }
+    }
+};
+
+export const updateNoticesDetails = (param) => async (dispatch) => {
+    try {
+        const response = await fetch(
+            `${cleanApiUrl}/services/updateNotice`,
+            {
+                method: "POST",
+                headers: postAuthorizedHeaders,
+                body: JSON.stringify(param)
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return dispatch({
+            type: data.success ? "NOTICE_DETAILS_UPDATE_SUCCESS" : "NOTICE_DETAILS_UPDATE_FAILURE",
+            payload: data
+        });
+    } catch (error) {
+        console.error("Error in AppConfigAction.js > updateNoticesDetails:", error);
+        if (DEBUG_MODE) {
+            console.error("Failed URL:", `${cleanApiUrl}/services/updateNoticesDetails`);
+        }
+    }
+};
+
+export const getEmployeeListForNotice = () => async (dispatch) => {
+    try {
+        const response = await fetch(
+            `${cleanApiUrl}/services/allEmployeeList`,
+            {
+                method: "GET",
+                headers: getAuthorizedHeaders
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return dispatch({
+            type: "EMP_LIST_NOTICE",
+            payload: data
+        });
+    } catch (error) {
+        console.error("Error in AppConfigAction.js > getEmployeeListForNotice:", error);
+        if (DEBUG_MODE) {
+            console.error("Failed URL:", `${cleanApiUrl}/services/allEmployeeList`);
+        }
+    }
+};
+
+export const getNotificationList = (param) => async (dispatch) => {
+    try {
+        const response = await fetch(
+            `${cleanApiUrl}/services/getNotificationList?employeeId=${param}`,
+            {
+                method: "GET",
+                headers: getAuthorizedHeaders
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return dispatch({
+            type: "EMP_NOTIFICATION_LIST",
+            payload: data
+        });
+    } catch (error) {
+        console.error("Error in AppConfigAction.js > getNotificationList:", error);
+        if (DEBUG_MODE) {
+            console.error("Failed URL:", `${cleanApiUrl}/services/getNotificationList`);
+        }
+    }
+
+};
+
+export const getMarkNoticeAsRead = (param) => async (dispatch) => {
+    try {
+        const response = await fetch(
+            `${cleanApiUrl}/services/getMarkNoticeAsRead?employeeId=${param.employeeId}&noticeId=${param.noticeId}`,
+            {
+                method: "POST",
+                headers: postAuthorizedHeaders,
+                body: JSON.stringify(param)
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return dispatch({
+            type: data.success ? "NOTIFICATION_READ_SUCCESS" : "NOTIFICATION_READ_FAILURE",
+            payload: data
+        });
+    } catch (error) {
+        console.error("Error in AppConfigAction.js > getMarkNoticeAsRead:", error);
+        if (DEBUG_MODE) {
+            console.error("Failed URL:", `${cleanApiUrl}/services/getMarkNoticeAsRead`);
+        }
+    }
+};

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2'; // Install: npm install sweetalert2
+import Swal from 'sweetalert2';
 import {
     Container,
     Box,
@@ -50,6 +50,8 @@ import {
     updateEmployeeCompleteProfile,
     updateEmployeeProfile
 } from '../../services/AppConfigAction';
+import useLoading from '../../redux/slices/useLoading';
+import eaplRotatingLogo from '../../assets/images/EAPLfavicon.jpg';
 
 export const EmployeeManagementPage = () => {
     const navigate = useNavigate();
@@ -85,10 +87,12 @@ export const EmployeeManagementPage = () => {
     // File upload
     const [selectedImage, setSelectedImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
+    const { showLoader, hideLoader, withLoader } = useLoading(); // Get loading functions
 
     useEffect(() => {
         const loadAllData = async () => {
             setLoading(true);
+            showLoader(eaplRotatingLogo, 0);
             try {
                 await loadEmployees();
                 await loadRolesDetails();
@@ -98,6 +102,7 @@ export const EmployeeManagementPage = () => {
                 console.error('Error loading data:', error);
             } finally {
                 setLoading(false);
+                hideLoader();
             }
         };
 
@@ -653,7 +658,7 @@ export const EmployeeManagementPage = () => {
                 mb={3}
             >
                 {/* Title */}
-                <Typography
+                {/* <Typography
                     variant="h4"
                     sx={{
                         width: { xs: '100%', md: 'auto' },
@@ -661,7 +666,37 @@ export const EmployeeManagementPage = () => {
                     }}
                 >
                     Employee Management
-                </Typography>
+                </Typography> */}
+
+                {/* Add button */}
+                <Button
+                    variant="contained"
+                    startIcon={<Add />}
+                    onClick={() => {
+                        setCurrentEmployee({
+                            name: '',
+                            email: '',
+                            phone: '',
+                            role: '',
+                            department: '',
+                            position: '',
+                            status: true,
+                            profilePicture: null,
+                            profilePictureType: null
+                        });
+                        setImagePreview(null);
+                        setSelectedImage(null);
+                        setErrors({});
+                        setSubmitError('');
+                        setOpenDialog(true);
+                    }}
+                    sx={{
+                        whiteSpace: 'nowrap',
+                        // width: '100%'
+                    }}
+                >
+                    Add Employee
+                </Button>
 
                 {/* Search field and button container */}
                 <Box
@@ -676,7 +711,7 @@ export const EmployeeManagementPage = () => {
                         fullWidth
                         sx={{
                             maxWidth: { xs: '100%', md: 400 },
-                            minWidth: { xs: '100%', sm: 300 }
+                            minWidth: { xs: '100%', sm: 300 },
                         }}
                         placeholder="Search employees by name, email, role, department, or position..."
                         value={searchTerm}
@@ -689,36 +724,6 @@ export const EmployeeManagementPage = () => {
                             ),
                         }}
                     />
-
-                    {/* Add button */}
-                    <Button
-                        variant="contained"
-                        startIcon={<Add />}
-                        onClick={() => {
-                            setCurrentEmployee({
-                                name: '',
-                                email: '',
-                                phone: '',
-                                role: '',
-                                department: '',
-                                position: '',
-                                status: true,
-                                profilePicture: null,
-                                profilePictureType: null
-                            });
-                            setImagePreview(null);
-                            setSelectedImage(null);
-                            setErrors({});
-                            setSubmitError('');
-                            setOpenDialog(true);
-                        }}
-                        sx={{
-                            whiteSpace: 'nowrap',
-                            width: '100%'
-                        }}
-                    >
-                        Add Employee
-                    </Button>
                 </Box>
             </Box>
 
@@ -760,7 +765,7 @@ export const EmployeeManagementPage = () => {
                             backgroundColor: 'action.hover',
                         },
                         '& .MuiDataGrid-columnHeader': {
-                            backgroundColor: '#224e67ff !important',
+                            backgroundColor: '#6288a6 !important',
                         },
                         '& .MuiDataGrid-columnHeaderTitle': {
                             color: '#fdfafaff !important',

@@ -279,7 +279,7 @@ const ServiceDetails = () => {
 
   return (
     <Fade in={!loading}>
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Container maxWidth="lg" sx={{ py: 10 }}>
         {/* Header Section */}
         <Paper sx={{
           p: 4,

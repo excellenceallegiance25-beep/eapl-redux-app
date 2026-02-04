@@ -1,4 +1,3 @@
-// components/common/LeaveFormDialog.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -27,7 +26,8 @@ import {
     Grid,
     FormControlLabel,
     Checkbox,
-    Autocomplete
+    Autocomplete,
+    Collapse
 } from '@mui/material';
 import {
     Close,
@@ -39,6 +39,8 @@ import {
 import { leaveFailure } from '../../redux/slices/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getEmployeeProfileList } from '../../services/AppConfigAction';
+import eaplRotatingLogo from '../../assets/images/EAPLfavicon.jpg';
+import useLoading from '../../redux/slices/useLoading';
 
 export const LeaveFormDialog = ({
     open,
@@ -70,17 +72,18 @@ export const LeaveFormDialog = ({
         isHalfDay: false,
         durationType: 'fullDay', // 'fullDay' or 'halfDay'
         startDateHalf: 'morning', // 'morning' or 'afternoon'
-        endDateHalf: 'morning' // 'morning' or 'afternoon'
+        endDateHalf: 'morning', // 'morning' or 'afternoon'
+        rejectionReason: '' // New field for rejection reason
     });
 
     const [errors, setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
     const [activeStep, setActiveStep] = useState(0);
     const [selectedEmployee, setSelectedEmployee] = useState(null);
-    // Add these to your component state
     const [allEmployees, setAllEmployees] = useState([]);
     const [isAdmin, setIsAdmin] = useState(false);
     const { user } = useSelector((state) => state.auth);
+    const { showLoader, hideLoader, withLoader } = useLoading(); // Get loading functions
 
     const loadAllData = async () => {
         try {
@@ -94,8 +97,8 @@ export const LeaveFormDialog = ({
 
     const loadProfileData = async () => {
         try {
+            showLoader(eaplRotatingLogo, 0);
             const result = await dispatch(getEmployeeProfileList());
-            // console.log('Profile API result:', result);
 
             if (result.type === "EMP_INFO_LIST" && result.payload && Array.isArray(result.payload) && result.payload.length > 0) {
                 const currentUserId = user?.id;
@@ -110,14 +113,11 @@ export const LeaveFormDialog = ({
                     role: emp.role || 'employee'
                 }));
 
-                // console.log('Transformed employees:', employees);
                 setAllEmployees(employees);
 
                 // Determine if user is admin
                 const adminStatus = userRole === 'admin' || user?.isAdmin === true;
                 setIsAdmin(adminStatus);
-
-                // console.log('User is admin:', adminStatus, 'User role:', userRole);
 
                 // For non-admin users, auto-select their profile
                 if (!adminStatus) {
@@ -135,7 +135,6 @@ export const LeaveFormDialog = ({
                     }
 
                     if (userProfileData) {
-                        // console.log('Setting employee for non-admin:', userProfileData);
                         setSelectedEmployee(userProfileData);
                         setFormData(prev => ({
                             ...prev,
@@ -151,6 +150,8 @@ export const LeaveFormDialog = ({
         } catch (error) {
             console.error('Error loading profile data:', error);
             setAllEmployees([]);
+        } finally {
+            hideLoader();
         }
     };
 
@@ -161,17 +162,8 @@ export const LeaveFormDialog = ({
 
     // Initialize form
     useEffect(() => {
-        // console.log('Initializing form with:', {
-        //     initialData,
-        //     locationPrefill,
-        //     allEmployeesLength: allEmployees.length,
-        //     selectedEmployee
-        // });
-
         const dataToUse = initialData || locationPrefill;
         if (dataToUse) {
-            // console.log('Data to use:', dataToUse);
-
             // Find employee in the allEmployees array
             let employee = null;
             if (allEmployees.length > 0) {
@@ -181,12 +173,9 @@ export const LeaveFormDialog = ({
                         emp.employeeId === dataToUse.employeeId ||
                         emp.name === dataToUse.employeeName
                     );
-                    // console.log('Checking employee:', emp, 'matches:', matches);
                     return matches;
                 });
             }
-
-            // console.log('Found employee for edit/view:', employee);
 
             setFormData({
                 leaveId: dataToUse.leaveId || 0,
@@ -198,18 +187,16 @@ export const LeaveFormDialog = ({
                 reason: dataToUse.reason || '',
                 status: dataToUse.status || 'pending',
                 isHalfDay: dataToUse.isHalfDay === 't' || dataToUse.isHalfDay === true,
-                // Calculate duration type based on API data
                 durationType: (dataToUse.isHalfDay === 't' || dataToUse.isHalfDay === true ||
                     dataToUse.totalDays === "0.5") ? 'halfDay' : 'fullDay',
                 startDateHalf: dataToUse.halfDayPeriod || 'morning',
-                endDateHalf: 'morning' // Default value
+                endDateHalf: 'morning',
+                rejectionReason: dataToUse.rejectionReason || '' // Initialize rejection reason
             });
 
             if (employee) {
                 setSelectedEmployee(employee);
-                // console.log('Set selected employee:', employee);
             } else if (dataToUse.employeeName && dataToUse.employeeId) {
-                // Create a temporary employee object if not found in allEmployees
                 const tempEmployee = {
                     id: dataToUse.employeeId,
                     employeeId: dataToUse.employeeId,
@@ -218,11 +205,8 @@ export const LeaveFormDialog = ({
                     role: 'employee'
                 };
                 setSelectedEmployee(tempEmployee);
-                // console.log('Created temp employee:', tempEmployee);
             }
         } else {
-            // Reset form for new leave
-            // console.log('Resetting form for new leave');
             setFormData({
                 leaveId: 0,
                 employeeId: 0,
@@ -235,9 +219,9 @@ export const LeaveFormDialog = ({
                 isHalfDay: false,
                 durationType: 'fullDay',
                 startDateHalf: 'morning',
-                endDateHalf: 'morning'
+                endDateHalf: 'morning',
+                rejectionReason: '' // Initialize rejection reason
             });
-            // Don't reset selectedEmployee if it's already set for non-admin user
             if (isAdmin) {
                 setSelectedEmployee(null);
             }
@@ -245,12 +229,11 @@ export const LeaveFormDialog = ({
         setErrors({});
         setSubmitted(false);
         setActiveStep(0);
-    }, [open, initialData, locationPrefill]); // Remove allEmployees from dependencies
+    }, [open, initialData, locationPrefill]);
 
     // Handle when allEmployees loads
     useEffect(() => {
         if (allEmployees.length > 0 && !selectedEmployee && !isAdmin) {
-            // Auto-select current user's profile for non-admin
             const currentUserId = user?.id;
             let userProfileData = allEmployees.find(emp =>
                 emp.id === currentUserId ||
@@ -268,7 +251,6 @@ export const LeaveFormDialog = ({
                     employeeId: userProfileData.employeeId,
                     employeeName: userProfileData.name
                 }));
-                // console.log('Auto-set employee after allEmployees loaded:', userProfileData);
             }
         }
     }, [allEmployees, isAdmin, user, selectedEmployee]);
@@ -276,12 +258,11 @@ export const LeaveFormDialog = ({
     const validateForm = () => {
         const newErrors = {};
 
-        if (!formData.employeeId || !formData.employeeName) {
+        if (!formData.employeeId) {
             newErrors.employee = 'Please select an employee';
         }
         if (!formData.startDate) newErrors.startDate = 'Start date is required';
 
-        // Only validate end date if it's full day leave
         if (formData.durationType === 'fullDay' && !formData.endDate) {
             newErrors.endDate = 'End date is required for full day leave';
         }
@@ -290,6 +271,11 @@ export const LeaveFormDialog = ({
             newErrors.endDate = 'End date must be after start date';
         }
         if (!formData.reason.trim()) newErrors.reason = 'Reason is required';
+
+        // Validate rejection reason if status is rejected
+        if (formData.status === 'rejected' && !formData.rejectionReason.trim()) {
+            newErrors.rejectionReason = 'Rejection reason is required when rejecting a leave request';
+        }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -322,7 +308,6 @@ export const LeaveFormDialog = ({
             ...prev,
             durationType,
             isHalfDay: durationType === 'halfDay',
-            // Auto-fill end date with start date for half day
             endDate: durationType === 'halfDay' ? prev.startDate : prev.endDate
         }));
     };
@@ -331,7 +316,6 @@ export const LeaveFormDialog = ({
         setFormData(prev => ({
             ...prev,
             startDate: date,
-            // Auto-update end date if it's half day
             endDate: prev.durationType === 'halfDay' ? date : prev.endDate
         }));
 
@@ -346,21 +330,33 @@ export const LeaveFormDialog = ({
             ...prev,
             isHalfDay,
             durationType: isHalfDay ? 'halfDay' : 'fullDay',
-            // Auto-fill end date with start date for half day
             endDate: isHalfDay ? prev.startDate : prev.endDate
         }));
     };
 
+    const handleStatusChange = (event) => {
+        const status = event.target.value;
+        setFormData(prev => ({
+            ...prev,
+            status,
+            // Clear rejection reason when status is not rejected
+            rejectionReason: status !== 'rejected' ? '' : prev.rejectionReason
+        }));
+
+        if (status !== 'rejected' && errors.rejectionReason) {
+            setErrors(prev => ({ ...prev, rejectionReason: '' }));
+        }
+    };
+
     const handleSubmit = async () => {
         if (validateForm()) {
-            // Calculate days based on duration leaveType
             let days = 0;
             if (formData.durationType === 'fullDay' && formData.startDate && formData.endDate) {
                 const start = new Date(formData.startDate);
                 const end = new Date(formData.endDate);
                 days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
             } else if (formData.durationType === 'halfDay' && formData.startDate) {
-                days = 0.5; // Half day count as 0.5
+                days = 0.5;
             }
 
             // Prepare payload for API
@@ -377,25 +373,20 @@ export const LeaveFormDialog = ({
                 halfDayPeriod: formData.startDateHalf,
                 totalDays: days,
                 appliedDate: new Date().toISOString().split('T')[0],
-                indicator: formData.leaveId ? 'update' : 'new'
+                indicator: formData.leaveId ? 'update' : 'new',
+                rejectionReason: formData.rejectionReason || null // Add rejection reason to payload
             };
 
-            // console.log('Leave Request Payload:', payload);
-
             if (mode === 'page') {
-
                 const response = await onSubmit(payload);
 
                 if (response.success) {
-                    // Only set active step to 1 if API call was successful
                     setActiveStep(1);
                     setSubmitted(true);
 
-                    // Auto-navigate back after submission
                     setTimeout(() => {
                         if (location.pathname) {
                             setActiveStep(0);
-                            // Reset form for new leave
                             setFormData({
                                 leaveId: 0,
                                 employeeId: 0,
@@ -408,7 +399,8 @@ export const LeaveFormDialog = ({
                                 isHalfDay: false,
                                 durationType: 'fullDay',
                                 startDateHalf: 'morning',
-                                endDateHalf: 'morning'
+                                endDateHalf: 'morning',
+                                rejectionReason: ''
                             });
                             setSelectedEmployee(null);
                         } else {
@@ -419,12 +411,10 @@ export const LeaveFormDialog = ({
                     dispatch(leaveFailure(response.message || 'Failed to save employee'));
                 }
             } else {
-                // For dialog mode, wait for the API call
                 const response = await onSubmit(payload);
                 if (response.success && onClose) {
                     onClose();
                 } else {
-                    // Handle error in dialog mode
                     dispatch(leaveFailure(response.message || 'Failed to submit leave request'));
                 }
             }
@@ -459,7 +449,8 @@ export const LeaveFormDialog = ({
                 isHalfDay: false,
                 durationType: 'fullDay',
                 startDateHalf: 'morning',
-                endDateHalf: 'morning'
+                endDateHalf: 'morning',
+                rejectionReason: ''
             });
             setSelectedEmployee(null);
         } else if (onClose) {
@@ -480,265 +471,341 @@ export const LeaveFormDialog = ({
         return '';
     };
 
+    const sectionCard = {
+        p: 3,
+        mb: 3,
+        borderRadius: 3,
+        backgroundColor: '#fff',
+        boxShadow: '0 12px 30px rgba(15,42,68,0.08)',
+    };
+
+    const inputStyle = {
+        '& .MuiOutlinedInput-root': {
+            borderRadius: 2,
+            backgroundColor: '#f9fbff',
+        },
+    };
+
+    const durationBadge = {
+        mt: 2,
+        px: 2,
+        py: 0.8,
+        borderRadius: 2,
+        backgroundColor: 'rgba(79,195,247,0.15)',
+        fontWeight: 600,
+        width: 'fit-content',
+    };
+
+    const successCard = {
+        p: 6,
+        borderRadius: 3,
+        textAlign: 'center',
+        background: 'linear-gradient(180deg, #ffffff, #f1f7ff)',
+    };
+
+    const SectionTitle = ({ title }) => (
+        <>
+            <Typography variant="subtitle1" fontWeight={600}>
+                {title}
+            </Typography>
+            <Divider sx={{ my: 2 }} />
+        </>
+    );
+
     // Render as Page
     if (mode === 'page') {
         return (
-            <Container maxWidth="lg">
-                {/* Header */}
-                <Paper sx={{ p: 3, mb: 4 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                        <Box>
-                            <Typography variant="h4" fontWeight="bold">
-                                Leave Request
-                            </Typography>
-                            <Typography variant="body1" color="textSecondary">
-                                Submit a new leave request for approval
-                            </Typography>
-                        </Box>
-                        {/* <IconButton onClick={handleClose}>
-                            <Close />
-                        </IconButton> */}
-                    </Box>
+            <Container
+                maxWidth="lg"
+                sx={{
+                    py: 8,
+                    // background: 'linear-gradient(135deg, #f8fbff 0%, #eef5ff 100%)',
+                }}
+            >
+                {/* ================= HEADER + STEPPER ================= */}
+                <Paper
+                    elevation={0}
+                    sx={{
+                        p: 3,
+                        mb: 3,
+                        borderRadius: 3,
+                        boxShadow: '0 12px 30px rgba(15,42,68,0.08)',
+                        backgroundColor: '#fff',
+                    }}
+                >
+                    <Typography variant="h4" fontWeight={700}>
+                        Leave Request
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                        Submit a new leave request for approval
+                    </Typography>
 
-                    {/* Stepper */}
-                    <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
-                        <Step>
-                            <StepLabel>Fill Details</StepLabel>
-                        </Step>
-                        <Step>
-                            <StepLabel>Confirmation</StepLabel>
-                        </Step>
+                    <Divider sx={{ my: 3 }} />
+
+                    <Stepper activeStep={activeStep}>
+                        <Step><StepLabel>Fill Details</StepLabel></Step>
+                        <Step><StepLabel>Confirmation</StepLabel></Step>
                     </Stepper>
+                </Paper>
 
-                    {activeStep === 0 && (
-                        <>
-                            <Alert severity="info" sx={{ mb: 3 }}>
-                                Please fill out all required fields. Your manager will review this request.
-                            </Alert>
+                {/* ================= STEP 1 ================= */}
+                {activeStep === 0 && (
+                    <>
+                        <Alert
+                            icon={false}
+                            sx={{
+                                mb: 3,
+                                borderRadius: 2,
+                                backgroundColor: 'rgba(79,195,247,0.12)',
+                                color: '#0f2a44',
+                            }}
+                        >
+                            Please fill out all required fields. Your manager will review this request.
+                        </Alert>
 
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                                {/* Employee Selection */}
-                                <FormControl fullWidth error={!!errors.employee}>
-                                    {/* <Autocomplete
-                                        options={selectedEmployee}
-                                        getOptionLabel={(option) => `${option.name} [${option.employeeId}]`}
-                                        value={selectedEmployee}
-                                        onChange={handleEmployeeSelect}
-                                        renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                label="Select Employee"
-                                                required
-                                                error={!!errors.employee}
-                                                helperText={errors.employee}
-                                            />
-                                        )}
-                                        renderOption={(props, option) => {
-                                            const { key, ...restProps } = props;
-                                            return (
-                                                <li key={key} {...restProps}>
-                                                    <Box>
-                                                        <Typography variant="body1">{option.name}</Typography>
-                                                        <Typography variant="caption" color="textSecondary">
-                                                            ID: {option.employeeId} | Dept: {option.department}
-                                                        </Typography>
-                                                    </Box>
-                                                </li>
-                                            );
-                                        }}
-                                    />
-                                    // For Autocomplete (employee selection) */}
-                                    <Autocomplete
-                                        options={allEmployees}
-                                        getOptionLabel={(option) => `${option.name} [${option.employeeId}]`}
-                                        value={selectedEmployee}
-                                        onChange={handleEmployeeSelect}
-                                        disabled={!isAdmin && !!selectedEmployee} // Disable for non-admins
-                                        readOnly={!isAdmin} // Make read-only for non-admins
-                                        renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                label="Select Employee"
-                                                required
-                                                error={!!errors.employee}
-                                                helperText={errors.employee}
-                                                InputProps={{
-                                                    ...params.InputProps,
-                                                    readOnly: !isAdmin, // Make input read-only for non-admins
-                                                }}
-                                            />
-                                        )}
-                                        renderOption={(props, option) => {
-                                            const { key, ...restProps } = props;
-                                            return (
-                                                <li key={key} {...restProps}>
-                                                    <Box>
-                                                        <Typography variant="body1">{option.name}</Typography>
-                                                        <Typography variant="caption" color="textSecondary">
-                                                            ID: {option.employeeId} | Dept: {option.department} |
-                                                            Role: {option.role || 'employee'}
-                                                        </Typography>
-                                                    </Box>
-                                                </li>
-                                            );
-                                        }}
-                                        isOptionEqualToValue={(option, value) => {
-                                            // Handle null values
-                                            if (!option || !value) return false;
-                                            return option.employeeId === value.employeeId;
-                                        }}
-                                    />
-                                </FormControl>
+                        {/* ========= EMPLOYEE INFO ========= */}
+                        <Paper sx={sectionCard}>
+                            <SectionTitle title="Employee Information" />
 
-                                <FormControl fullWidth>
-                                    <InputLabel>Leave Type</InputLabel>
-                                    <Select
-                                        value={formData.leaveType ?? ''}
-                                        onChange={handleChange('leaveType')}
-                                        label="Leave Type"
-                                    >
-                                        <MenuItem value="Unpaid">Unpaid</MenuItem>
-                                        <MenuItem value="Vacation">Vacation</MenuItem>
-                                        <MenuItem value="Sick">Sick</MenuItem>
-                                        {/* <MenuItem value="Personal">Personal</MenuItem> */}
-                                        <MenuItem value="Annual">Annual</MenuItem>
-                                        <MenuItem value="Maternity">Maternity</MenuItem>
-                                        <MenuItem value="Paternity">Paternity</MenuItem>
-                                        <MenuItem value="Casual">Casual</MenuItem>
-                                    </Select>
-                                </FormControl>
-
-                                {/* Duration Type Selection */}
-                                <FormControl fullWidth>
-                                    <InputLabel>Duration Type</InputLabel>
-                                    <Select
-                                        value={formData.durationType ?? ''}
-                                        onChange={handleDurationTypeChange}
-                                        label="Duration Type"
-                                    >
-                                        <MenuItem value="fullDay">Full Day</MenuItem>
-                                        <MenuItem value="halfDay">Half Day</MenuItem>
-                                    </Select>
-                                </FormControl>
-
-                                <Grid container spacing={2}>
-                                    <Grid item xs={6}>
+                            <FormControl fullWidth error={!!errors.employee}>
+                                <Autocomplete
+                                    options={allEmployees}
+                                    value={selectedEmployee}
+                                    getOptionLabel={(o) => `${o.name} [${o.employeeId}]`}
+                                    onChange={handleEmployeeSelect}
+                                    disabled={!isAdmin && !!selectedEmployee}
+                                    renderInput={(params) => (
                                         <TextField
-                                            label="Start Date"
-                                            type="date"
-                                            value={formData.startDate}
-                                            onChange={(e) => handleStartDateChange(e.target.value)}
-                                            fullWidth
-                                            InputLabelProps={{ shrink: true }}
-                                            error={!!errors.startDate}
-                                            helperText={errors.startDate}
+                                            {...params}
+                                            label="Select Employee"
                                             required
+                                            error={!!errors.employee}
+                                            helperText={errors.employee}
+                                            sx={inputStyle}
+                                            InputProps={{
+                                                ...params.InputProps,
+                                                readOnly: !isAdmin,
+                                            }}
                                         />
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <TextField
-                                            label="End Date"
-                                            type="date"
-                                            value={formData.endDate}
-                                            onChange={handleChange('endDate')}
-                                            fullWidth
-                                            InputLabelProps={{ shrink: true }}
-                                            error={!!errors.endDate}
-                                            helperText={errors.endDate}
-                                            required={formData.durationType === 'fullDay'}
-                                            disabled={formData.durationType === 'halfDay'}
-                                        />
-                                    </Grid>
-                                </Grid>
+                                    )}
+                                />
+                            </FormControl>
+                        </Paper>
 
-                                {/* Half Day Options */}
-                                {formData.durationType === 'halfDay' && (
+                        {/* ========= LEAVE DETAILS ========= */}
+                        <Paper sx={sectionCard}>
+                            <SectionTitle title="Leave Details" />
+
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} md={6}>
                                     <FormControl fullWidth>
-                                        <InputLabel>Half Day Period</InputLabel>
+                                        <InputLabel>Leave Type</InputLabel>
                                         <Select
-                                            value={formData.startDateHalf ?? ''}
-                                            onChange={handleChange('startDateHalf')}
-                                            label="Half Day Period"
+                                            value={formData.leaveType ?? ''}
+                                            onChange={handleChange('leaveType')}
+                                            label="Leave Type"
+                                            sx={inputStyle}
                                         >
-                                            <MenuItem value="morning">Morning (9 AM - 1 PM)</MenuItem>
-                                            <MenuItem value="afternoon">Afternoon (2 PM - 6 PM)</MenuItem>
+                                            {['Unpaid', 'Vacation', 'Sick', 'Annual', 'Maternity', 'Paternity', 'Casual']
+                                                .map(type => <MenuItem key={type} value={type}>{type}</MenuItem>)}
                                         </Select>
                                     </FormControl>
-                                )}
+                                </Grid>
 
-                                {getDurationDisplay() && (
-                                    <Typography variant="body2" color="primary" fontWeight="medium">
-                                        Total Duration: {getDurationDisplay()}
-                                    </Typography>
-                                )}
+                                <Grid item xs={12} md={6}>
+                                    <FormControl fullWidth>
+                                        <InputLabel>Duration Type</InputLabel>
+                                        <Select
+                                            value={formData.durationType ?? ''}
+                                            onChange={handleDurationTypeChange}
+                                            label="Duration Type"
+                                            sx={inputStyle}
+                                        >
+                                            <MenuItem value="fullDay">Full Day</MenuItem>
+                                            <MenuItem value="halfDay">Half Day</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                        </Paper>
 
+                        {/* ========= DATE SECTION ========= */}
+                        <Paper sx={sectionCard}>
+                            <SectionTitle title="Leave Duration" />
+
+                            <Grid
+                                container
+                                spacing={2}
+                                sx={{
+                                    backgroundColor: 'rgba(15,42,68,0.04)',
+                                    p: 2,
+                                    borderRadius: 2,
+                                }}
+                            >
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        type="date"
+                                        label="Start Date"
+                                        value={formData.startDate}
+                                        onChange={(e) => handleStartDateChange(e.target.value)}
+                                        InputLabelProps={{ shrink: true }}
+                                        fullWidth
+                                        error={!!errors.startDate}
+                                        helperText={errors.startDate}
+                                        required
+                                        sx={inputStyle}
+                                    />
+                                </Grid>
+
+                                <Grid item xs={12} md={6}>
+                                    <TextField
+                                        type="date"
+                                        label="End Date"
+                                        value={formData.endDate}
+                                        onChange={handleChange('endDate')}
+                                        InputLabelProps={{ shrink: true }}
+                                        disabled={formData.durationType === 'halfDay'}
+                                        fullWidth
+                                        error={!!errors.endDate}
+                                        helperText={errors.endDate}
+                                        required={formData.durationType === 'fullDay'}
+                                        sx={inputStyle}
+                                    />
+                                </Grid>
+                            </Grid>
+
+                            {formData.durationType === 'halfDay' && (
+                                <FormControl fullWidth sx={{ mt: 2 }}>
+                                    <InputLabel>Half Day Period</InputLabel>
+                                    <Select
+                                        value={formData.startDateHalf ?? ''}
+                                        onChange={handleChange('startDateHalf')}
+                                        label="Half Day Period"
+                                        sx={inputStyle}
+                                    >
+                                        <MenuItem value="morning">Morning (9 AM – 1 PM)</MenuItem>
+                                        <MenuItem value="afternoon">Afternoon (2 PM – 6 PM)</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            )}
+
+                            {getDurationDisplay() && (
+                                <Box sx={durationBadge}>
+                                    Total Duration: {getDurationDisplay()}
+                                </Box>
+                            )}
+                        </Paper>
+
+                        {/* ========= REASON & STATUS ========= */}
+                        <Paper sx={sectionCard}>
+                            <SectionTitle title="Reason & Approval" />
+
+                            <TextField
+                                label="Reason"
+                                multiline
+                                rows={4}
+                                fullWidth
+                                required
+                                error={!!errors.reason}
+                                helperText={errors.reason}
+                                value={formData.reason}
+                                onChange={handleChange('reason')}
+                                sx={inputStyle}
+                            />
+
+                            {showStatusField && (
+                                <FormControl fullWidth sx={{ mt: 2 }}>
+                                    <InputLabel>Status</InputLabel>
+                                    <Select
+                                        value={formData.status ?? ''}
+                                        onChange={handleStatusChange}
+                                        label="Status"
+                                        sx={inputStyle}
+                                    >
+                                        <MenuItem value="pending">Pending</MenuItem>
+                                        <MenuItem value="approved">Approved</MenuItem>
+                                        <MenuItem value="rejected">Rejected</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            )}
+
+                            <Collapse in={formData.status === 'rejected'}>
                                 <TextField
-                                    label="Reason"
+                                    label="Rejection Reason"
                                     multiline
-                                    rows={4}
-                                    value={formData.reason}
-                                    onChange={handleChange('reason')}
+                                    rows={3}
                                     fullWidth
-                                    error={!!errors.reason}
-                                    helperText={errors.reason}
-                                    required
+                                    error={!!errors.rejectionReason}
+                                    helperText={errors.rejectionReason}
+                                    required={formData.status === 'rejected'}
+                                    placeholder="Please provide a reason for rejecting this leave request..."
+                                    value={formData.rejectionReason}
+                                    onChange={handleChange('rejectionReason')}
+                                    sx={{
+                                        ...inputStyle,
+                                        mt: 2,
+                                        backgroundColor: 'rgba(244,67,54,0.04)',
+                                    }}
                                 />
+                            </Collapse>
+                        </Paper>
 
-                                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 2 }}>
-                                    <Button onClick={handleClose} color="inherit">
-                                        Cancel
-                                    </Button>
-                                    <Button variant="contained" onClick={handleSubmit} size="large">
-                                        {submitText}
-                                    </Button>
-                                </Box>
-                            </Box>
-                        </>
-                    )}
+                        {/* ========= ACTION BAR ========= */}
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: 2,
+                                mt: 3,
+                                borderRadius: 3,
+                                display: 'flex',
+                                justifyContent: 'flex-end',
+                                gap: 2,
+                                boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+                            }}
+                        >
+                            <Button color="inherit" onClick={handleClose}>
+                                Cancel
+                            </Button>
+                            <Button
+                                variant="contained"
+                                size="large"
+                                onClick={handleSubmit}
+                                sx={{
+                                    px: 4,
+                                    borderRadius: 2,
+                                    fontWeight: 600,
+                                    textTransform: 'none',
+                                }}
+                            >
+                                {submitText}
+                            </Button>
+                        </Paper>
+                    </>
+                )}
 
-                    {activeStep === 1 && (
-                        <Card>
-                            <CardContent>
-                                <Box sx={{ textAlign: 'center', py: 4 }}>
-                                    <CheckCircle sx={{ fontSize: 60, color: 'success.main', mb: 2 }} />
-                                    <Typography variant="h5" gutterBottom>
-                                        Leave Request Submitted!
-                                    </Typography>
-                                    <Typography variant="body1" color="textSecondary" paragraph>
-                                        Your request has been sent for approval. You will receive a confirmation email shortly.
-                                    </Typography>
-                                    <Typography variant="body2" color="textSecondary">
-                                        Redirecting you back...
-                                    </Typography>
-                                </Box>
-                            </CardContent>
-                        </Card>
-                    )}
-                </Paper>
-
-                {/* Policy Info */}
-                <Paper sx={{ p: 3, bgcolor: 'action.hover' }}>
-                    <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                        Leave Policy
-                    </Typography>
-                    <Typography variant="body2" color="textSecondary">
-                        • Submit requests at least 3 days in advance for planned leaves
-                        <br />
-                        • Emergency leaves can be requested on the same day
-                        <br />
-                        • You will receive email confirmation upon submission
-                        <br />
-                        • Half-day leaves count as 0.5 days
-                    </Typography>
-                </Paper>
+                {/* ================= STEP 2 ================= */}
+                {activeStep === 1 && (
+                    <Card sx={successCard}>
+                        <CheckCircle sx={{ fontSize: 60, color: 'success.main', mb: 2 }} />
+                        <Typography variant="h5">Leave Request Submitted</Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                            Your request has been sent for approval.
+                        </Typography>
+                    </Card>
+                )}
             </Container>
+
         );
     }
 
     // Render as Dialog (default)
     return (
         <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-            <DialogTitle>
+            <DialogTitle sx={{
+                color: '#f2eaea',
+                background: '#25747b',
+                fontWeight: 'bold'
+            }}>
                 {title}
             </DialogTitle>
             <DialogContent>
@@ -750,7 +817,7 @@ export const LeaveFormDialog = ({
                             getOptionLabel={(option) => `${option.name} [${option.employeeId}]`}
                             value={selectedEmployee}
                             onChange={handleEmployeeSelect}
-                            disabled={viewMode}
+                            disabled={viewMode || title === 'Edit Leave' ? true : false}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
@@ -774,7 +841,6 @@ export const LeaveFormDialog = ({
                                 );
                             }}
                             isOptionEqualToValue={(option, value) => {
-                                // Handle null values
                                 if (!option || !value) return false;
                                 return option.employeeId === value.employeeId;
                             }}
@@ -792,7 +858,6 @@ export const LeaveFormDialog = ({
                             <MenuItem value="Unpaid">Unpaid</MenuItem>
                             <MenuItem value="Vacation">Vacation</MenuItem>
                             <MenuItem value="Sick">Sick</MenuItem>
-                            {/* <MenuItem value="Personal">Personal</MenuItem> */}
                             <MenuItem value="Annual">Annual</MenuItem>
                             <MenuItem value="Maternity">Maternity</MenuItem>
                             <MenuItem value="Paternity">Paternity</MenuItem>
@@ -849,7 +914,6 @@ export const LeaveFormDialog = ({
                         </Grid>
                     </Grid>
 
-                    {/* Half Day Options */}
                     {formData.durationType === 'halfDay' && (
                         <FormControl fullWidth>
                             <InputLabel>Half Day Period</InputLabel>
@@ -885,19 +949,38 @@ export const LeaveFormDialog = ({
                     />
 
                     {showStatusField && (
-                        <FormControl fullWidth>
-                            <InputLabel>Status</InputLabel>
-                            <Select
-                                value={formData.status ?? ''}
-                                onChange={handleChange('status')}
-                                label="Status"
-                                disabled={viewMode}
-                            >
-                                <MenuItem value="pending">Pending</MenuItem>
-                                <MenuItem value="approved">Approved</MenuItem>
-                                <MenuItem value="rejected">Rejected</MenuItem>
-                            </Select>
-                        </FormControl>
+                        <>
+                            <FormControl fullWidth>
+                                <InputLabel>Status</InputLabel>
+                                <Select
+                                    value={formData.status ?? ''}
+                                    onChange={handleStatusChange}
+                                    label="Status"
+                                    disabled={viewMode}
+                                >
+                                    <MenuItem value="pending">Pending</MenuItem>
+                                    <MenuItem value="approved">Approved</MenuItem>
+                                    <MenuItem value="rejected">Rejected</MenuItem>
+                                </Select>
+                            </FormControl>
+
+                            {/* Rejection Reason Field - Only shown when status is 'rejected' */}
+                            <Collapse in={formData.status === 'rejected'}>
+                                <TextField
+                                    label="Rejection Reason"
+                                    multiline
+                                    rows={3}
+                                    value={formData.rejectionReason}
+                                    onChange={handleChange('rejectionReason')}
+                                    fullWidth
+                                    error={!!errors.rejectionReason}
+                                    helperText={errors.rejectionReason}
+                                    required={formData.status === 'rejected'}
+                                    disabled={viewMode}
+                                    placeholder="Please provide a reason for rejecting this leave request..."
+                                />
+                            </Collapse>
+                        </>
                     )}
                 </Box>
             </DialogContent>
@@ -906,7 +989,7 @@ export const LeaveFormDialog = ({
                     sx={{ border: '1px solid grey', '&:hover': { color: '#157aecff' } }}>
                     {viewMode ? 'Close' : 'Cancel'}
                 </Button>
-                {!viewMode && ( // Only show submit button if not in view mode
+                {!viewMode && (
                     <Button variant="contained" onClick={handleSubmit}>
                         {submitText}
                     </Button>

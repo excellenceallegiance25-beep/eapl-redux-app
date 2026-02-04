@@ -29,6 +29,9 @@ import serverconnection_bg from '../../assets/images/serverconnection.jpg';
 import workinghuman_bg from '../../assets/images/workinghuman.jpg';
 import workingonlaptop_bg from '../../assets/images/workingonlaptop.jpg';
 import { getApplicationServicesList } from '../../services/AppConfigAction';
+import useLoading from '../../redux/slices/useLoading';
+// import eaplRotatingLogo from '../../assets/images/eaplRotatingLogo.gif';
+import eaplRotatingLogo from '../../assets/images/EAPLfavicon.jpg';
 
 
 // ==================== SYMMETRICAL CARD CONFIGURATION ====================
@@ -103,11 +106,13 @@ const ServicesSection = () => {
     const isXl = useMediaQuery(theme.breakpoints.up('xl'));
     const navigate = useNavigate();
     const [showAllServices, setShowAllServices] = useState(false);
+    const { showLoader, hideLoader, withLoader } = useLoading(); // Get loading functions
 
     const [services, setServices] = useState([]);
     const dispatch = useDispatch();
     useEffect(() => {
         const loadConfigs = async () => {
+            showLoader(eaplRotatingLogo, 0);
             const result = await dispatch(getApplicationServicesList());
             // console.log('Configurations loaded successfully', 'success');
 
@@ -148,9 +153,12 @@ const ServicesSection = () => {
                 setServices(processedServices.filter(service =>
                     service.status === true
                 ));
+
+                hideLoader();
             }
         };
         loadConfigs();
+
     }, [dispatch]);
 
     // Add this helper function after your other helper functions

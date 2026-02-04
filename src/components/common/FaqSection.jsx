@@ -11,7 +11,7 @@ import {
 
 const FaqSection = () => {
     return (
-        <Box sx={{ mb: 4, height: '100%', mt: 4 }} >
+        <Box sx={{ mb: 4, height: '100%', mt: 10 }} >
             <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
                 Frequently Asked Questions
             </Typography>

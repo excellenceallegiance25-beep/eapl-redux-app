@@ -13,6 +13,9 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { getPartnerList } from '../../services/AppConfigAction';
 import { Person } from '@mui/icons-material';
+import eaplRotatingLogo from '../../assets/images/EAPLfavicon.jpg';
+import useLoading from '../../redux/slices/useLoading';
+
 
 // Helper function to validate color
 const isValidColor = (color) => {
@@ -154,9 +157,11 @@ const PartnersSection = () => {
 
     const [partners, setPartners] = useState([]);
     const dispatch = useDispatch();
+    const { showLoader, hideLoader, withLoader } = useLoading(); // Get loading functions
 
     useEffect(() => {
         const loadConfigs = async () => {
+            showLoader(eaplRotatingLogo, 580);
             const result = await dispatch(getPartnerList());
             if (result.type === "PARTNER_LIST") {
                 // Process partners to ensure they have valid colors and filter active ones
@@ -178,6 +183,7 @@ const PartnersSection = () => {
                     });
 
                 setPartners(processedPartners);
+                hideLoader();
             }
         };
 

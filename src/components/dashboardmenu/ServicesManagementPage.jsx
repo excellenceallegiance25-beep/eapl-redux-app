@@ -42,6 +42,8 @@ import {
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useDispatch } from 'react-redux';
 import { getApplicationServicesList, updateServiceRequest } from '../../services/AppConfigAction';
+import useLoading from '../../redux/slices/useLoading';
+import eaplRotatingLogo from '../../assets/images/EAPLfavicon.jpg';
 
 export const ServicesManagementPage = () => {
     const navigate = useNavigate();
@@ -49,6 +51,7 @@ export const ServicesManagementPage = () => {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const dispatch = useDispatch();
+    const { showLoader, hideLoader, withLoader } = useLoading();
 
     // Search state
     const [searchTerm, setSearchTerm] = useState('');
@@ -67,6 +70,7 @@ export const ServicesManagementPage = () => {
     const [services, setServices] = useState([]);
     useEffect(() => {
         const loadConfigs = async () => {
+            showLoader(eaplRotatingLogo, 0);
             setLoading(true);
             try {
                 const result = await dispatch(getApplicationServicesList());
@@ -87,6 +91,7 @@ export const ServicesManagementPage = () => {
                 showSnackbar('Failed to load services', 'error');
             } finally {
                 setLoading(false);
+                hideLoader();
             }
         };
 
@@ -509,7 +514,7 @@ export const ServicesManagementPage = () => {
     const columns = [
         {
             field: 'icon',
-            headerName: 'Icon',
+            headerName: '',
             width: 80,
             renderCell: (params) => {
                 const iconValue = params.value;
@@ -593,13 +598,57 @@ export const ServicesManagementPage = () => {
             }
         },
         {
-            field: 'id',
-            headerName: 'ID',
-            width: 70,
-            type: 'number',
+            field: 'actions',
+            headerName: 'Actions',
+            width: 130,
+            sortable: false,
+            filterable: false,
             headeralign: 'center',
-            align: 'center'
+            align: 'center',
+            renderCell: (params) => (
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'left',
+                    height: '100%',
+                    width: '100%'
+                }}>
+                    {/* <Tooltip title={params.row.status === 'active' ? 'Deactivate' : 'Activate'}>
+                        <IconButton
+                            size="small"
+                            onClick={() => toggleStatus(params.row.id)}
+                        >
+                            {getStatusIcon(params.row.status)}
+                        </IconButton>
+                    </Tooltip> */}
+                    <Tooltip title="Edit">
+                        <IconButton
+                            size="small"
+                            onClick={() => handleEdit(params.row)}
+                        >
+                            <Edit />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                        <IconButton
+                            size="small"
+                            color="error"
+                            onClick={() => handleDelete(params.row.id)}
+                        >
+                            <Delete />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+            )
         },
+        // {
+        //     field: 'id',
+        //     headerName: 'ID',
+        //     width: 70,
+        //     type: 'number',
+        //     headeralign: 'center',
+        //     align: 'center'
+        // },
         {
             field: 'title',
             headerName: 'Service Name',
@@ -646,28 +695,6 @@ export const ServicesManagementPage = () => {
             width: 120
         },
         {
-            field: 'description',
-            headerName: 'Description',
-            width: 250,
-            renderCell: (params) => (
-                <Box sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'left',
-                    height: '100%',
-                    width: '100%'
-                }}>
-                    <Typography variant="body2" sx={{
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap'
-                    }}>
-                        {params.value || 'No description'}
-                    </Typography>
-                </Box>
-            )
-        },
-        {
             field: 'status',
             headerName: 'Status',
             width: 130,
@@ -690,13 +717,9 @@ export const ServicesManagementPage = () => {
             )
         },
         {
-            field: 'actions',
-            headerName: 'Actions',
-            width: 180,
-            sortable: false,
-            filterable: false,
-            headeralign: 'center',
-            align: 'center',
+            field: 'description',
+            headerName: 'Description',
+            width: 500,
             renderCell: (params) => (
                 <Box sx={{
                     display: 'flex',
@@ -705,34 +728,16 @@ export const ServicesManagementPage = () => {
                     height: '100%',
                     width: '100%'
                 }}>
-                    <Tooltip title={params.row.status === 'active' ? 'Deactivate' : 'Activate'}>
-                        <IconButton
-                            size="small"
-                            onClick={() => toggleStatus(params.row.id)}
-                        >
-                            {getStatusIcon(params.row.status)}
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Edit">
-                        <IconButton
-                            size="small"
-                            onClick={() => handleEdit(params.row)}
-                        >
-                            <Edit />
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Delete">
-                        <IconButton
-                            size="small"
-                            color="error"
-                            onClick={() => handleDelete(params.row.id)}
-                        >
-                            <Delete />
-                        </IconButton>
-                    </Tooltip>
+                    <Typography variant="body2" sx={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap'
+                    }}>
+                        {params.value || 'No description'}
+                    </Typography>
                 </Box>
             )
-        }
+        },
     ];
 
     // Service categories for dropdown
@@ -766,9 +771,21 @@ export const ServicesManagementPage = () => {
                 gap={2}
                 mb={3}
             >
-                <Typography variant="h4">
+                {/* <Typography variant="h4">
                     Services Management
-                </Typography>
+                </Typography> */}
+
+                <Button
+                    variant="contained"
+                    startIcon={<Add />}
+                    onClick={() => {
+                        resetDialog();
+                        setOpenDialog(true);
+                    }}
+                    sx={{ whiteSpace: 'nowrap', minWidth: "150px" }}
+                >
+                    Add Service
+                </Button>
 
                 <TextField
                     fullWidth
@@ -785,17 +802,7 @@ export const ServicesManagementPage = () => {
                     }}
                 />
 
-                <Button
-                    variant="contained"
-                    startIcon={<Add />}
-                    onClick={() => {
-                        resetDialog();
-                        setOpenDialog(true);
-                    }}
-                    sx={{ whiteSpace: 'nowrap', minWidth: "150px" }}
-                >
-                    Add Service
-                </Button>
+
             </Box>
 
             {/* DataGrid */}
@@ -824,12 +831,26 @@ export const ServicesManagementPage = () => {
                         },
                     }}
                     sx={{
+                        border: 'none',
                         '& .MuiDataGrid-cell:focus': {
                             outline: 'none',
                         },
                         '& .MuiDataGrid-columnHeaders': {
                             backgroundColor: 'background.default',
                         },
+                        '& .MuiDataGrid-row:hover': {
+                            backgroundColor: 'action.hover',
+                        },
+                        '& .MuiDataGrid-columnHeader': {
+                            backgroundColor: '#6288a6 !important',
+                        },
+                        '& .MuiDataGrid-columnHeaderTitle': {
+                            color: '#fdfafaff !important',
+                            fontWeight: 'bold !important',
+                        },
+                        '& .no-sort-icon .MuiDataGrid-iconButtonContainer, & .no-sort-icon .MuiDataGrid-menuIcon': {
+                            display: 'none'
+                        }
                     }}
                 />
             </Box>
@@ -941,7 +962,8 @@ export const ServicesManagementPage = () => {
                                         fullWidth
                                         placeholder="e.g., 📊, 🔒, 🚀"
                                         error={!!errors.icon}
-                                        disabled={submitting}
+                                        // disabled={submitting}
+                                        disabled
                                     />
                                 </Box>
                             </Grid>

@@ -14,6 +14,8 @@ import {
 } from '@mui/material';
 import { loginStart, loginSuccess, loginFailure } from '../../redux/slices/authSlice';
 import { userLogin } from '../../services/AppConfigAction';
+import useLoading from '../../redux/slices/useLoading';
+import eaplRotatingLogo from '../../assets/images/EAPLfavicon.jpg';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -23,6 +25,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error, isAuthenticated, user } = useSelector((state) => state.auth);
+  const { showLoader, hideLoader, withLoader } = useLoading();
 
   const handleChange = (e) => {
     setFormData({
@@ -50,7 +53,7 @@ const Login = () => {
     try {
       // Start loading
       dispatch(loginStart());
-
+      showLoader(eaplRotatingLogo, 0);
       // Dispatch login action
       const result = await dispatch(userLogin(formData));
 
@@ -108,7 +111,8 @@ const Login = () => {
         }));
 
         // Navigate to profile
-        navigate(`/dashboard/${completeUserData.id}`);
+        navigate(`/dashboard`);
+        // navigate(`/dashboard/${completeUserData.id}`);
         // navigate(`/profile/${completeUserData.id}`);
 
       } else if (result.type === "EMP_FAILURE_LOGIN") {
@@ -144,14 +148,17 @@ const Login = () => {
       } else {
         dispatch(loginFailure('An unexpected error occurred.'));
       }
+    } finally {
+      hideLoader();
     }
   };
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" sx={{ py: 4 }}>
       <Box
         sx={{
-          minHeight: '80vh',
+          minHeight: '90vh',
+          // margin: 4,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

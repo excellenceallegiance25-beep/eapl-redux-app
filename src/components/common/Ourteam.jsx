@@ -84,7 +84,7 @@ const Ourteam = () => {
     ];
 
     return (
-        <Box sx={{ mb: 10 }}>
+        <Box sx={{ mb: 10, mt: 4 }}>
             <Box sx={{ textAlign: 'center', mb: 6 }}>
                 <Chip
                     label="LEADERSHIP"

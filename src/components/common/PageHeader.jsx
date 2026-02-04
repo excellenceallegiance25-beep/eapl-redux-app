@@ -20,6 +20,8 @@ const PageHeader = ({ backgroundImage, title, subtitle, breadcrumbs = [] }) => {
         backgroundRepeat: 'no-repeat',
         position: 'relative',
         overflow: 'hidden',
+        top: 20,
+        mb: 2,
         '&::before': {
           content: '""',
           position: 'absolute',

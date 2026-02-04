@@ -24,7 +24,7 @@ const ChatHeader = ({ onClose }) => {
         <Box
             sx={{
                 p: 2,
-                bgcolor: 'primary.main',
+                bgcolor: '#2d87a0',
                 color: 'white',
                 display: 'flex',
                 alignItems: 'center',
@@ -34,9 +34,76 @@ const ChatHeader = ({ onClose }) => {
             }}
         >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, height: "15px" }}>
-                <Avatar sx={{ bgcolor: 'white', color: 'primary.main' }}>
-                    <BotIcon />
-                </Avatar>
+                {/* <Box
+                    sx={{
+                        display: 'inline-flex',
+                        color: '#ffff',
+                        animation: 'subtleFloat 1s ease-in-out infinite',
+                        transformOrigin: 'center 85%',
+                        position: 'relative',
+                        '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: '130%',
+                            height: '130%',
+                            borderRadius: '50%',
+                            background: 'radial-gradient(circle, rgba(25, 118, 210, 0.15) 0%, transparent 70%)',
+                            animation: 'glowPulse 1s ease-in-out infinite',
+                            zIndex: -1,
+                        },
+                        '@keyframes subtleFloat': {
+                            '0%, 100%': {
+                                transform: 'rotate(0deg) translateY(0px)',
+                            },
+                            '33%': {
+                                transform: 'rotate(3deg) translateY(-2px)',
+                            },
+                            '66%': {
+                                transform: 'rotate(-3deg) translateY(-1px)',
+                            },
+                        },
+                        '@keyframes glowPulse': {
+                            '0%, 100%': { opacity: 0.3 },
+                            '50%': { opacity: 0.6 },
+                        }
+                    }}
+                >
+                    <BotIcon sx={{ fontSize: 28, filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }} />
+                </Box> */}
+
+                <Box
+                    sx={{
+                        display: 'inline-flex',
+                        background: 'linear-gradient(135deg, #033c98 0%, #be0735 100%)',
+                        color: '#ffff',
+                        borderRadius: '50%',
+                        padding: 1,
+                        animation: 'professionalBob 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite',
+                        boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
+                        '@keyframes professionalBob': {
+                            '0%, 100%': {
+                                transform: 'rotate(0deg) translateY(0)',
+                                boxShadow: '10 4px 12px rgba(25, 118, 210, 0.3)',
+                            },
+                            '50%': {
+                                transform: 'rotate(5deg) translateY(-4px)',
+                                boxShadow: '10 8px 20px rgba(25, 118, 210, 0.4)'
+                            },
+                        },
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                            animationPlayState: 'paused',
+                            transform: 'scale(1.05)',
+                            boxShadow: '0 8px 24px rgba(25, 118, 210, 0.5)',
+                        },
+                    }}
+                >
+                    <BotIcon sx={{ fontSize: 22 }} />
+                </Box>
+
                 <Box>
                     <Typography variant="subtitle1" fontWeight="bold">
                         AI Assistant

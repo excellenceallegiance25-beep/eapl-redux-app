@@ -37,6 +37,9 @@ import {
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useDispatch } from 'react-redux';
 import { getPartnerList, updatePartnersDetails } from '../../services/AppConfigAction';
+import eaplRotatingLogo from '../../assets/images/EAPLfavicon.jpg';
+import useLoading from '../../redux/slices/useLoading';
+
 
 export const PartnersManagementPage = () => {
     const navigate = useNavigate();
@@ -46,12 +49,14 @@ export const PartnersManagementPage = () => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const dispatch = useDispatch();
+    const { showLoader, hideLoader, withLoader } = useLoading();
 
     useEffect(() => {
         loadPartners();
     }, [dispatch]);
 
     const loadPartners = async () => {
+        showLoader(eaplRotatingLogo, 0);
         setLoading(true);
         setError(null);
         try {
@@ -64,6 +69,7 @@ export const PartnersManagementPage = () => {
             setError('Failed to load partners');
         } finally {
             setLoading(false);
+            hideLoader();
         }
     };
 
@@ -519,15 +525,15 @@ export const PartnersManagementPage = () => {
                 </Stack>
             )
         },
-        {
-            field: 'id',
-            headerName: 'ID',
-            width: 70,
-            type: 'number',
-            align: 'center',
-            headerAlign: 'center',
-            editable: false
-        },
+        // {
+        //     field: 'id',
+        //     headerName: 'ID',
+        //     width: 70,
+        //     type: 'number',
+        //     align: 'center',
+        //     headerAlign: 'center',
+        //     editable: false
+        // },
         {
             field: 'name',
             headerName: 'Name',
@@ -609,65 +615,6 @@ export const PartnersManagementPage = () => {
             )
         },
         {
-            field: 'services',
-            headerName: 'Services',
-            width: 200,
-            renderCell: (params) => {
-                if (!params.value) return null;
-
-                let servicesArray = [];
-                if (Array.isArray(params.value)) {
-                    servicesArray = params.value;
-                } else if (typeof params.value === 'string') {
-                    servicesArray = params.value.split(',').map(s => s.trim()).filter(s => s !== '');
-                }
-
-                if (servicesArray.length === 0) return null;
-
-                return (
-                    <Box sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'left',
-                        height: '100%',
-                        width: '100%'
-                    }}>
-                        <Stack direction="row" spacing={0.5} flexWrap="wrap">
-                            {servicesArray.slice(0, 3).map((service, index) => (
-                                <Chip
-                                    key={index}
-                                    label={service}
-                                    size="small"
-                                    variant="outlined"
-                                    sx={{
-                                        m: 0.2,
-                                        fontSize: '0.7rem',
-                                        maxWidth: '80px',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis'
-                                    }}
-                                />
-                            ))}
-                            {servicesArray.length > 3 && (
-                                <Tooltip title={servicesArray.slice(3).join(', ')}>
-                                    <Chip
-                                        label={`+${servicesArray.length - 3}`}
-                                        size="small"
-                                        variant="outlined"
-                                        sx={{
-                                            m: 0.2,
-                                            fontSize: '0.7rem',
-                                            cursor: 'pointer'
-                                        }}
-                                    />
-                                </Tooltip>
-                            )}
-                        </Stack>
-                    </Box>
-                );
-            }
-        },
-        {
             field: 'status',
             headerName: 'Status',
             width: 130,
@@ -693,6 +640,89 @@ export const PartnersManagementPage = () => {
                 </Box>
             )
         },
+        {
+            field: 'services',
+            headerName: 'Services',
+            width: 350,
+            renderCell: (params) => {
+                if (!params.value) return null;
+
+                let servicesArray = [];
+                if (Array.isArray(params.value)) {
+                    servicesArray = params.value;
+                } else if (typeof params.value === 'string') {
+                    servicesArray = params.value.split(',').map(s => s.trim()).filter(s => s !== '');
+                }
+
+                if (servicesArray.length === 0) return null;
+
+                return (
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'left',
+                            height: '100%',
+                            width: '100%'
+                        }}
+                    >
+                        {/* <Stack
+                            direction="row"
+                            spacing={0.5}
+                            flexWrap="wrap"
+                            sx={{ maxWidth: '100%' }}
+                        > */}
+                        {servicesArray.slice(0, 3).map((service, index) => (
+                            <Tooltip key={index} title={service} arrow>
+                                <Chip
+                                    label={service}
+                                    size="small"
+                                    sx={{
+                                        maxWidth: 90,
+                                        height: 22,
+                                        fontSize: '0.72rem',
+                                        fontWeight: 500,
+                                        borderRadius: 1.5,
+                                        backgroundColor: 'rgba(79,195,247,0.12)',
+                                        color: '#0f2a44',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        '&:hover': {
+                                            backgroundColor: 'rgba(79,195,247,0.2)',
+                                        },
+                                    }}
+                                />
+                            </Tooltip>
+                        ))}
+
+                        {servicesArray.length > 3 && (
+                            <Tooltip title={servicesArray.slice(3).join(', ')} arrow>
+                                <Chip
+                                    label={`+${servicesArray.length - 3}`}
+                                    size="small"
+                                    sx={{
+                                        height: 22,
+                                        fontSize: '0.7rem',
+                                        fontWeight: 600,
+                                        borderRadius: 1.5,
+                                        cursor: 'pointer',
+
+                                        backgroundColor: 'rgba(15,42,68,0.08)',
+                                        color: '#0f2a44',
+
+                                        '&:hover': {
+                                            backgroundColor: 'rgba(15,42,68,0.15)',
+                                        },
+                                    }}
+                                />
+                            </Tooltip>
+                        )}
+                        {/* </Stack> */}
+                    </Box>
+                );
+            }
+        },
+
 
     ];
 
@@ -715,7 +745,7 @@ export const PartnersManagementPage = () => {
             )}
 
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                <Typography variant="h4">Partners Management</Typography>
+                {/* <Typography variant="h4">Partners Management</Typography> */}
                 <Button
                     variant="contained"
                     startIcon={<Add />}
@@ -770,12 +800,26 @@ export const PartnersManagementPage = () => {
                         },
                     }}
                     sx={{
+                        border: 'none',
                         '& .MuiDataGrid-cell:focus': {
                             outline: 'none',
                         },
                         '& .MuiDataGrid-columnHeaders': {
                             backgroundColor: 'background.default',
                         },
+                        '& .MuiDataGrid-row:hover': {
+                            backgroundColor: 'action.hover',
+                        },
+                        '& .MuiDataGrid-columnHeader': {
+                            backgroundColor: '#6288a6 !important',
+                        },
+                        '& .MuiDataGrid-columnHeaderTitle': {
+                            color: '#fdfafaff !important',
+                            fontWeight: 'bold !important',
+                        },
+                        '& .no-sort-icon .MuiDataGrid-iconButtonContainer, & .no-sort-icon .MuiDataGrid-menuIcon': {
+                            display: 'none'
+                        }
                     }}
                 />
             </Box>

@@ -9,144 +9,327 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { getReviewList } from "../../services/AppConfigAction";
-import { useDispatch } from 'react-redux';
-
-
-const reviewss = [
-  {
-    name: "Sarah Johnson",
-    position: "CTO",
-    company: "TechCorp Inc.",
-    comment:
-      "Excellence Allegiance transformed our digital infrastructure. Exceptional quality and support throughout the project.",
-    rating: 5,
-    initials: "SJ",
-    color: "#2196F3",
-  },
-  {
-    name: "Michael Chen",
-    position: "CEO",
-    company: "InnovateLabs",
-    comment:
-      "The best tech partner we've worked with. Their cloud expertise saved us 40% in costs.",
-    rating: 5,
-    initials: "MC",
-    color: "#4CAF50",
-  },
-  {
-    name: "Emma Davis",
-    position: "Director",
-    company: "GlobalTech",
-    comment:
-      "Professional team, on-time delivery, and excellent post-launch support.",
-    rating: 4,
-    initials: "ED",
-    color: "#FF9800",
-  },
-];
-
-// Duplicate list for seamless scrolling
+import cloudCartoon from '../../assets/images/cloudCartoon.avif';
+import customerReview from '../../assets/images/customerReview.png';
 
 const ReviewsSection = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const dispatch = useDispatch();
 
   const [reviews, setReviews] = useState([]);
-  const dispatch = useDispatch();
+
   useEffect(() => {
-    // Move the function definition inside useEffect
-    const loadConfigs = async () => {
+    const loadReviews = async () => {
       const result = await dispatch(getReviewList());
-      // console.log('Configurations loaded successfully', 'success');
-      if (result.type === "REVIEW_LIST") {
-        setReviews(result.payload);
+      if (result?.type === "REVIEW_LIST") {
+        setReviews(result.payload || []);
       }
     };
+    loadReviews();
+  }, [dispatch]);
 
-    loadConfigs();
-  }, [dispatch]); // Only dispatch is needed as dependency
-
-  const scrollingReviews = [...reviews, ...reviews];
+  const scrollingReviews = reviews.length ? [...reviews, ...reviews] : [];
 
   return (
-    <Box sx={{ py: { xs: 6, sm: 8, md: 10 }, bgcolor: "grey.50" }}>
-      <Container maxWidth="md">
+    <Box sx={{
+      py: { xs: 6, md: 10 },
+      // background: 'linear-gradient(135deg, #114b7d, rgba(10, 143, 167, 0.8))',
+      background: 'linear-gradient(135deg, #162a3a, #4a6d87, #8daec3, #d97b6a)',
+      color: '#ffff'
+    }}>
+      <Container maxWidth="xl">
         {/* Header */}
-        <Box textAlign="center" sx={{ mb: 6 }}>
+        <Box textAlign="center" sx={{ mb: 2 }}>
           <Chip
             label="Client Reviews"
             color="secondary"
-            sx={{ mb: 2, fontWeight: "bold", px: 2, py: 1 }}
+            sx={{ mb: 2, fontWeight: 600, px: 2 }}
           />
-          <Typography variant="h4" fontWeight="bold" sx={{ mb: 1 }}>
+          <Typography variant="h4" fontWeight={700} sx={{ mb: 1 }}>
             What Our Clients Say
           </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Reviews scroll automatically.
+          <Typography color="#ffff">
+            Trusted by professionals across industries
           </Typography>
         </Box>
 
-        {/* Always scrolling (no pause) */}
+        {/* Scroll Container with Two Columns */}
         <Box
           sx={{
-            height: 350,
+            height: 500,
+            overflow: "hidden",
+            position: "relative",
+            display: "flex",
+            gap: 4,
+          }}
+        >
+          {/* First Column - Reviews */}
+          <Box
+            sx={{
+              flex: 1,
+              // overflow: "auto",
+              position: "relative",
+            }}
+          >
+            <Box
+              className="reviews-scroll"
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 3,
+                animation: "scrollReviews 32s linear infinite",
+              }}
+            >
+              {scrollingReviews.map((review, index) => {
+                const offset = index % 2 === 0 ? -20 : 20;
+                const rotation = index % 3 === 0 ? "-1deg" : "1deg";
+
+                return (
+                  <Card
+                    key={index}
+                    sx={{
+                      p: 3,
+                      borderRadius: 3,
+                      width: "100%",
+                      alignSelf: index % 2 === 0 ? "flex-start" : "flex-end",
+                      transform: `translateX(${offset}px) rotate(${rotation})`,
+                      boxShadow: theme.shadows[4],
+                      transition: "all 0.3s ease",
+                      "&:hover": !isMobile && {
+                        transform: "translateY(-6px) scale(1.02)",
+                        boxShadow: theme.shadows[8],
+                      },
+                    }}
+                  >
+                    <Rating
+                      value={review.rating || 0}
+                      readOnly
+                      size="small"
+                      sx={{ mb: 1 }}
+                    />
+
+                    <Typography
+                      color="text.secondary"
+                      sx={{
+                        mb: 2,
+                        fontStyle: "italic",
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      "{review.comment_text}"
+                    </Typography>
+
+                    <Box display="flex" alignItems="center" gap={2}>
+                      <Avatar
+                        sx={{
+                          bgcolor: theme.palette.primary.main,
+                          width: 44,
+                          height: 44,
+                          fontWeight: 600,
+                        }}
+                      >
+                        {review.initials ||
+                          review.name
+                            ?.split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                      </Avatar>
+
+                      <Box>
+                        <Typography fontWeight={600}>
+                          {review.name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {review.position}
+                          {review.company && `, ${review.company}`}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Card>
+                );
+              })}
+            </Box>
+
+            {/* Gradient overlay at bottom for smooth scrolling */}
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: 30,
+                background: "linear-gradient(to right ,transparent, #114b7d,transparent)",
+                zIndex: 2,
+              }}
+            />
+          </Box>
+
+          {/* Second Column - Single Full-height Image */}
+          <Box
+            sx={{
+              width: isMobile ? "40%" : "45%",
+              display: { xs: "none", md: "block" }, // Hide on mobile, show on desktop
+              position: "relative",
+            }}
+          >
+            <Box
+              sx={{
+                position: "sticky",
+                top: 20,
+                height: "100%",
+                width: "100%",
+                borderRadius: 4,
+                overflow: "hidden",
+                boxShadow: theme.shadows[6],
+                border: `1px solid ${theme.palette.divider}`,
+              }}
+            >
+              {/* Replace with your actual image */}
+              <Box
+                component="img"
+                src={customerReview} // Your image path here
+                alt="Customer reviews"
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  transition: "transform 0.5s ease",
+                  "&:hover": {
+                    transform: "scale(1.05)",
+                  },
+                }}
+              />
+
+              {/* Optional overlay with text */}
+              <Box
+                sx={{
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  background: "linear-gradient(transparent, rgba(0,0,0,0.7))",
+                  color: "white",
+                  padding: 3,
+                  textAlign: "center",
+                }}
+              >
+                <Typography variant="h6" fontWeight={600}>
+                  Happy Customers
+                </Typography>
+                <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                  Trusted by thousands worldwide
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Scroll Container */}
+        {/* <Box
+          sx={{
+            height: 500,
             overflow: "hidden",
             position: "relative",
           }}
         >
           <Box
+            className="reviews-scroll"
             sx={{
               display: "flex",
               flexDirection: "column",
-              animation: "scrollReviews 30s linear infinite",
+              gap: 3,
+              animation: "scrollReviews 32s linear infinite",
             }}
           >
-            {scrollingReviews.map((review, index) => (
-              <Card
-                key={index}
-                sx={{
-                  p: 3,
-                  mb: 2,
-                  borderRadius: 3,
-                  transition: "transform .2s",
-                  boxShadow: "0px 4px 15px rgba(0,0,0,0.1)",
-                }}
-              >
-                <Rating value={review.rating} readOnly sx={{ mb: 1 }} />
+            {scrollingReviews.map((review, index) => {
+              const offset = index % 2 === 0 ? -20 : 20;
+              const rotation = index % 3 === 0 ? "-1deg" : "1deg";
 
-                <Typography
-                  variant="body1"
-                  color="text.secondary"
-                  sx={{ mb: 2, fontStyle: "italic" }}
+              return (
+                <Card
+                  key={index}
+                  sx={{
+                    p: 3,
+                    borderRadius: 3,
+                    width: isMobile ? "100%" : "92%",
+                    alignSelf: index % 2 === 0 ? "flex-start" : "flex-end",
+                    transform: `translateX(${offset}px) rotate(${rotation})`,
+                    boxShadow: theme.shadows[4],
+                    transition: "all 0.3s ease",
+                    "&:hover": !isMobile && {
+                      transform: "translateY(-6px) scale(1.02)",
+                      boxShadow: theme.shadows[8],
+                    },
+                  }}
                 >
-                  "{review.comment_text}"
-                </Typography>
+                  <Rating
+                    value={review.rating || 0}
+                    readOnly
+                    size="small"
+                    sx={{ mb: 1 }}
+                  />
 
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                  <Avatar sx={{ bgcolor: review.color }}>
-                    {review.initials}
-                  </Avatar>
+                  <Typography
+                    color="text.secondary"
+                    sx={{
+                      mb: 2,
+                      fontStyle: "italic",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    “{review.comment_text}”
+                  </Typography>
 
-                  <Box>
-                    <Typography fontWeight="bold">{review.name}</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {review.position}, {review.company}
-                    </Typography>
+                  <Box display="flex" alignItems="center" gap={2}>
+                    <Avatar
+                      sx={{
+                        bgcolor: theme.palette.primary.main,
+                        width: 44,
+                        height: 44,
+                        fontWeight: 600,
+                      }}
+                    >
+                      {review.initials ||
+                        review.name
+                          ?.split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                    </Avatar>
+
+                    <Box>
+                      <Typography fontWeight={600}>
+                        {review.name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {review.position}
+                        {review.company && `, ${review.company}`}
+                      </Typography>
+                    </Box>
                   </Box>
-                </Box>
-              </Card>
-            ))}
+                </Card>
+              );
+            })}
           </Box>
-        </Box>
+        </Box> */}
 
-        {/* Animation */}
+        {/* Animation + Pause on Hover */}
         <style>
           {`
             @keyframes scrollReviews {
-              0% { transform: translateY(0); }
-              100% { transform: translateY(-50%); }
+              0% {
+                transform: translateY(0);
+              }
+              100% {
+                transform: translateY(-50%);
+              }
+            }
+
+            .reviews-scroll:hover {
+              animation-play-state: paused;
             }
           `}
         </style>
