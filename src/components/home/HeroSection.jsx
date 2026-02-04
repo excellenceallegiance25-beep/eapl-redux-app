@@ -138,7 +138,7 @@ const HeroSection = () => {
 
               {/* Version 1.0  1_0_EAPL_2026*/}
               <Button
-                variant="contained"
+                variant="outlined"
                 color="secondary"
                 size={isMobile ? "medium" : "large"}
                 endIcon={<ArrowForward />}
