@@ -2,7 +2,7 @@ import {
   ArrowForward,
   PlayCircle,
   KeyboardArrowDown,
-} from '@mui/icons-material';
+} from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -13,97 +13,98 @@ import {
   useMediaQuery,
   useTheme,
   alpha,
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import TrustIndicators from './TrustIndicators';
-import home_background from '../../assets/images/home_bg.avif';
-import { Link as RouterLink } from 'react-router-dom';
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import TrustIndicators from "./TrustIndicators";
+import home_background from "../../assets/images/home_bg.avif";
+import { Link as RouterLink } from "react-router-dom";
 
 const HeroSection = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
   const navigate = useNavigate();
   const { isAuthenticated } = useSelector((state) => state.auth);
 
   const handleGetStarted = () => {
     if (isAuthenticated) {
-      navigate('/dashboard');
+      navigate("/dashboard");
     } else {
-      navigate('/register');
+      navigate("/register");
     }
   };
 
   const scrollToNext = () => {
     window.scrollTo({
       top: window.innerHeight,
-      behavior: 'smooth',
+      behavior: "smooth",
     });
   };
 
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative',
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
         background: `linear-gradient(135deg, rgba(0,0,0,0.75), rgba(0,0,0,0.6)),url("${home_background}")`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        overflow: 'hidden',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        overflow: "hidden",
       }}
     >
-
       {/* Background Pattern */}
       <Box
         sx={{
-          position: 'absolute',
+          position: "absolute",
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
           opacity: 0.1,
-          backgroundImage: `radial-gradient(${alpha('#fff', 0.2)} 1px, transparent 1px)`,
-          backgroundSize: '50px 50px',
+          backgroundImage: `radial-gradient(${alpha("#fff", 0.2)} 1px, transparent 1px)`,
+          backgroundSize: "50px 50px",
         }}
       />
 
       <Container maxWidth="lg">
         <Fade in={true} timeout={1000}>
-          <Box sx={{
-            textAlign: 'center',
-            color: 'white',
-            position: 'relative',
-            zIndex: 1,
-            px: { xs: 2, sm: 3, md: 0 }
-          }}>
+          <Box
+            sx={{
+              textAlign: "center",
+              color: "white",
+              position: "relative",
+              zIndex: 1,
+              px: { xs: 2, sm: 3, md: 0 },
+            }}
+          >
             <Typography
               variant={isMobile ? "h3" : isTablet ? "h2" : "h1"}
               sx={{
                 fontWeight: 900,
                 mb: 3,
                 fontSize: {
-                  xs: '2rem',
-                  sm: '2.8rem',
-                  md: '3.5rem',
-                  lg: '4.5rem'
+                  xs: "2rem",
+                  sm: "2.8rem",
+                  md: "3.5rem",
+                  lg: "4.5rem",
                 },
                 lineHeight: 1.2,
               }}
             >
-              Excellence Allegiance{' '}
+              Excellence Allegiance{" "}
               <Box
                 component="span"
                 sx={{
-                  background: 'linear-gradient(45deg, #FFD700, #FF8C00)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  color: 'transparent',
-                  display: isMobile ? 'block' : 'inline'
+                  background: "linear-gradient(45deg, #FFD700, #FF8C00)",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  color: "transparent",
+                  display: isMobile ? "block" : "inline",
                 }}
               >
                 Private Limited
@@ -116,17 +117,18 @@ const HeroSection = () => {
                 mb: 5,
                 opacity: 0.9,
                 maxWidth: 800,
-                mx: 'auto',
+                mx: "auto",
                 fontSize: {
-                  xs: '1rem',
-                  sm: '1.2rem',
-                  md: '1.5rem'
+                  xs: "1rem",
+                  sm: "1.2rem",
+                  md: "1.5rem",
                 },
                 lineHeight: 1.6,
               }}
             >
-              We deliver innovative technology solutions that drive growth, enhance efficiency,
-              and create sustainable competitive advantages for businesses worldwide.
+              We deliver innovative technology solutions that drive growth,
+              enhance efficiency, and create sustainable competitive advantages
+              for businesses worldwide.
             </Typography>
 
             <Stack
@@ -135,23 +137,39 @@ const HeroSection = () => {
               justifyContent="center"
               sx={{ mb: { xs: 6, md: 8 } }}
             >
-
               {/* Version 1.0  1_0_EAPL_2026*/}
               <Button
-                variant="outlined"
-                color="secondary"
-                size={isMobile ? "medium" : "large"}
-                endIcon={<ArrowForward />}
-                // onClick={handleGetStarted}
                 component={RouterLink}
                 to="/contact"
+                variant="outlined"
+                color="warning"
+                size={isMobile ? "medium" : "large"}
+                endIcon={<ArrowForward />}
                 sx={{
                   py: { xs: 1.5, md: 2 },
-                  px: { xs: 3, md: 4 },
-                  fontSize: { xs: '1rem', md: '1.1rem' },
-                  fontWeight: 'bold',
-                  borderRadius: 2,
-                  minWidth: { xs: '100%', sm: 200 },
+                  px: { xs: 3.5, md: 5 },
+                  fontSize: { xs: "1rem", md: "1.05rem" },
+                  fontWeight: 600,
+                  letterSpacing: "0.3px",
+                  borderRadius: 3,
+                  minWidth: { xs: "100%", sm: 220 },
+                  borderWidth: 1,
+                  textTransform: "none",
+                  transition: "all 0.3s ease",
+                  "& svg": {
+                    transition: "transform 0.3s ease",
+                  },
+                  "&:hover": {
+                    backgroundColor: alpha(theme.palette.warning.main, 0.08),
+                    borderColor: theme.palette.warning.main,
+                    boxShadow: `0 6px 18px ${alpha(theme.palette.warning.main, 0.25)}`,
+                    "& svg": {
+                      transform: "translateX(4px)",
+                    },
+                  },
+                  "&:active": {
+                    transform: "scale(0.98)",
+                  },
                 }}
               >
                 Start Free Trial
@@ -201,27 +219,30 @@ const HeroSection = () => {
         {/* Scroll Indicator */}
         <Box
           sx={{
-            position: 'absolute',
+            position: "absolute",
             bottom: { xs: 20, md: 40 },
-            left: '50%',
-            transform: 'translateX(-50%)',
-            textAlign: 'center',
-            cursor: 'pointer',
-            display: isMobile ? 'none' : 'block',
+            left: "50%",
+            transform: "translateX(-50%)",
+            textAlign: "center",
+            cursor: "pointer",
+            display: isMobile ? "none" : "block",
           }}
           onClick={scrollToNext}
         >
-          <Typography variant="body2" sx={{ color: 'white', mb: 1, opacity: 0.8 }}>
+          <Typography
+            variant="body2"
+            sx={{ color: "white", mb: 1, opacity: 0.8 }}
+          >
             Explore Services
           </Typography>
           <KeyboardArrowDown
             sx={{
-              color: 'white',
-              animation: 'bounce 2s infinite',
+              color: "white",
+              animation: "bounce 2s infinite",
               fontSize: 40,
-              '@keyframes bounce': {
-                '0%, 100%': { transform: 'translateY(0)' },
-                '50%': { transform: 'translateY(-10px)' },
+              "@keyframes bounce": {
+                "0%, 100%": { transform: "translateY(0)" },
+                "50%": { transform: "translateY(-10px)" },
               },
             }}
           />
