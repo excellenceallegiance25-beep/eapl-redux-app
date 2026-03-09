@@ -1,13 +1,12 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
-import { Box, Chip, Stack, Typography } from '@mui/material';
 import {
     Code as CodeIcon,
-    Help as HelpIcon,
     Email as EmailIcon,
-    Translate as TranslateIcon,
+    Help as HelpIcon,
     Summarize as SummarizeIcon,
+    Translate as TranslateIcon,
 } from '@mui/icons-material';
+import { Box, Chip, Stack, Typography } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { sendMessage } from '../../redux/slices/chatSlice';
 
 const QuickActions = () => {

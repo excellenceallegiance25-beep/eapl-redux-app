@@ -7,7 +7,6 @@ import {
   Description,
   Directions,
   Email,
-  Language,
   LocationOn,
   Navigation,
   Person,
@@ -19,16 +18,13 @@ import {
   Send,
   SupportAgent,
   Verified,
-  WhatsApp
-} from '@mui/icons-material';
+} from "@mui/icons-material";
 import {
   Alert,
   alpha,
   Box,
   Button,
   Card,
-  CardContent,
-  Chip,
   Collapse,
   Container,
   Fade,
@@ -40,23 +36,29 @@ import {
   Snackbar,
   TextField,
   Typography,
-  useTheme
-} from '@mui/material';
-import { useState } from 'react';
-import PageHeader from '../components/common/PageHeader';
-import workingHour_bg from '../assets/images/workingHour.jpg';
-import { useDispatch } from 'react-redux';
-import { sendUserDetailsToManager } from '../services/AppConfigAction';
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import workingHour_bg from "../assets/images/workingHour.jpg";
+import workingperson_bg from "../assets/images/workingperson.jpg";
+import manylaptopbg_bg from "../assets/images/manylaptopbg.jpg";
+import buildingbg_bg from "../assets/images/buildingbg.jpg";
+import meeting_bg from "../assets/images/meeting.jpg";
+import PageHeader from "../components/common/PageHeader";
+import { sendUserDetailsToManager } from "../services/AppConfigAction";
+import ContactForm from "../components/common/ContactForm";
 
 const Contact = () => {
   const theme = useTheme();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
-    department: '',
+    name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+    department: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -68,96 +70,121 @@ const Contact = () => {
   const [success, setSuccess] = useState(null);
   const [uploading, setUploading] = useState(false);
 
+  // Responsive breakpoints
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
+
+  // Responsive container maxWidth
+  const containerMaxWidth = isMobile ? false : isTablet ? "lg" : "xl";
+
+  // Responsive font sizes
+  const getFontSize = {
+    h1: { xs: "1.8rem", sm: "2.2rem", md: "2.8rem", lg: "3.5rem", xl: "4rem" },
+    h2: { xs: "1.5rem", sm: "1.8rem", md: "2.2rem", lg: "2.5rem", xl: "3rem" },
+    h3: { xs: "1.3rem", sm: "1.5rem", md: "1.8rem", lg: "2rem", xl: "2.2rem" },
+    h4: { xs: "1.1rem", sm: "1.3rem", md: "1.5rem", lg: "1.8rem", xl: "2rem" },
+    h5: { xs: "1rem", sm: "1.1rem", md: "1.2rem", lg: "1.3rem", xl: "1.5rem" },
+    h6: { xs: "0.9rem", sm: "0.95rem", md: "1rem", lg: "1.1rem", xl: "1.2rem" },
+    body1: {
+      xs: "0.8rem",
+      sm: "0.85rem",
+      md: "0.9rem",
+      lg: "1rem",
+      xl: "1.1rem",
+    },
+    body2: {
+      xs: "0.7rem",
+      sm: "0.75rem",
+      md: "0.8rem",
+      lg: "0.875rem",
+      xl: "0.95rem",
+    },
+    caption: {
+      xs: "0.6rem",
+      sm: "0.65rem",
+      md: "0.7rem",
+      lg: "0.75rem",
+      xl: "0.8rem",
+    },
+  };
 
   const departments = [
-    'General Inquiry',
-    'Sales',
-    'Technical Support',
-    'Billing',
-    'Partnership',
-    'Careers',
+    "General Inquiry",
+    "Sales",
+    "Technical Support",
+    "Billing",
+    "Partnership",
+    "Careers",
   ];
 
   const contactInfo = [
     {
       icon: <LocationOn fontSize="large" />,
-      title: 'Visit Our Office',
-      details: ['1st floor, 1/16, Basanta Rd.', 'Nitai Nagar,Mukundapur', 'Kolkata, West Bengal 700099'],
+      title: "Visit Our Office",
+      details: [
+        "1st floor, 1/16, Basanta Rd.",
+        "Nitai Nagar, Mukundapur",
+        "Kolkata, West Bengal 700099",
+      ],
       color: theme.palette.primary.main,
       bgColor: alpha(theme.palette.primary.main, 0.1),
       delay: 100,
-      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop',
-      action: () => window.open('https://maps.app.goo.gl/4KzGDkDDPkAnKovw7', '_blank')
+      image: buildingbg_bg,
+      // "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop",
+      action: () =>
+        window.open("https://maps.app.goo.gl/4KzGDkDDPkAnKovw7", "_blank"),
     },
     {
       icon: <Email fontSize="large" />,
-      title: 'Email Us',
-      details: ['contact@myeapl.com'],
+      title: "Email Us",
+      details: ["contact@myeapl.com"],
       color: theme.palette.secondary.main,
       bgColor: alpha(theme.palette.secondary.main, 0.1),
       delay: 200,
-      action: () => window.location.href = 'mailto:contact@myeapl.com?subject=Inquiry%20from%20Website',
-      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop'
+      action: () =>
+        (window.location.href =
+          "mailto:contact@myeapl.com?subject=Inquiry%20from%20Website"),
+      image: workingperson_bg,
+      // "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop",
     },
     {
       icon: <Phone fontSize="large" />,
-      title: 'Call Us',
-      details: ['+91 6289534780'],
+      title: "Call Us",
+      details: ["+91 6289534780"],
       color: theme.palette.success.main,
       bgColor: alpha(theme.palette.success.main, 0.1),
       delay: 300,
-      action: () => window.location.href = 'tel:+91 6289534780',
-      image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=300&fit=crop'
+      action: () => (window.location.href = "tel:+91 6289534780"),
+      image: manylaptopbg_bg,
+      // "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=300&fit=crop",
     },
     {
       icon: <Schedule fontSize="large" />,
-      title: 'Business Hours',
-      details: ['Monday - Friday: 10:30AM - 07:30PM', 'Saturday: 10AM - 4PM', 'Sunday: Closed'],
+      title: "Business Hours",
+      details: [
+        "Monday - Friday: 10:30AM - 07:30PM",
+        "Saturday: 10AM - 4PM",
+        "Sunday: Closed",
+      ],
       color: theme.palette.warning.main,
       bgColor: alpha(theme.palette.warning.main, 0.1),
       delay: 400,
       image: workingHour_bg,
-      action: null // No action for this card
+      action: null,
     },
-  ];
-
-  const contactInfo1 = [
-    {
-      icon: <LocationOn fontSize="large" />,
-      title: 'Visit Our Office',
-      details: ['1st floor, 1/16, Basanta Rd.', 'Nitai Nagar,Mukundapur', 'Kolkata, West Bengal 700099'],
-      color: theme.palette.primary.main,
-      bgColor: alpha(theme.palette.primary.main, 0.1),
-      delay: 100,
-      image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop',
-      action: () => window.open('https://maps.app.goo.gl/4KzGDkDDPkAnKovw7', '_blank')
-    },
-    {
-      icon: <Email sx={{ fontSize: 40 }} />,
-      title: 'Contact Email',
-      details: ['hello@excellenceallegiance.com', 'sales@excellenceallegiance.com', 'careers@excellenceallegiance.com'],
-      color: '#f5576c',
-      image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop'
-    },
-    {
-      icon: <Phone sx={{ fontSize: 40 }} />,
-      title: 'Phone Numbers',
-      details: ['+1 (415) 123-4567 (Sales)', '+1 (415) 987-6543 (Support)', '24/7 Emergency: +1 (415) 555-7890'],
-      color: '#4CAF50',
-      image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=300&fit=crop'
-    }
   ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: '',
+        [name]: "",
       }));
     }
   };
@@ -165,15 +192,16 @@ const Contact = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!formData.name.trim()) newErrors.name = "Name is required";
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Invalid email address';
+      newErrors.email = "Invalid email address";
     }
-    if (!formData.subject.trim()) newErrors.subject = 'Subject is required';
-    if (!formData.message.trim()) newErrors.message = 'Message is required';
-    if (!formData.department) newErrors.department = 'Please select a department';
+    if (!formData.subject.trim()) newErrors.subject = "Subject is required";
+    if (!formData.message.trim()) newErrors.message = "Message is required";
+    if (!formData.department)
+      newErrors.department = "Please select a department";
 
     return newErrors;
   };
@@ -184,7 +212,6 @@ const Contact = () => {
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
 
-    // Validate form
     if (!validateForm(data)) {
       console.error("Form validation failed");
       return;
@@ -198,133 +225,196 @@ const Contact = () => {
     try {
       setUploading(true);
       setError(null);
-      setSubmitting('Submitting response...');
+      setSubmitting("Submitting response...");
 
       const result = await dispatch(sendUserDetailsToManager(payload));
 
-      // Redux Toolkit / Thunk safe handling
       if (result?.type === "USER_DETAILS_FETCH_SUCCESS") {
         if (result?.payload?.success) {
-          console.log("User details saved successfully");
-
-          // Show success snackbar
+          // console.log("User details saved successfully");
           setOpenSnackbar(true);
-
           e.target.reset();
           setError(null);
-          // Clear submitting message after a delay
           setTimeout(() => {
-            setSubmitting('');
+            setSubmitting("");
           }, 2000);
         } else {
           console.error("Backend error:", result?.payload?.message);
           setError(result?.payload?.message || "Submission failed");
-          setSubmitting('');
+          setSubmitting("");
         }
       } else {
         console.error("Unexpected action type:", result?.type);
         setError("Unexpected server response");
-        setSubmitting('');
+        setSubmitting("");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
       setError("Failed to submit contact form");
-      setSubmitting('');
+      setSubmitting("");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleFormSubmit = async (formData) => {
+    try {
+      setUploading(true);
+      setError(null);
+
+      const result = await dispatch(
+        sendUserDetailsToManager({
+          ...formData,
+          source: "website_contact_form",
+        }),
+      );
+
+      if (
+        result?.type === "USER_DETAILS_FETCH_SUCCESS" &&
+        result?.payload?.success
+      ) {
+        setOpenSnackbar(true);
+        return { success: true };
+      } else {
+        throw new Error(result?.payload?.message || "Submission failed");
+      }
+    } catch (error) {
+      setError(error.message);
+      throw error;
     } finally {
       setUploading(false);
     }
   };
 
   return (
-    <Box sx={{ bgcolor: theme.palette.background.default }}>
+    <Box
+      sx={{ bgcolor: theme.palette.background.default, overflowX: "hidden" }}
+    >
       <PageHeader
         title="Get in Touch"
+        animation="slideInRight"
         subtitle="We're here to help and answer any questions you might have"
-        breadcrumbs={[{ label: 'Contact', path: '/contact' }]}
-        backgroundImage={`linear-gradient(rgba(52, 59, 67, 0.85), rgba(31, 56, 77, 0.85)), url(https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2070&q=80)`}
+        backgroundImage={`linear-gradient(rgba(52, 59, 67, 0.85), rgba(31, 56, 77, 0.85)), url(${meeting_bg})`}
         sx={{
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          minHeight: '50vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          minHeight: { xs: "35vh", sm: "40vh", md: "45vh", lg: "50vh" },
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       />
 
-      <Container maxWidth="xl" sx={{ mt: -5 }}>
+      <Container
+        maxWidth={containerMaxWidth}
+        sx={{
+          mt: { xs: -3, sm: -4, md: -5 },
+          px: { xs: 2, sm: 3, md: 4 },
+        }}
+      >
         {/* Floating Contact Info Cards */}
-        <Box sx={{ position: 'relative', zIndex: 2 }}>
-          <Grid container spacing={3} justifyContent="center">
+        <Box sx={{ position: "relative", zIndex: 2 }}>
+          <Grid
+            container
+            spacing={{ xs: 2, sm: 2.5, md: 3 }}
+            justifyContent="center"
+          >
             {contactInfo.map((contact, index) => (
               <Grid item xs={12} sm={6} md={3} key={index}>
                 <Grow in={true} timeout={contact.delay}>
-                  <Card elevation={4}
+                  <Card
+                    elevation={4}
                     onClick={contact.action}
                     sx={{
-                      height: '100%',
-                      transition: 'all 0.3s ease',
-                      cursor: contact.action ? 'pointer' : 'default',
+                      height: "100%",
+                      transition: "all 0.3s ease",
+                      cursor: contact.action ? "pointer" : "default",
+                      background: `linear-gradient(90deg, #d9f6f7,#FFF)`,
                       border: `2px solid transparent`,
-                      '&:hover': {
-                        transform: 'translateY(-8px)',
+                      "&:hover": {
+                        transform: isDesktop
+                          ? "translateY(-8px)"
+                          : "translateY(-4px)",
                         boxShadow: theme.shadows[8],
-                        borderColor: contact.action ? contact.color : 'transparent',
+                        borderColor: contact.action
+                          ? contact.color
+                          : "transparent",
                       },
-                      overflow: 'hidden',
-                      position: 'relative',
-                      transition: 'all 0.3s',
-                      '&:hover': {
-                        transform: 'translateY(-8px)',
-                        boxShadow: `0 20px 40px ${alpha(contact.color, 0.2)}`,
-                        '& .contact-image': {
-                          transform: 'scale(1.1)'
-                        }
+                      overflow: "hidden",
+                      position: "relative",
+                      borderRadius: { xs: 2, sm: 2.5, md: 3 },
+                      "&:hover .contact-image": {
+                        transform: isDesktop ? "scale(1.1)" : "scale(1.05)",
                       },
-                      bgcolor: 'background.paper',
-                      position: 'relative',
-                      overflow: 'hidden',
-                      '&::before': {
+                      bgcolor: "background.paper",
+                      "&::before": {
                         content: '""',
-                        position: 'absolute',
+                        position: "absolute",
                         top: 0,
                         left: 0,
                         right: 0,
-                        height: '4px',
+                        height: "4px",
                         background: `linear-gradient(90deg, ${contact.color}, ${alpha(contact.color, 0.5)})`,
-                      }
+                      },
                     }}
-                    onMouseEnter={() => setActiveInfo(index)}>
+                    onMouseEnter={() => setActiveInfo(index)}
+                  >
                     <Box
                       className="contact-image"
                       sx={{
-                        height: 150,
+                        height: { xs: 120, sm: 130, md: 140, lg: 150 },
                         backgroundImage: `url(${contact.image})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        transition: 'transform 0.5s'
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        transition: "transform 0.5s",
                       }}
                     />
-                    <Box sx={{ p: 4, textAlign: 'center' }}>
+                    <Box
+                      sx={{
+                        p: { xs: 2, sm: 2.5, md: 3, lg: 4 },
+                        textAlign: "center",
+                      }}
+                    >
                       <Box
                         sx={{
-                          width: 70,
-                          height: 70,
-                          borderRadius: '50%',
+                          width: { xs: 50, sm: 60, md: 65, lg: 70 },
+                          height: { xs: 50, sm: 60, md: 65, lg: 70 },
+                          borderRadius: "50%",
                           bgcolor: alpha(contact.color, 0.1),
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          margin: '-55px auto 25px',
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          margin: {
+                            xs: "-35px auto 15px",
+                            sm: "-40px auto 20px",
+                            md: "-45px auto 22px",
+                            lg: "-55px auto 25px",
+                          },
                           color: contact.color,
                           border: `4px solid ${theme.palette.background.paper}`,
-                          position: 'relative',
-                          zIndex: 1
+                          position: "relative",
+                          zIndex: 1,
+                          "& svg": {
+                            fontSize: { xs: 24, sm: 28, md: 30, lg: 32 },
+                          },
                         }}
                       >
                         {contact.icon}
                       </Box>
-                      <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ mb: 3 }}>
+                      <Typography
+                        variant="h5"
+                        gutterBottom
+                        fontWeight="bold"
+                        sx={{
+                          fontSize: {
+                            xs: "1rem",
+                            sm: "1.1rem",
+                            md: "1.2rem",
+                            lg: "1.3rem",
+                          },
+                          mb: { xs: 2, sm: 2.5, md: 3 },
+                        }}
+                      >
                         {contact.title}
                       </Typography>
                       {contact.details.map((detail, idx) => (
@@ -332,13 +422,16 @@ const Contact = () => {
                           key={idx}
                           variant="body1"
                           sx={{
-                            mb: 2,
-                            color: idx === 0 ? 'text.primary' : 'text.secondary',
-                            transition: 'all 0.3s',
-                            '&:hover': {
+                            mb: 1.5,
+                            color:
+                              idx === 0 ? "text.primary" : "text.secondary",
+                            transition: "all 0.3s",
+                            fontSize: getFontSize.body1,
+                            wordBreak: "break-word",
+                            "&:hover": {
                               color: contact.color,
-                              transform: 'translateX(5px)'
-                            }
+                              transform: isDesktop ? "translateX(5px)" : "none",
+                            },
                           }}
                         >
                           {detail}
@@ -352,1564 +445,1075 @@ const Contact = () => {
           </Grid>
         </Box>
 
-        {/* Contact Information with Images */}
-        {/* <Box sx={{ position: 'relative', zIndex: 2 }}>
-          <Grid container spacing={3} justifyContent="center">
-            {contactInfo.map((info, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
-                <Grow in={true} timeout={info.delay}>
-                  <Card
-                    elevation={4}
-                    onClick={info.action}
-                    sx={{
-                      height: '100%',
-                      transition: 'all 0.3s ease',
-                      cursor: info.action ? 'pointer' : 'default',
-                      border: `2px solid transparent`,
-                      '&:hover': {
-                        transform: 'translateY(-8px)',
-                        boxShadow: theme.shadows[8],
-                        borderColor: info.action ? info.color : 'transparent',
-                      },
-                      bgcolor: 'background.paper',
-                      position: 'relative',
-                      overflow: 'hidden',
-                      '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: '4px',
-                        background: `linear-gradient(90deg, ${info.color}, ${alpha(info.color, 0.5)})`,
-                      }
-                    }}
-                    onMouseEnter={() => setActiveInfo(index)}
-                  >
-                    <CardContent sx={{ textAlign: 'center', p: 3 }}>
-                      <Box
-                        sx={{
-                          width: 80,
-                          height: 80,
-                          borderRadius: '50%',
-                          bgcolor: info.bgColor,
-                          color: info.color,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          margin: '0 auto 24px',
-                          transition: 'all 0.3s ease',
-                          transform: activeInfo === index ? 'scale(1.1)' : 'scale(1)',
-                          backgroundImage: `url(${info.image})`,
-                        }}
-                      >
-                        {info.icon}
-                      </Box>
-                      <Typography variant="h6" gutterBottom fontWeight="bold">
-                        {info.title}
-                      </Typography>
-                      {info.details.map((detail, idx) => (
-                        <Fade in={true} timeout={500 + idx * 100} key={idx}>
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            paragraph
-                            sx={{ mb: 1 }}
-                          >
-                            {detail}
-                          </Typography>
-                        </Fade>
-                      ))}
-                      {info.action && (
-                        <Fade in={true} timeout={800}>
-                          <Box sx={{ mt: 2 }}>
-                            <Button
-                              variant="text"
-                              size="small"
-                              sx={{
-                                color: info.color,
-                                '&:hover': {
-                                  backgroundColor: alpha(info.color, 0.1),
-                                }
-                              }}
-                            >
-                              {info.title === 'Visit Our Office' ? 'View on Map' :
-                                info.title === 'Email Us' ? 'Send Email' :
-                                  info.title === 'Call Us' ? 'Call Now' : 'View Details'}
-                            </Button>
-                          </Box>
-                        </Fade>
-                      )}
-                    </CardContent>
-                  </Card>
-                </Grow>
-              </Grid>
-            ))}
-          </Grid>
-        </Box> */}
-
-        <Box sx={{ mt: 12, mb: 8 }}>
-          <Grid item xs={12}>
-            <Fade in={true} timeout={700}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  flexDirection: { xs: 'column', md: 'row' },
-                  gap: { xs: 3, md: 4 },
-                  height: '100%',
-                  width: '100%'
-                }}
-              >
-                {/* Enhanced Map Container with Custom Google Maps */}
+        {/* Main Content Section - Map and Contact Info */}
+        <Box
+          sx={{
+            mt: { xs: 8, sm: 10, md: 12 },
+            mb: { xs: 6, sm: 7, md: 8 },
+          }}
+        >
+          <Grid container spacing={{ xs: 3, sm: 4, md: 5 }}>
+            <Grid item xs={12}>
+              <Fade in={true} timeout={700}>
                 <Box
                   sx={{
-                    flex: { xs: '1 1 100%', md: '1 1 40%' },
-                    maxWidth: { xs: '100%', md: '500px' },
-                    width: '100%',
-                    position: 'relative',
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: { xs: "center", md: "flex-start" },
+                    flexDirection: { xs: "column", md: "row" },
+                    gap: { xs: 4, md: 5 },
+                    height: "100%",
+                    width: "100%",
                   }}
                 >
-                  <Paper
-                    elevation={8}
+                  {/* Enhanced Map Container */}
+                  <Box
                     sx={{
-                      borderRadius: '20px',
-                      overflow: 'hidden',
-                      position: 'relative',
-                      height: { xs: 350, md: 450 },
-                      transform: 'translateZ(0)',
-                      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                      '&:hover': {
-                        transform: 'translateY(-5px) scale(1.01)',
-                        boxShadow: '0 30px 60px rgba(0,0,0,0.2)',
-                      },
+                      flex: { xs: "1 1 100%", md: "1 1 50%", lg: "1 1 55%" },
+                      width: "100%",
+                      maxWidth: { xs: "100%", md: "700px", lg: "800px" },
+                      position: "relative",
                     }}
                   >
-                    {/* Original Google Maps with Custom Styling */}
-                    <Box
+                    <Paper
+                      elevation={8}
                       sx={{
-                        height: '100%',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        '& iframe': {
-                          filter: 'saturate(1.2) contrast(1.05)',
+                        borderRadius: { xs: 3, sm: 4, md: "20px" },
+                        overflow: "hidden",
+                        position: "relative",
+                        height: { xs: 300, sm: 350, md: 400, lg: 450 },
+                        transform: "translateZ(0)",
+                        transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                        "&:hover": {
+                          transform: isDesktop
+                            ? "translateY(-5px) scale(1.01)"
+                            : "none",
+                          boxShadow: isDesktop
+                            ? "0 30px 60px rgba(0,0,0,0.2)"
+                            : 8,
                         },
                       }}
                     >
-                      <iframe
-                        title="Google Maps - Our Headquarters"
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3684.772122709782!2d88.4031208!3d22.4952639!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a0271d4ec05af01%3A0xaece0c5471680424!2sExcellence%20Allegiance%20Private%20Limited!5e0!3m2!1sen!2sin!4v1705661567895!5m2!1sen!2sin"
-                        width="100%"
-                        height="100%"
-                        style={{
-                          border: 0,
-                          borderTopLeftRadius: '20px',
-                          borderTopRightRadius: '20px',
-                        }}
-                        allowFullScreen=""
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                      />
-
-                      {/* Custom Google Maps Overlay Controls */}
                       <Box
                         sx={{
-                          position: 'absolute',
-                          top: 20,
-                          right: 20,
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: 1,
-                          pointerEvents: 'auto',
+                          height: "100%",
+                          position: "relative",
+                          overflow: "hidden",
                         }}
                       >
-                        {/* Custom Zoom Controls */}
-                        <Box
-                          sx={{
-                            background: 'white',
-                            borderRadius: '8px',
-                            overflow: 'hidden',
-                            boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+                        <iframe
+                          title="Google Maps - Our Headquarters"
+                          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3684.772122709782!2d88.4031208!3d22.4952639!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a0271d4ec05af01%3A0xaece0c5471680424!2sExcellence%20Allegiance%20Private%20Limited!5e0!3m2!1sen!2sin!4v1705661567895!5m2!1sen!2sin"
+                          width="100%"
+                          height="100%"
+                          style={{
+                            border: 0,
                           }}
-                        >
-                          <Button
-                            size="small"
-                            sx={{
-                              minWidth: 40,
-                              height: 40,
-                              borderRadius: 0,
-                              borderBottom: '1px solid #eee',
-                              '&:hover': {
-                                background: '#f5f5f5',
-                              },
-                            }}
-                          >
-                            <Add />
-                          </Button>
-                          <Button
-                            size="small"
-                            sx={{
-                              minWidth: 40,
-                              height: 40,
-                              borderRadius: 0,
-                              '&:hover': {
-                                background: '#f5f5f5',
-                              },
-                            }}
-                          >
-                            <Remove />
-                          </Button>
-                        </Box>
-
-                        {/* Compass Control */}
-                        <Box
-                          sx={{
-                            width: 40,
-                            height: 40,
-                            background: 'white',
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-                            cursor: 'pointer',
-                            transition: 'transform 0.3s ease',
-                            '&:hover': {
-                              transform: 'rotate(30deg)',
-                              background: '#f8f9fa',
-                            },
-                          }}
-                        >
-                          <Navigation sx={{ color: '#666', fontSize: 20 }} />
-                        </Box>
-                      </Box>
-
-                      {/* Custom Location Pin with Pulse Effect */}
-                      <Box
-                        sx={{
-                          position: 'absolute',
-                          top: '50%',
-                          left: '50%',
-                          transform: 'translate(-50%, -100%)',
-                          pointerEvents: 'none',
-                        }}
-                      >
-                        {/* Pulsing ring effect */}
-                        <Box
-                          sx={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            width: 40,
-                            height: 40,
-                            borderRadius: '50%',
-                            background: 'rgba(255, 68, 68, 0.2)',
-                            animation: 'pulse 2s infinite',
-                            '@keyframes pulse': {
-                              '0%': {
-                                transform: 'translate(-50%, -50%) scale(0.8)',
-                                opacity: 0.8,
-                              },
-                              '100%': {
-                                transform: 'translate(-50%, -50%) scale(1.5)',
-                                opacity: 0,
-                              },
-                            },
-                          }}
+                          allowFullScreen=""
+                          loading="lazy"
+                          referrerPolicy="no-referrer-when-downgrade"
                         />
 
-                        {/* Main pin */}
+                        {/* Custom Map Controls */}
                         <Box
                           sx={{
-                            width: 60,
-                            height: 60,
-                            borderRadius: '50% 50% 50% 0',
-                            background: 'linear-gradient(135deg, #ff4444, #ff6666)',
-                            transform: 'rotate(-45deg)',
-                            position: 'relative',
-                            boxShadow: '0 10px 30px rgba(255, 68, 68, 0.3)',
-                            animation: 'bounce 2s infinite',
-                            '@keyframes bounce': {
-                              '0%, 100%': { transform: 'rotate(-45deg) translateY(0)' },
-                              '50%': { transform: 'rotate(-45deg) translateY(-10px)' },
-                            },
-                            '&::before': {
-                              content: '""',
-                              position: 'absolute',
-                              top: '50%',
-                              left: '50%',
-                              transform: 'translate(-50%, -50%)',
-                              width: 30,
-                              height: 30,
-                              background: 'white',
-                              borderRadius: '50%',
-                            },
-                            '&::after': {
-                              content: '"🏢"',
-                              position: 'absolute',
-                              top: '50%',
-                              left: '50%',
-                              transform: 'translate(-50%, -50%) rotate(45deg)',
-                              fontSize: '16px',
-                            },
+                            position: "absolute",
+                            top: { xs: 10, sm: 15, md: 20 },
+                            right: { xs: 10, sm: 15, md: 20 },
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 1,
+                            pointerEvents: "auto",
                           }}
-                        />
-                      </Box>
-
-                      {/* Custom Info Window at Bottom */}
-                      <Box
-                        sx={{
-                          position: 'absolute',
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          background: 'linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%)',
-                          backdropFilter: 'blur(10px)',
-                          padding: 2,
-                          borderTop: '1px solid rgba(0,0,0,0.1)',
-                          transform: 'translateY(0)',
-                          transition: 'transform 0.3s ease',
-                          '&:hover': {
-                            transform: 'translateY(-5px)',
-                          },
-                        }}
-                      >
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                          <Box sx={{ flexShrink: 0 }}>
-                            <Place
+                        >
+                          <Box
+                            sx={{
+                              background: "white",
+                              borderRadius: "8px",
+                              overflow: "hidden",
+                              boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+                            }}
+                          >
+                            <Button
+                              size="small"
                               sx={{
-                                color: theme.palette.primary.main,
-                                fontSize: 24,
+                                minWidth: { xs: 30, sm: 35, md: 40 },
+                                height: { xs: 30, sm: 35, md: 40 },
+                                borderRadius: 0,
+                                borderBottom: "1px solid #eee",
+                              }}
+                            >
+                              <Add
+                                sx={{ fontSize: { xs: 16, sm: 18, md: 20 } }}
+                              />
+                            </Button>
+                            <Button
+                              size="small"
+                              sx={{
+                                minWidth: { xs: 30, sm: 35, md: 40 },
+                                height: { xs: 30, sm: 35, md: 40 },
+                                borderRadius: 0,
+                              }}
+                            >
+                              <Remove
+                                sx={{ fontSize: { xs: 16, sm: 18, md: 20 } }}
+                              />
+                            </Button>
+                          </Box>
+
+                          <Box
+                            sx={{
+                              width: { xs: 30, sm: 35, md: 40 },
+                              height: { xs: 30, sm: 35, md: 40 },
+                              background: "white",
+                              borderRadius: "50%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
+                              cursor: "pointer",
+                              transition: "transform 0.3s ease",
+                              "&:hover": {
+                                transform: isDesktop ? "rotate(30deg)" : "none",
+                                background: "#f8f9fa",
+                              },
+                            }}
+                          >
+                            <Navigation
+                              sx={{
+                                color: "#666",
+                                fontSize: { xs: 16, sm: 18, md: 20 },
                               }}
                             />
                           </Box>
-                          <Box sx={{ flex: 1 }}>
-                            <Typography variant="subtitle1" fontWeight="bold">
-                              Excellence Allegiance Pvt Ltd
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              Kolkata, West Bengal • 22.4952639° N, 88.4031208° E
-                            </Typography>
-                          </Box>
-                          <Button
-                            variant="contained"
-                            size="small"
-                            startIcon={<Directions />}
-                            onClick={() => window.open('https://www.google.com/maps/dir/?api=1&destination=22.4952639,88.4031208', '_blank')}
-                            sx={{
-                              background: 'linear-gradient(135deg, #4285F4, #34A853)',
-                              borderRadius: '20px',
-                              fontWeight: 'bold',
-                              boxShadow: '0 4px 12px rgba(66, 133, 244, 0.3)',
-                              '&:hover': {
-                                transform: 'translateY(-2px)',
-                                boxShadow: '0 6px 16px rgba(66, 133, 244, 0.4)',
-                              },
-                              transition: 'all 0.3s ease',
-                            }}
-                          >
-                            Directions
-                          </Button>
                         </Box>
-                      </Box>
-                    </Box>
-                  </Paper>
 
-                  {/* Map Stats Cards */}
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      gap: 2,
-                      mt: 2,
-                      justifyContent: 'center',
-                      flexWrap: 'wrap',
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        background: 'white',
-                        padding: 1.5,
-                        borderRadius: '12px',
-                        minWidth: '100px',
-                        textAlign: 'center',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-                        border: '1px solid rgba(0,0,0,0.05)',
-                      }}
-                    >
-                      <Typography variant="caption" color="text.secondary">
-                        📍 Latitude
-                      </Typography>
-                      <Typography variant="body2" fontWeight="bold">
-                        22.495264° N
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        background: 'white',
-                        padding: 1.5,
-                        borderRadius: '12px',
-                        minWidth: '100px',
-                        textAlign: 'center',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-                        border: '1px solid rgba(0,0,0,0.05)',
-                      }}
-                    >
-                      <Typography variant="caption" color="text.secondary">
-                        🌐 Longitude
-                      </Typography>
-                      <Typography variant="body2" fontWeight="bold">
-                        88.403121° E
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        background: 'white',
-                        padding: 1.5,
-                        borderRadius: '12px',
-                        minWidth: '100px',
-                        textAlign: 'center',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-                        border: '1px solid rgba(0,0,0,0.05)',
-                      }}
-                    >
-                      <Typography variant="caption" color="text.secondary">
-                        ⏰ Timezone
-                      </Typography>
-                      <Typography variant="body2" fontWeight="bold">
-                        IST (UTC+5:30)
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
-
-                {/* second section */}
-                <Box
-                  sx={{
-                    flex: { xs: '1 1 100%', md: '1 1 30%' },
-                    width: '100%',
-                    maxWidth: { xs: '100%', sm: '500px', md: '400px', lg: '40%' },
-                    mx: { xs: 'auto', md: 0 }
-                  }}
-                >
-                  {/* <Paper
-                    elevation={0}
-                    sx={{
-                      p: { xs: 2, sm: 2.5, md: 3, lg: 3.5 },
-                      borderRadius: { xs: 2, md: 3 },
-                      height: '100%',
-                      minHeight: { xs: 'auto', sm: 420, md: 450 },
-                      background: 'white',
-                      border: '1px solid',
-                      borderColor: 'grey.200',
-                      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                      position: 'relative',
-                      overflow: 'hidden',
-                      '&:hover': {
-                        borderColor: 'primary.main',
-                        boxShadow: {
-                          xs: '0 10px 25px rgba(0,0,0,0.06)',
-                          md: '0 20px 40px rgba(0,0,0,0.08)'
-                        },
-                        '&::before': {
-                          opacity: 1,
-                        },
-                      },
-                      '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: { xs: '2px', sm: '3px' },
-                        background: 'linear-gradient(90deg, #667eea 0%, #764ba2 100%)',
-                        opacity: 0.7,
-                        transition: 'opacity 0.3s ease',
-                      },
-                    }}
-                  > */}
-                  {/* Unified Header */}
-                  <Box sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: { xs: 1.5, sm: 2 },
-                    mb: { xs: 3, sm: 4 }
-                  }}>
-                    <Box
-                      sx={{
-                        width: { xs: 48, sm: 52, md: 56 },
-                        height: { xs: 48, sm: 52, md: 56 },
-                        borderRadius: '50%',
-                        background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#667eea',
-                        position: 'relative',
-                        flexShrink: 0,
-                        '&::after': {
-                          content: '""',
-                          position: 'absolute',
-                          inset: { xs: '-3px', sm: '-4px' },
-                          borderRadius: '50%',
-                          border: '2px solid rgba(102, 126, 234, 0.2)',
-                          animation: 'pulse 2s infinite',
-                          '@keyframes pulse': {
-                            '0%, 100%': { opacity: 1 },
-                            '50%': { opacity: 0.5 },
-                          },
-                        },
-                      }}
-                    >
-                      <Business sx={{
-                        fontSize: {
-                          xs: 24,
-                          sm: 26,
-                          md: 28
-                        }
-                      }} />
-                    </Box>
-                    <Box sx={{ minWidth: 0 }}>
-                      <Typography
-                        variant="h6"
-                        fontWeight={700}
-                        color="grey.900"
-                        sx={{
-                          fontSize: {
-                            xs: '1rem',
-                            sm: '1.1rem',
-                            md: '1.25rem'
-                          },
-                          lineHeight: 1.3
-                        }}
-                      >
-                        Contact & Hours
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="grey.600"
-                        sx={{
-                          fontSize: {
-                            xs: '0.75rem',
-                            sm: '0.875rem'
-                          },
-                          mt: 0.5
-                        }}
-                      >
-                        Connect instantly or check availability
-                      </Typography>
-                    </Box>
-                  </Box>
-
-                  {/* Response Time Section */}
-                  <Box
-                    sx={{
-                      mb: { xs: 3, sm: 4 },
-                      p: { xs: 1.5, sm: 2, md: 2.5 },
-                      borderRadius: { xs: 1.5, sm: 2 },
-                      background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-                      border: '1px solid',
-                      borderColor: 'grey.100',
-                    }}
-                  >
-                    <Box sx={{
-                      display: 'flex',
-                      flexDirection: { xs: 'column', sm: 'row' },
-                      justifyContent: 'space-between',
-                      alignItems: { xs: 'flex-start', sm: 'center' },
-                      gap: { xs: 1, sm: 0 },
-                      mb: { xs: 1, sm: 1.5 }
-                    }}>
-                      <Typography
-                        variant="body2"
-                        fontWeight={600}
-                        color="grey.700"
-                        sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
-                      >
-                        Response Performance
-                      </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {/* Custom Location Pin */}
                         <Box
                           sx={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #10b981, #34d399)',
-                            animation: 'pulse-small 2s infinite',
-                            '@keyframes pulse-small': {
-                              '0%, 100%': { opacity: 1 },
-                              '50%': { opacity: 0.5 },
+                            position: "absolute",
+                            top: "50%",
+                            left: "50%",
+                            transform: "translate(-50%, -100%)",
+                            pointerEvents: "none",
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              position: "absolute",
+                              top: "50%",
+                              left: "50%",
+                              transform: "translate(-50%, -50%)",
+                              width: { xs: 30, sm: 35, md: 40 },
+                              height: { xs: 30, sm: 35, md: 40 },
+                              borderRadius: "50%",
+                              background: "rgba(255, 68, 68, 0.2)",
+                              animation: isDesktop
+                                ? "pulse 2s infinite"
+                                : "none",
+                            }}
+                          />
+
+                          <Box
+                            sx={{
+                              width: { xs: 45, sm: 50, md: 55, lg: 60 },
+                              height: { xs: 45, sm: 50, md: 55, lg: 60 },
+                              borderRadius: "50% 50% 50% 0",
+                              background:
+                                "linear-gradient(135deg, #ff4444, #ff6666)",
+                              transform: "rotate(-45deg)",
+                              position: "relative",
+                              boxShadow: "0 10px 30px rgba(255, 68, 68, 0.3)",
+                              animation: isDesktop
+                                ? "bounce 2s infinite"
+                                : "none",
+                              "&::before": {
+                                content: '""',
+                                position: "absolute",
+                                top: "50%",
+                                left: "50%",
+                                transform: "translate(-50%, -50%)",
+                                width: { xs: 20, sm: 25, md: 30 },
+                                height: { xs: 20, sm: 25, md: 30 },
+                                background: "white",
+                                borderRadius: "50%",
+                              },
+                              "&::after": {
+                                content: '"🏢"',
+                                position: "absolute",
+                                top: "50%",
+                                left: "50%",
+                                transform:
+                                  "translate(-50%, -50%) rotate(45deg)",
+                                fontSize: { xs: 12, sm: 14, md: 16 },
+                              },
+                            }}
+                          />
+                        </Box>
+
+                        {/* Info Window */}
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
+                            background:
+                              "linear-gradient(to top, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%)",
+                            backdropFilter: "blur(10px)",
+                            padding: { xs: 1.5, sm: 2 },
+                            borderTop: "1px solid rgba(0,0,0,0.1)",
+                            transform: "translateY(0)",
+                            transition: "transform 0.3s ease",
+                            "&:hover": {
+                              transform: isDesktop
+                                ? "translateY(-5px)"
+                                : "none",
+                            },
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: { xs: 1, sm: 1.5, md: 2 },
+                            }}
+                          >
+                            <Box sx={{ flexShrink: 0 }}>
+                              <Place
+                                sx={{
+                                  color: theme.palette.primary.main,
+                                  fontSize: { xs: 20, sm: 22, md: 24 },
+                                }}
+                              />
+                            </Box>
+                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                              <Typography
+                                variant="subtitle1"
+                                fontWeight="bold"
+                                sx={{
+                                  fontSize: {
+                                    xs: "0.85rem",
+                                    sm: "0.95rem",
+                                    md: "1rem",
+                                  },
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                }}
+                              >
+                                Excellence Allegiance Pvt Ltd
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                color="text.secondary"
+                                sx={{
+                                  fontSize: {
+                                    xs: "0.7rem",
+                                    sm: "0.75rem",
+                                    md: "0.8rem",
+                                  },
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                }}
+                              >
+                                Kolkata, West Bengal • 22.4952639° N,
+                                88.4031208° E
+                              </Typography>
+                            </Box>
+                            <Button
+                              variant="contained"
+                              size={isMobile ? "small" : "medium"}
+                              startIcon={
+                                <Directions
+                                  sx={{ fontSize: { xs: 16, sm: 18 } }}
+                                />
+                              }
+                              onClick={() =>
+                                window.open(
+                                  "https://www.google.com/maps/dir/?api=1&destination=22.4952639,88.4031208",
+                                  "_blank",
+                                )
+                              }
+                              sx={{
+                                background:
+                                  "linear-gradient(135deg, #4285F4, #34A853)",
+                                borderRadius: "20px",
+                                fontWeight: "bold",
+                                fontSize: {
+                                  xs: "0.7rem",
+                                  sm: "0.75rem",
+                                  md: "0.8rem",
+                                },
+                                py: { xs: 0.5, sm: 0.8, md: 1 },
+                                px: { xs: 1.5, sm: 2, md: 2.5 },
+                                whiteSpace: "nowrap",
+                                minWidth: { xs: "auto", sm: "auto" },
+                                "&:hover": {
+                                  transform: isDesktop
+                                    ? "translateY(-2px)"
+                                    : "none",
+                                },
+                              }}
+                            >
+                              {isMobile ? "Go" : "Directions"}
+                            </Button>
+                          </Box>
+                        </Box>
+                      </Box>
+                    </Paper>
+
+                    {/* Map Stats Cards */}
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: { xs: 1, sm: 1.5, md: 2 },
+                        mt: { xs: 2, sm: 2.5, md: 3 },
+                        justifyContent: "center",
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          background: "white",
+                          p: { xs: 1, sm: 1.2, md: 1.5 },
+                          borderRadius: { xs: 2, sm: 2.5, md: 3 },
+                          minWidth: { xs: 80, sm: 90, md: 100 },
+                          textAlign: "center",
+                          boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                          border: "1px solid rgba(0,0,0,0.05)",
+                        }}
+                      >
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ fontSize: getFontSize.caption }}
+                        >
+                          📍 Latitude
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          fontWeight="bold"
+                          sx={{ fontSize: getFontSize.body2 }}
+                        >
+                          22.495264° N
+                        </Typography>
+                      </Box>
+                      <Box
+                        sx={{
+                          background: "white",
+                          p: { xs: 1, sm: 1.2, md: 1.5 },
+                          borderRadius: { xs: 2, sm: 2.5, md: 3 },
+                          minWidth: { xs: 80, sm: 90, md: 100 },
+                          textAlign: "center",
+                          boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                          border: "1px solid rgba(0,0,0,0.05)",
+                        }}
+                      >
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ fontSize: getFontSize.caption }}
+                        >
+                          🌐 Longitude
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          fontWeight="bold"
+                          sx={{ fontSize: getFontSize.body2 }}
+                        >
+                          88.403121° E
+                        </Typography>
+                      </Box>
+                      <Box
+                        sx={{
+                          background: "white",
+                          p: { xs: 1, sm: 1.2, md: 1.5 },
+                          borderRadius: { xs: 2, sm: 2.5, md: 3 },
+                          minWidth: { xs: 80, sm: 90, md: 100 },
+                          textAlign: "center",
+                          boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+                          border: "1px solid rgba(0,0,0,0.05)",
+                        }}
+                      >
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ fontSize: getFontSize.caption }}
+                        >
+                          ⏰ Timezone
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          fontWeight="bold"
+                          sx={{ fontSize: getFontSize.body2 }}
+                        >
+                          IST (UTC+5:30)
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+
+                  {/* Contact Info Section */}
+                  <Box
+                    sx={{
+                      flex: { xs: "1 1 100%", md: "1 1 40%", lg: "1 1 35%" },
+                      width: "100%",
+                      maxWidth: {
+                        xs: "100%",
+                        sm: "500px",
+                        md: "450px",
+                        lg: "400px",
+                      },
+                      mx: { xs: "auto", md: 0 },
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: { xs: 1.5, sm: 2 },
+                        mb: { xs: 3, sm: 4 },
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          width: { xs: 40, sm: 45, md: 48, lg: 56 },
+                          height: { xs: 40, sm: 45, md: 48, lg: 56 },
+                          borderRadius: "50%",
+                          background:
+                            "linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#667eea",
+                          position: "relative",
+                          flexShrink: 0,
+                          "&::after": {
+                            content: '""',
+                            position: "absolute",
+                            inset: { xs: "-2px", sm: "-3px", md: "-4px" },
+                            borderRadius: "50%",
+                            border: "2px solid rgba(102, 126, 234, 0.2)",
+                            animation: isDesktop ? "pulse 2s infinite" : "none",
+                          },
+                        }}
+                      >
+                        <Business
+                          sx={{
+                            fontSize: { xs: 20, sm: 22, md: 24, lg: 28 },
+                          }}
+                        />
+                      </Box>
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography
+                          variant="h6"
+                          fontWeight={700}
+                          color="grey.900"
+                          sx={{
+                            fontSize: {
+                              xs: "1rem",
+                              sm: "1.1rem",
+                              md: "1.2rem",
+                            },
+                            lineHeight: 1.3,
+                          }}
+                        >
+                          Contact & Hours
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="grey.600"
+                          sx={{
+                            fontSize: getFontSize.body2,
+                            mt: 0.5,
+                          }}
+                        >
+                          Connect instantly or check availability
+                        </Typography>
+                      </Box>
+                    </Box>
+
+                    {/* Response Time Section */}
+                    <Box
+                      sx={{
+                        mb: { xs: 3, sm: 4 },
+                        p: { xs: 1.5, sm: 2, md: 2.5 },
+                        borderRadius: { xs: 2, sm: 2.5, md: 3 },
+                        background:
+                          "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+                        border: "1px solid",
+                        borderColor: "grey.100",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: { xs: "column", sm: "row" },
+                          justifyContent: "space-between",
+                          alignItems: { xs: "flex-start", sm: "center" },
+                          gap: { xs: 1, sm: 0 },
+                          mb: { xs: 1, sm: 1.5 },
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          fontWeight={600}
+                          color="grey.700"
+                          sx={{ fontSize: getFontSize.body2 }}
+                        >
+                          Response Performance
+                        </Typography>
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
+                          <Box
+                            sx={{
+                              width: { xs: 6, sm: 7, md: 8 },
+                              height: { xs: 6, sm: 7, md: 8 },
+                              borderRadius: "50%",
+                              background:
+                                "linear-gradient(135deg, #10b981, #34d399)",
+                              animation: isDesktop
+                                ? "pulse-small 2s infinite"
+                                : "none",
+                            }}
+                          />
+                          <Typography
+                            variant="body2"
+                            fontWeight={700}
+                            color="success.dark"
+                            sx={{ fontSize: getFontSize.body2 }}
+                          >
+                            85% within 2h
+                          </Typography>
+                        </Box>
+                      </Box>
+                      <Box
+                        sx={{
+                          height: { xs: 4, sm: 5, md: 6 },
+                          bgcolor: "grey.200",
+                          borderRadius: 3,
+                          overflow: "hidden",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            height: "100%",
+                            width: "85%",
+                            background:
+                              "linear-gradient(90deg, #10b981, #34d399)",
+                            borderRadius: 3,
+                            position: "relative",
+                            "&::after": {
+                              content: '""',
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              background:
+                                "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)",
+                              animation: isDesktop
+                                ? "shimmer 2s infinite"
+                                : "none",
                             },
                           }}
                         />
-                        <Typography
-                          variant="body2"
-                          fontWeight={700}
-                          color="success.dark"
-                          sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
-                        >
-                          85% within 2h
-                        </Typography>
                       </Box>
                     </Box>
-                    <Box sx={{
-                      height: { xs: 4, sm: 6 },
-                      bgcolor: 'grey.200',
-                      borderRadius: 3,
-                      overflow: 'hidden'
-                    }}>
+
+                    {/* Contact Actions Grid */}
+                    <Grid
+                      container
+                      spacing={{ xs: 1.5, sm: 2 }}
+                      sx={{ mb: { xs: 3, sm: 4 } }}
+                    >
+                      <Grid item xs={12} sm={6}>
+                        <Box
+                          onClick={() =>
+                            (window.location.href = "tel:+91 6289534780")
+                          }
+                          sx={{
+                            p: { xs: 1.5, sm: 2 },
+                            borderRadius: { xs: 2, sm: 2.5 },
+                            border: "1px solid",
+                            borderColor: "grey.200",
+                            background: "white",
+                            cursor: "pointer",
+                            transition: "all 0.3s ease",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            textAlign: "center",
+                            "&:hover": {
+                              borderColor: "#3b82f6",
+                              background:
+                                "linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)",
+                              transform: isDesktop
+                                ? "translateY(-2px)"
+                                : "translateY(-1px)",
+                              boxShadow: "0 4px 12px rgba(59, 130, 246, 0.15)",
+                            },
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: { xs: 32, sm: 36, md: 40 },
+                              height: { xs: 32, sm: 36, md: 40 },
+                              borderRadius: "50%",
+                              background:
+                                "linear-gradient(135deg, #3b82f6, #1d4ed8)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              color: "white",
+                              mb: { xs: 1, sm: 1.5 },
+                            }}
+                          >
+                            <Phone
+                              sx={{ fontSize: { xs: 16, sm: 18, md: 20 } }}
+                            />
+                          </Box>
+                          <Typography
+                            variant="body2"
+                            fontWeight={600}
+                            color="grey.900"
+                            sx={{ fontSize: getFontSize.body2 }}
+                          >
+                            Call Now
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            color="grey.600"
+                            sx={{
+                              mt: 0.5,
+                              fontSize: getFontSize.caption,
+                              wordBreak: "break-word",
+                            }}
+                          >
+                            +91 62895 34780
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={12} sm={6}>
+                        <Box
+                          onClick={() =>
+                            (window.location.href = "mailto:contact@myeapl.com")
+                          }
+                          sx={{
+                            p: { xs: 1.5, sm: 2 },
+                            borderRadius: { xs: 2, sm: 2.5 },
+                            border: "1px solid",
+                            borderColor: "grey.200",
+                            background: "white",
+                            cursor: "pointer",
+                            transition: "all 0.3s ease",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            textAlign: "center",
+                            "&:hover": {
+                              borderColor: "#8b5cf6",
+                              background:
+                                "linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)",
+                              transform: isDesktop
+                                ? "translateY(-2px)"
+                                : "translateY(-1px)",
+                              boxShadow: "0 4px 12px rgba(139, 92, 246, 0.15)",
+                            },
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: { xs: 32, sm: 36, md: 40 },
+                              height: { xs: 32, sm: 36, md: 40 },
+                              borderRadius: "50%",
+                              background:
+                                "linear-gradient(135deg, #8b5cf6, #7c3aed)",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              color: "white",
+                              mb: { xs: 1, sm: 1.5 },
+                            }}
+                          >
+                            <Email
+                              sx={{ fontSize: { xs: 16, sm: 18, md: 20 } }}
+                            />
+                          </Box>
+                          <Typography
+                            variant="body2"
+                            fontWeight={600}
+                            color="grey.900"
+                            sx={{ fontSize: getFontSize.body2 }}
+                          >
+                            Email Us
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            color="grey.600"
+                            sx={{
+                              mt: 0.5,
+                              fontSize: getFontSize.caption,
+                              wordBreak: "break-all",
+                            }}
+                          >
+                            contact@myeapl.com
+                          </Typography>
+                        </Box>
+                      </Grid>
+                    </Grid>
+
+                    {/* Office Hours Section */}
+                    <Box sx={{ mb: { xs: 3, sm: 4 } }}>
                       <Box
                         sx={{
-                          height: '100%',
-                          width: '85%',
-                          background: 'linear-gradient(90deg, #10b981, #34d399)',
-                          borderRadius: 3,
-                          position: 'relative',
-                          '&::after': {
-                            content: '""',
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
-                            animation: 'shimmer 2s infinite',
-                            '@keyframes shimmer': {
-                              '0%': { transform: 'translateX(-100%)' },
-                              '100%': { transform: 'translateX(100%)' },
-                            },
-                          },
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1,
+                          mb: { xs: 2, sm: 3 },
                         }}
-                      />
+                      >
+                        <Schedule
+                          sx={{
+                            color: "grey.500",
+                            fontSize: { xs: 18, sm: 20, md: 22 },
+                          }}
+                        />
+                        <Typography
+                          variant="subtitle2"
+                          fontWeight={600}
+                          color="grey.700"
+                          sx={{ fontSize: getFontSize.body1 }}
+                        >
+                          Office Hours
+                        </Typography>
+                      </Box>
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: { xs: "column", sm: "row" },
+                          flexWrap: { sm: "wrap" },
+                          gap: { xs: 1.5, sm: 2 },
+                        }}
+                      >
+                        {[
+                          {
+                            day: "Mon - Fri",
+                            time: "10:30AM - 7:30PM",
+                            status: "Open",
+                            color: "#10b981",
+                            bgColor: "#d1fae5",
+                          },
+                          {
+                            day: "Saturday",
+                            time: "10:00AM - 4:00PM",
+                            status: "Limited",
+                            color: "#f59e0b",
+                            bgColor: "#fef3c7",
+                          },
+                          {
+                            day: "Sunday",
+                            time: "Closed",
+                            status: "Closed",
+                            color: "#6b7280",
+                            bgColor: "#f3f4f6",
+                          },
+                        ].map((item, index) => (
+                          <Box
+                            key={index}
+                            sx={{
+                              flex: { xs: "none", sm: 1 },
+                              display: "flex",
+                              flexDirection: { xs: "row", sm: "column" },
+                              alignItems: { xs: "center", sm: "flex-start" },
+                              justifyContent: "space-between",
+                              p: { xs: 1.5, sm: 2 },
+                              borderRadius: { xs: 2, sm: 2.5 },
+                              background: item.bgColor,
+                              border: "1px solid",
+                              borderColor: `${item.color}20`,
+                              transition: "all 0.3s ease",
+                              minWidth: { sm: 0 },
+                              "&:hover": {
+                                transform: isDesktop
+                                  ? "translateY(-2px)"
+                                  : "translateX(2px)",
+                                boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+                              },
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                flex: { xs: 1, sm: "none" },
+                                mb: { sm: 1 },
+                              }}
+                            >
+                              <Typography
+                                variant="body2"
+                                fontWeight={600}
+                                color="grey.900"
+                                sx={{
+                                  fontSize: getFontSize.body2,
+                                  mb: { sm: 0.5 },
+                                }}
+                              >
+                                {item.day}
+                              </Typography>
+                              <Typography
+                                variant="caption"
+                                color="grey.600"
+                                sx={{
+                                  fontSize: getFontSize.caption,
+                                  display: "block",
+                                }}
+                              >
+                                {item.time}
+                              </Typography>
+                            </Box>
+                            <Box
+                              sx={{
+                                px: { xs: 1, sm: 1.5 },
+                                py: { xs: 0.25, sm: 0.5 },
+                                borderRadius: "20px",
+                                background: item.bgColor,
+                                border: `1px solid ${item.color}40`,
+                                flexShrink: 0,
+                                mt: { xs: 0, sm: "auto" },
+                              }}
+                            >
+                              <Typography
+                                variant="caption"
+                                fontWeight={600}
+                                sx={{
+                                  color: item.color,
+                                  fontSize: getFontSize.caption,
+                                }}
+                              >
+                                {item.status}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        ))}
+                      </Box>
                     </Box>
                   </Box>
+                </Box>
+              </Fade>
+            </Grid>
+          </Grid>
+        </Box>
+      </Container>
 
-                  {/* Contact Actions Grid */}
-                  <Grid
-                    container
-                    spacing={{ xs: 1.5, sm: 2 }}
-                    sx={{ mb: { xs: 3, sm: 4 } }}
+      {/* Send a Message Section - Using ContactForm component */}
+      <ContactForm
+        onSubmit={handleFormSubmit}
+        variant="full"
+        showHeader={true}
+        // onSuccess={() => {
+        //   console.log("Form submitted successfully");
+        // }}
+        onError={(error) => {
+          setError(error);
+        }}
+      />
+
+      {/* Why Choose Us Section */}
+      <Box
+        sx={{
+          py: { xs: 6, sm: 8, md: 10, lg: 12 },
+          px: { xs: 2, sm: 3, md: 4 },
+          bgcolor: "#f8fafc",
+        }}
+      >
+        <Container maxWidth={containerMaxWidth}>
+          <Grid container spacing={4} justifyContent="center">
+            <Grid item xs={12} md={10} lg={8}>
+              <Box
+                sx={{
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: { xs: 2, sm: 2.5, md: 3 },
+                }}
+              >
+                {/* Response Time & Features */}
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: { xs: 2.5, sm: 3, md: 3.5, lg: 4 },
+                    borderRadius: { xs: 2.5, sm: 3, md: 3.5 },
+                    background: "white",
+                    border: "1px solid #e2e8f0",
+                  }}
+                >
+                  <Typography
+                    variant="h5"
+                    fontWeight={700}
+                    color="#1e293b"
+                    gutterBottom
+                    sx={{
+                      fontSize: { xs: "1.2rem", sm: "1.3rem", md: "1.5rem" },
+                      mb: { xs: 2.5, sm: 3, md: 3.5 },
+                    }}
                   >
-                    <Grid item xs={12} sm={6}>
-                      <Box
-                        onClick={() => window.location.href = 'tel:+91 6289534780'}
-                        sx={{
-                          p: { xs: 1.5, sm: 2 },
-                          borderRadius: { xs: 1.5, sm: 2 },
-                          border: '1px solid',
-                          borderColor: 'grey.200',
-                          background: 'white',
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          textAlign: 'center',
-                          '&:hover': {
-                            borderColor: '#3b82f6',
-                            background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
-                            transform: { xs: 'translateY(-1px)', sm: 'translateY(-2px)' },
-                            boxShadow: {
-                              xs: '0 3px 8px rgba(59, 130, 246, 0.12)',
-                              sm: '0 4px 12px rgba(59, 130, 246, 0.15)'
-                            },
-                          },
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            width: { xs: 36, sm: 40, md: 44 },
-                            height: { xs: 36, sm: 40, md: 44 },
-                            borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: 'white',
-                            mb: { xs: 1, sm: 1.5 },
-                          }}
-                        >
-                          <Phone sx={{ fontSize: { xs: 16, sm: 18, md: 20 } }} />
-                        </Box>
-                        <Typography
-                          variant="body2"
-                          fontWeight={600}
-                          color="grey.900"
-                          sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
-                        >
-                          Call Now
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          color="grey.600"
-                          sx={{
-                            mt: 0.5,
-                            fontSize: { xs: '0.7rem', sm: '0.75rem' },
-                            wordBreak: 'break-word'
-                          }}
-                        >
-                          +91 62895 34780
-                        </Typography>
-                      </Box>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <Box
-                        onClick={() => window.location.href = 'mailto:eapl.techhub@gmail.com'}
-                        sx={{
-                          p: { xs: 1.5, sm: 2 },
-                          borderRadius: { xs: 1.5, sm: 2 },
-                          border: '1px solid',
-                          borderColor: 'grey.200',
-                          background: 'white',
-                          cursor: 'pointer',
-                          transition: 'all 0.3s ease',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          textAlign: 'center',
-                          '&:hover': {
-                            borderColor: '#8b5cf6',
-                            background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)',
-                            transform: { xs: 'translateY(-1px)', sm: 'translateY(-2px)' },
-                            boxShadow: {
-                              xs: '0 3px 8px rgba(139, 92, 246, 0.12)',
-                              sm: '0 4px 12px rgba(139, 92, 246, 0.15)'
-                            },
-                          },
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            width: { xs: 36, sm: 40, md: 44 },
-                            height: { xs: 36, sm: 40, md: 44 },
-                            borderRadius: '50%',
-                            background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: 'white',
-                            mb: { xs: 1, sm: 1.5 },
-                          }}
-                        >
-                          <Email sx={{ fontSize: { xs: 16, sm: 18, md: 20 } }} />
-                        </Box>
-                        <Typography
-                          variant="body2"
-                          fontWeight={600}
-                          color="grey.900"
-                          sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}
-                        >
-                          Email Us
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          color="grey.600"
-                          sx={{
-                            mt: 0.5,
-                            fontSize: { xs: '0.7rem', sm: '0.75rem' },
-                            wordBreak: 'break-all'
-                          }}
-                        >
-                          eapl.techhub@gmail.com
-                        </Typography>
-                      </Box>
-                    </Grid>
-                  </Grid>
+                    Why Choose Us
+                  </Typography>
 
-                  {/* Office Hours Section */}
-                  <Box sx={{ mb: { xs: 3, sm: 4 } }}>
-                    <Box sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 1,
-                      mb: { xs: 2, sm: 3 }
-                    }}>
-                      <Schedule sx={{
-                        color: 'grey.500',
-                        fontSize: { xs: 18, sm: 20 }
-                      }} />
-                      <Typography
-                        variant="subtitle2"
-                        fontWeight={600}
-                        color="grey.700"
-                        sx={{ fontSize: { xs: '0.85rem', sm: '0.875rem' } }}
-                      >
-                        Office Hours
-                      </Typography>
-                    </Box>
-
-                    <Box sx={{
-                      display: 'flex',
-                      flexDirection: { xs: 'column', sm: 'row' },
-                      flexWrap: { sm: 'wrap' },
-                      gap: { xs: 1.5, sm: 2 }
-                    }}>
-                      {[
-                        {
-                          day: 'Mon - Fri',
-                          time: '10:30 AM - 7:30 PM',
-                          status: 'Open',
-                          color: '#10b981',
-                          bgColor: '#d1fae5'
-                        },
-                        {
-                          day: 'Saturday',
-                          time: '10:00 AM - 4:00 PM',
-                          status: 'Limited',
-                          color: '#f59e0b',
-                          bgColor: '#fef3c7'
-                        },
-                        {
-                          day: 'Sunday',
-                          time: 'Closed',
-                          status: 'Closed',
-                          color: '#6b7280',
-                          bgColor: '#f3f4f6'
-                        },
-                      ].map((item, index) => (
+                  <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }}>
+                    {[
+                      {
+                        icon: <AccessTime sx={{ color: "#3b82f6" }} />,
+                        title: "Fast Response Time",
+                        description:
+                          "85% of inquiries answered within 2 business hours",
+                        color: "#3b82f6",
+                        bgColor: "#eff6ff",
+                      },
+                      {
+                        icon: <Verified sx={{ color: "#10b981" }} />,
+                        title: "Expert Support",
+                        description:
+                          "Dedicated team with 10+ years of industry experience",
+                        color: "#10b981",
+                        bgColor: "#f0fdf4",
+                      },
+                      {
+                        icon: <Security sx={{ color: "#8b5cf6" }} />,
+                        title: "Secure & Private",
+                        description:
+                          "Your information is protected with enterprise-grade security",
+                        color: "#8b5cf6",
+                        bgColor: "#f5f3ff",
+                      },
+                      {
+                        icon: <SupportAgent sx={{ color: "#f59e0b" }} />,
+                        title: "24/7 Support",
+                        description:
+                          "Emergency support available round the clock",
+                        color: "#f59e0b",
+                        bgColor: "#fffbeb",
+                      },
+                    ].map((item, index) => (
+                      <Grid item xs={12} sm={6} key={index}>
                         <Box
-                          key={index}
                           sx={{
-                            flex: { xs: 'none', sm: 1 },
-                            display: 'flex',
-                            flexDirection: { xs: 'row', sm: 'column' },
-                            alignItems: { xs: 'center', sm: 'flex-start' },
-                            justifyContent: 'space-between',
+                            display: "flex",
+                            alignItems: "center",
+                            gap: { xs: 1.5, sm: 2 },
                             p: { xs: 1.5, sm: 2 },
-                            borderRadius: { xs: 1.5, sm: 2 },
-                            background: index === 0 ? 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)' :
-                              index === 1 ? 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)' :
-                                'linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%)',
-                            border: '1px solid',
-                            borderColor: index === 0 ? '#bbf7d0' :
-                              index === 1 ? '#fde68a' :
-                                '#e5e7eb',
-                            transition: 'all 0.3s ease',
-                            minWidth: { sm: 0 },
-                            '&:hover': {
-                              transform: {
-                                xs: 'translateX(2px)',
-                                sm: 'translateY(-2px)'
-                              },
-                              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                            borderRadius: { xs: 2, sm: 2.5 },
+                            background: item.bgColor,
+                            border: `1px solid ${item.color}20`,
+                            transition: "all 0.3s ease",
+                            height: "100%",
+                            "&:hover": {
+                              transform: isDesktop ? "translateX(4px)" : "none",
+                              boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
                             },
                           }}
                         >
-                          <Box sx={{
-                            flex: { xs: 1, sm: 'none' },
-                            mb: { sm: 1 }
-                          }}>
+                          <Box
+                            sx={{
+                              width: { xs: 36, sm: 40 },
+                              height: { xs: 36, sm: 40 },
+                              borderRadius: "50%",
+                              background: `${item.color}15`,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              flexShrink: 0,
+                            }}
+                          >
+                            {React.cloneElement(item.icon, {
+                              sx: { fontSize: { xs: 18, sm: 20, md: 22 } },
+                            })}
+                          </Box>
+                          <Box sx={{ flex: 1 }}>
                             <Typography
                               variant="body2"
                               fontWeight={600}
-                              color="grey.900"
-                              sx={{
-                                fontSize: { xs: '0.8rem', sm: '0.875rem' },
-                                mb: { sm: 0.5 }
-                              }}
+                              color="#1e293b"
+                              sx={{ fontSize: getFontSize.body2 }}
                             >
-                              {item.day}
-                            </Typography>
-                            <Typography
-                              variant="caption"
-                              color="grey.600"
-                              sx={{
-                                fontSize: { xs: '0.7rem', sm: '0.75rem' },
-                                display: 'block'
-                              }}
-                            >
-                              {item.time}
-                            </Typography>
-                          </Box>
-                          <Box
-                            sx={{
-                              px: { xs: 1, sm: 1.5, md: 2 },
-                              py: { xs: 0.25, sm: 0.5 },
-                              borderRadius: '20px',
-                              background: item.bgColor,
-                              border: `1px solid ${item.color}40`,
-                              flexShrink: 0,
-                              mt: { xs: 0, sm: 'auto' }
-                            }}
-                          >
-                            <Typography
-                              variant="caption"
-                              fontWeight={600}
-                              sx={{
-                                color: item.color,
-                                fontSize: { xs: '0.7rem', sm: '0.75rem' }
-                              }}
-                            >
-                              {item.status}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      ))}
-                    </Box>
-                  </Box>
-
-                  {/* </Paper> */}
-                </Box>
-              </Box>
-            </Fade>
-          </Grid>
-        </Box>
-
-        {/* Current Time Display */}
-        {/* <Box
-          sx={{
-            p: { xs: 1.5, sm: 2, md: 2.5 },
-            borderRadius: { xs: 1.5, sm: 2 },
-            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-            border: '1px solid #334155',
-            position: 'relative',
-            overflow: 'hidden',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'radial-gradient(circle at 20% 80%, rgba(56, 189, 248, 0.1) 0%, transparent 50%)',
-            },
-          }}
-        >
-          <Box sx={{ position: 'relative', zIndex: 1 }}>
-            <Box sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              mb: { xs: 1.5, sm: 2 }
-            }}>
-              <Typography
-                variant="caption"
-                fontWeight={600}
-                color="#94a3b8"
-                sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
-              >
-                CURRENT TIME
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <Box sx={{
-                  width: { xs: 6, sm: 8 },
-                  height: { xs: 6, sm: 8 },
-                  borderRadius: '50%',
-                  background: '#10b981'
-                }} />
-                <Typography
-                  variant="caption"
-                  color="#10b981"
-                  fontWeight={600}
-                  sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}
-                >
-                  LIVE
-                </Typography>
-              </Box>
-            </Box>
-
-            <Box sx={{
-              display: 'flex',
-              alignItems: 'baseline',
-              flexWrap: 'wrap',
-              gap: 1
-            }}>
-              <Typography
-                variant="h4"
-                fontWeight={700}
-                sx={{
-                  color: 'white',
-                  fontFamily: 'monospace',
-                  letterSpacing: '1px',
-                  textShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                  fontSize: {
-                    xs: '1.5rem',
-                    sm: '1.75rem',
-                    md: '2rem'
-                  },
-                  lineHeight: 1.2
-                }}
-              >
-                {new Date().toLocaleTimeString('en-IN', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </Typography>
-              <Typography
-                variant="body2"
-                color="#cbd5e1"
-                sx={{
-                  ml: { xs: 0, sm: 'auto' },
-                  fontSize: { xs: '0.8rem', sm: '0.875rem' }
-                }}
-              >
-                IST
-              </Typography>
-            </Box>
-
-            <Typography
-              variant="caption"
-              color="#94a3b8"
-              sx={{
-                display: 'block',
-                mt: 1,
-                fontSize: { xs: '0.7rem', sm: '0.75rem' }
-              }}
-            >
-              Indian Standard Time • UTC+5:30
-            </Typography>
-          </Box>
-        </Box> */}
-
-        {/* Send a Message Section */}
-        <Box sx={{
-          width: '100vw',
-          position: 'relative',
-          left: '50%',
-          right: '50%',
-          ml: '-50vw',
-          mr: '-50vw',
-          mt: 12,
-          py: { xs: 8, md: 12 },
-          px: { xs: 2, sm: 3 },
-          background: 'linear-gradient(135deg, #D4C9BE 0%, #123458 50%, #0F172A 100%)',
-          borderTop: '1px solid rgba(255,255,255,0.1)',
-          borderBottom: '1px solid rgba(255,255,255,0.1)',
-          overflow: 'hidden',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'radial-gradient(circle at 30% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
-          }
-        }}>
-          <Container maxWidth="lg">
-            <Fade in={true} timeout={1000}>
-              <Box>
-                <Grid container spacing={5} alignItems="stretch">
-                  {/* Left Column: Contact Form */}
-                  <Grid item xs={12} md={7}>
-                    <Paper
-                      elevation={0}
-                      sx={{
-                        p: { xs: 4, sm: 5, md: 6 },
-                        borderRadius: 4,
-                        height: '100%',
-                        background: 'linear-gradient(145deg, #FFFFFF 0%, #F8FAFC 100%)',
-                        border: '1px solid rgba(255,255,255,0.9)',
-                        boxShadow: `0 20px 40px rgba(0,0,0,0.08),
-                                  0 8px 16px rgba(0,0,0,0.04),
-                                  inset 0 1px 0 rgba(255,255,255,0.9)`,
-                        position: 'relative',
-                        overflow: 'hidden',
-                        backdropFilter: 'blur(10px)',
-                        '&::before': {
-                          content: '""',
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          height: '5px',
-                          background: 'linear-gradient(90deg, #3B82F6 0%, #083de9 50%, #0F172A 100%)',
-                          borderBottomLeftRadius: 4,
-                          borderBottomRightRadius: 4,
-                        },
-                        '&::after': {
-                          content: '""',
-                          position: 'absolute',
-                          bottom: 0,
-                          right: 0,
-                          width: '120px',
-                          height: '120px',
-                          background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, transparent 50%)',
-                          borderTopLeftRadius: '50%',
-                        }
-                      }}
-                    >
-                      <Box sx={{ mb: 5, position: 'relative', zIndex: 1 }}>
-                        <Typography
-                          variant="h4"
-                          fontWeight={700}
-                          color="#0F172A"
-                          gutterBottom
-                          sx={{
-                            background: 'linear-gradient(135deg, #0F172A 0%, #1E40AF 100%)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            backgroundClip: 'text',
-                          }}
-                        >
-                          Send a Message
-                        </Typography>
-                        <Typography variant="body1" color="#475569" sx={{ lineHeight: 1.7 }}>
-                          Complete the form below and our dedicated team will respond to your inquiry
-                          within 24 business hours.
-                        </Typography>
-                      </Box>
-
-                      <form onSubmit={handleSubmit}>
-                        <Grid container spacing={3}>
-                          {/* Name Field */}
-                          <Grid item xs={12} sm={6}>
-                            <TextField
-                              fullWidth
-                              required
-                              name="name"
-                              label="Full Name"
-                              variant="outlined"
-                              size="medium"
-                              sx={{
-                                '& .MuiOutlinedInput-root': {
-                                  borderRadius: 3,
-                                  backgroundColor: 'rgba(248, 250, 252, 0.8)',
-                                  border: '1px solid #E2E8F0',
-                                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                  '&:hover': {
-                                    backgroundColor: '#FFFFFF',
-                                    borderColor: '#94A3B8',
-                                    boxShadow: '0 2px 8px rgba(148, 163, 184, 0.1)',
-                                  },
-                                  '&.Mui-focused': {
-                                    backgroundColor: '#FFFFFF',
-                                    borderColor: '#3B82F6',
-                                    boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
-                                  },
-                                },
-                                '& .MuiInputLabel-root': {
-                                  color: '#64748B',
-                                  fontWeight: 500,
-                                }
-                              }}
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <Person sx={{ color: '#8a2605', fontSize: 20 }} />
-                                  </InputAdornment>
-                                ),
-                              }}
-                            />
-                          </Grid>
-
-                          {/* Email Field */}
-                          <Grid item xs={12} sm={6}>
-                            <TextField
-                              fullWidth
-                              required
-                              name="email"
-                              type="email"
-                              label="Email Address"
-                              variant="outlined"
-                              size="medium"
-                              sx={{
-                                '& .MuiOutlinedInput-root': {
-                                  borderRadius: 3,
-                                  backgroundColor: 'rgba(248, 250, 252, 0.8)',
-                                  border: '1px solid #E2E8F0',
-                                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                  '&:hover': {
-                                    backgroundColor: '#FFFFFF',
-                                    borderColor: '#94A3B8',
-                                    boxShadow: '0 2px 8px rgba(148, 163, 184, 0.1)',
-                                  },
-                                  '&.Mui-focused': {
-                                    backgroundColor: '#FFFFFF',
-                                    borderColor: '#3B82F6',
-                                    boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
-                                  },
-                                }
-                              }}
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <Email sx={{ color: '#0964e2', fontSize: 20 }} />
-                                  </InputAdornment>
-                                ),
-                              }}
-                            />
-                          </Grid>
-
-                          {/* Phone Field */}
-                          <Grid item xs={12} sm={6}>
-                            <TextField
-                              fullWidth
-                              name="phone"
-                              label="Phone Number"
-                              variant="outlined"
-                              size="medium"
-                              helperText="Optional"
-                              sx={{
-                                '& .MuiOutlinedInput-root': {
-                                  borderRadius: 3,
-                                  backgroundColor: 'rgba(248, 250, 252, 0.8)',
-                                  border: '1px solid #E2E8F0',
-                                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                },
-                                '& .MuiFormHelperText-root': {
-                                  color: '#94A3B8',
-                                  fontSize: '0.75rem',
-                                }
-                              }}
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <Phone sx={{ color: '#bb0ed2', fontSize: 20 }} />
-                                  </InputAdornment>
-                                ),
-                              }}
-                            />
-                          </Grid>
-
-                          {/* Subject Field */}
-                          <Grid item xs={12} sm={6}>
-                            <TextField
-                              fullWidth
-                              required
-                              name="subject"
-                              label="Subject"
-                              variant="outlined"
-                              size="medium"
-                              sx={{
-                                '& .MuiOutlinedInput-root': {
-                                  borderRadius: 3,
-                                  backgroundColor: 'rgba(248, 250, 252, 0.8)',
-                                  border: '1px solid #E2E8F0',
-                                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                }
-                              }}
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <Description sx={{ color: '#09b209', fontSize: 20 }} />
-                                  </InputAdornment>
-                                ),
-                              }}
-                            />
-                          </Grid>
-
-                          {/* Message Field */}
-                          <Grid item xs={12} lg={4}>
-                            <TextField
-                              fullWidth
-                              required
-                              name="message"
-                              label="Your Message"
-                              multiline
-                              rows={5}
-                              variant="outlined"
-                              size="medium"
-                              sx={{
-                                '& .MuiOutlinedInput-root': {
-                                  borderRadius: 3,
-                                  backgroundColor: 'rgba(248, 250, 252, 0.8)',
-                                  border: '1px solid #E2E8F0',
-                                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                  '&:hover, &.Mui-focused': {
-                                    backgroundColor: '#FFFFFF',
-                                  }
-                                }
-                              }}
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start" sx={{ alignItems: 'flex-start', mt: 1.5 }}>
-                                    <Chat sx={{ color: '#4c079b', fontSize: 20 }} />
-                                  </InputAdornment>
-                                ),
-                              }}
-                            />
-                          </Grid>
-
-                          {/* Submit Button */}
-                          <Grid item xs={12}>
-                            <Button
-                              type="submit"
-                              variant="contained"
-                              size="large"
-                              fullWidth
-                              sx={{
-                                py: 2,
-                                borderRadius: 3,
-                                background: 'linear-gradient(135deg, #D4C9BE 0%, #1E40AF 100%)',
-                                fontWeight: 600,
-                                fontSize: '1rem',
-                                textTransform: 'none',
-                                letterSpacing: '0.01em',
-                                boxShadow: `
-                          0 4px 20px rgba(59, 130, 246, 0.25),
-                          0 2px 8px rgba(59, 130, 246, 0.2)
-                        `,
-                                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                position: 'relative',
-                                overflow: 'hidden',
-                                '&::before': {
-                                  content: '""',
-                                  position: 'absolute',
-                                  top: 0,
-                                  left: '-100%',
-                                  width: '100%',
-                                  height: '100%',
-                                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-                                  transition: 'left 0.7s ease',
-                                },
-                                '&:hover': {
-                                  transform: 'translateY(-2px)',
-                                  boxShadow: `
-                            0 8px 30px rgba(59, 130, 246, 0.35),
-                            0 4px 12px rgba(59, 130, 246, 0.25)
-                          `,
-                                  background: 'linear-gradient(135deg, #2563EB 0%, #1E3A8A 100%)',
-                                  '&::before': {
-                                    left: '100%',
-                                  },
-                                },
-                                '&:active': {
-                                  transform: 'translateY(0)',
-                                  boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)',
-                                },
-                              }}
-                              startIcon={<Send sx={{ fontSize: 22 }} />}
-                            >
-                              Send Message
-                            </Button>
-                          </Grid>
-
-                          {/* Privacy Note */}
-                          <Grid item xs={12}>
-                            <Typography
-                              variant="caption"
-                              color="#64748B"
-                              align="center"
-                              sx={{
-                                display: 'block',
-                                mt: 2,
-                                lineHeight: 1.6,
-                                fontSize: '0.875rem'
-                              }}
-                            >
-                              By submitting this form, you acknowledge and agree to our{' '}
-                              <Link
-                                href="/privacy"
-                                color="primary"
-                                sx={{
-                                  textDecoration: 'none',
-                                  fontWeight: 600,
-                                  color: '#3B82F6',
-                                  borderBottom: '1px solid transparent',
-                                  transition: 'border-color 0.2s',
-                                  '&:hover': {
-                                    borderBottomColor: '#3B82F6',
-                                  }
-                                }}
-                              >
-                                Privacy Policy
-                              </Link>{' '}
-                              and consent to being contacted regarding your inquiry.
-                            </Typography>
-                          </Grid>
-                        </Grid>
-                      </form>
-                    </Paper>
-                  </Grid>
-                </Grid>
-
-                {/* Success Message */}
-                <Collapse in={false}>
-                  <Box
-                    sx={{
-                      mt: 4,
-                      p: 4,
-                      borderRadius: 3,
-                      background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%)',
-                      border: '1px solid rgba(16, 185, 129, 0.3)',
-                      backdropFilter: 'blur(10px)',
-                      textAlign: 'center',
-                      animation: 'fadeIn 0.6s ease-out',
-                      '@keyframes fadeIn': {
-                        from: { opacity: 0, transform: 'translateY(-10px)' },
-                        to: { opacity: 1, transform: 'translateY(0)' }
-                      }
-                    }}
-                  >
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2, mb: 2 }}>
-                      <CheckCircle sx={{ color: '#10B981', fontSize: 28 }} />
-                      <Typography variant="h6" fontWeight={600} color="#065F46">
-                        Message Sent Successfully!
-                      </Typography>
-                    </Box>
-                    <Typography variant="body2" color="#047857" sx={{ maxWidth: '600px', mx: 'auto', lineHeight: 1.7 }}>
-                      Thank you for reaching out. We've received your message and our team will review
-                      your inquiry. You can expect a response within 24 business hours.
-                    </Typography>
-                  </Box>
-                </Collapse>
-              </Box>
-            </Fade>
-          </Container>
-        </Box>
-
-        {/* Right Column: Why Choose Us */}
-        <Box sx={{
-          width: '100vw',
-          position: 'relative',
-          left: '50%',
-          right: '50%',
-          ml: '-50vw',
-          mr: '-50vw',
-          // mt: 12,
-          // mb: 8,
-          py: { xs: 6, md: 10 },
-          px: { xs: 2, sm: 3 },
-          // background: 'linear-gradient(135deg, #0C2C55 0%, #f1f5f9 100%)',
-          borderTop: '1px solid #e2e8f0',
-          borderBottom: '1px solid #e2e8f0',
-        }}>
-          <Container maxWidth="lg">
-            <Box>
-              <Grid item xs={12} md={5}>
-                <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 3 }}>
-                  {/* Response Time & Features */}
-                  <Paper
-                    elevation={0}
-                    sx={{
-                      p: { xs: 3, sm: 4 },
-                      borderRadius: 3,
-                      flex: 1,
-                      background: 'white',
-                      border: '1px solid #e2e8f0',
-                    }}
-                  >
-                    <Typography variant="h6" fontWeight={700} color="#1e293b" gutterBottom sx={{ mb: 3 }}>
-                      Why Choose Us
-                    </Typography>
-
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                      {[
-                        {
-                          icon: <AccessTime sx={{ color: '#3b82f6' }} />,
-                          title: 'Fast Response Time',
-                          description: '85% of inquiries answered within 2 business hours',
-                          color: '#3b82f6',
-                          bgColor: '#eff6ff',
-                        },
-                        {
-                          icon: <Verified sx={{ color: '#10b981' }} />,
-                          title: 'Expert Support',
-                          description: 'Dedicated team with 10+ years of industry experience',
-                          color: '#10b981',
-                          bgColor: '#f0fdf4',
-                        },
-                        {
-                          icon: <Security sx={{ color: '#8b5cf6' }} />,
-                          title: 'Secure & Private',
-                          description: 'Your information is protected with enterprise-grade security',
-                          color: '#8b5cf6',
-                          bgColor: '#f5f3ff',
-                        },
-                        {
-                          icon: <SupportAgent sx={{ color: '#f59e0b' }} />,
-                          title: '24/7 Support',
-                          description: 'Emergency support available round the clock',
-                          color: '#f59e0b',
-                          bgColor: '#fffbeb',
-                        },
-                      ].map((item, index) => (
-                        <Box
-                          key={index}
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 2,
-                            p: 2,
-                            borderRadius: 2,
-                            background: item.bgColor,
-                            border: `1px solid ${item.color}20`,
-                            transition: 'all 0.3s ease',
-                            '&:hover': {
-                              transform: 'translateX(4px)',
-                              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                            },
-                          }}
-                        >
-                          <Box sx={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: '50%',
-                            background: `${item.color}15`,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            flexShrink: 0,
-                          }}>
-                            {item.icon}
-                          </Box>
-                          <Box sx={{ flex: 1 }}>
-                            <Typography variant="body2" fontWeight={600} color="#1e293b">
                               {item.title}
                             </Typography>
-                            <Typography variant="caption" color="#64748b">
+                            <Typography
+                              variant="caption"
+                              color="#64748b"
+                              sx={{ fontSize: getFontSize.caption }}
+                            >
                               {item.description}
                             </Typography>
                           </Box>
                         </Box>
-                      ))}
-                    </Box>
-                  </Paper>
-                </Box>
-              </Grid>
-            </Box>
-          </Container>
-        </Box>
-      </Container>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Paper>
+              </Box>
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
 
+      {/* Success Snackbar */}
       <Snackbar
         open={openSnackbar}
         autoHideDuration={5000}
         onClose={() => setOpenSnackbar(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
         <Alert
           onClose={() => setOpenSnackbar(false)}
           severity="success"
           sx={{
-            width: '100%',
-            borderRadius: '12px',
-            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-            color: 'white',
-            boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)',
-            position: 'relative',
-            overflow: 'hidden',
-            '&::before': {
+            width: "100%",
+            maxWidth: { xs: "90vw", sm: 400, md: 450 },
+            borderRadius: { xs: 2, sm: 2.5, md: 3 },
+            background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+            color: "white",
+            boxShadow: "0 8px 32px rgba(16, 185, 129, 0.3)",
+            position: "relative",
+            overflow: "hidden",
+            "&::before": {
               content: '""',
-              position: 'absolute',
+              position: "absolute",
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
-              background: 'radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 70%)',
-            }
+              background:
+                "radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 70%)",
+            },
           }}
           icon={false}
         >
-          <Box sx={{ position: 'relative', zIndex: 1 }}>
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-              {/* Animated Icon */}
+          <Box sx={{ position: "relative", zIndex: 1 }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "flex-start",
+                gap: { xs: 1.5, sm: 2 },
+              }}
+            >
               <Box
                 sx={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: '50%',
-                  background: 'rgba(255, 255, 255, 0.2)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  width: { xs: 36, sm: 40, md: 44 },
+                  height: { xs: 36, sm: 40, md: 44 },
+                  borderRadius: "50%",
+                  background: "rgba(255, 255, 255, 0.2)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                   flexShrink: 0,
-                  animation: 'pulse 2s infinite',
+                  animation: isDesktop ? "pulse 2s infinite" : "none",
                 }}
               >
-                <CheckCircle sx={{ fontSize: 28, color: 'white' }} />
+                <CheckCircle sx={{ fontSize: { xs: 22, sm: 24, md: 28 } }} />
               </Box>
 
               <Box sx={{ flex: 1 }}>
@@ -1917,9 +1521,9 @@ const Contact = () => {
                   variant="body1"
                   fontWeight="bold"
                   sx={{
-                    color: 'white',
+                    color: "white",
                     mb: 0.5,
-                    fontSize: '1rem'
+                    fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem" },
                   }}
                 >
                   ✨ Message sent successfully!
@@ -1928,34 +1532,50 @@ const Contact = () => {
                 <Typography
                   variant="body2"
                   sx={{
-                    color: 'rgba(255, 255, 255, 0.9)',
+                    color: "rgba(255, 255, 255, 0.9)",
                     lineHeight: 1.5,
-                    fontSize: '0.875rem'
+                    fontSize: getFontSize.body2,
                   }}
                 >
                   We'll get back to you soon. Thank you for reaching out!
                 </Typography>
 
-                {/* Quick Info */}
                 <Box
                   sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1.5,
-                    mt: 1.5,
-                    pt: 1.5,
-                    borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+                    display: "flex",
+                    alignItems: "center",
+                    gap: { xs: 1, sm: 1.5 },
+                    mt: { xs: 1, sm: 1.5 },
+                    pt: { xs: 1, sm: 1.5 },
+                    borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+                    flexWrap: "wrap",
                   }}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <AccessTime sx={{ fontSize: 16, opacity: 0.8 }} />
-                    <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <AccessTime
+                      sx={{ fontSize: { xs: 14, sm: 16 }, opacity: 0.8 }}
+                    />
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        opacity: 0.8,
+                        fontSize: getFontSize.caption,
+                      }}
+                    >
                       Response within 2h
                     </Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <Verified sx={{ fontSize: 16, opacity: 0.8 }} />
-                    <Typography variant="caption" sx={{ opacity: 0.8 }}>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                    <Verified
+                      sx={{ fontSize: { xs: 14, sm: 16 }, opacity: 0.8 }}
+                    />
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        opacity: 0.8,
+                        fontSize: getFontSize.caption,
+                      }}
+                    >
                       Confirmation sent
                     </Typography>
                   </Box>
@@ -1965,6 +1585,32 @@ const Contact = () => {
           </Box>
         </Alert>
       </Snackbar>
+
+      {/* Animation Keyframes */}
+      <style>
+        {`
+          @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+          }
+          
+          @keyframes pulse-small {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+          }
+          
+          @keyframes bounce {
+            0%, 100% { transform: rotate(-45deg) translateY(0); }
+            50% { transform: rotate(-45deg) translateY(-10px); }
+          }
+          
+          @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+          }
+        `}
+      </style>
     </Box>
   );
 };

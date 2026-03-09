@@ -1,17 +1,17 @@
-import React, { useRef, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import {
-    Paper,
     Box,
-    Slide,
     Fade,
-    useTheme,
+    Paper,
+    Slide,
     useMediaQuery,
+    useTheme,
 } from '@mui/material';
+import { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { closeChat } from '../../redux/slices/chatSlice';
 import ChatHeader from './ChatHeader';
-import MessageList from './MessageList';
 import ChatInput from './ChatInput';
+import MessageList from './MessageList';
 import QuickActions from './QuickActions';
 
 const ChatWindow = () => {

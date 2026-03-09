@@ -13,8 +13,8 @@ import {
   Phone,
   Security,
   Star,
-  VerifiedUser
-} from '@mui/icons-material';
+  VerifiedUser,
+} from "@mui/icons-material";
 import {
   Alert,
   AppBar,
@@ -34,22 +34,23 @@ import {
   Snackbar,
   Toolbar,
   Typography,
-  useMediaQuery
-} from '@mui/material';
-import { useTheme } from '@mui/material/styles';
-import { useEffect, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+  useMediaQuery,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { useEffect, useState } from "react";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 
 const Footer = () => {
   const theme = useTheme();
   const currentYear = new Date().getFullYear();
+  const location = useLocation();
 
   // Media queries for responsive design
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [subscriptionSuccess, setSubscriptionSuccess] = useState(false);
   const [expandedSections, setExpandedSections] = useState({});
@@ -62,7 +63,7 @@ const Footer = () => {
       setVisibleColumns(1);
       setExpandedSections({});
     } else if (isTablet) {
-      setVisibleColumns(2);
+      setVisibleColumns(3);
     } else {
       setVisibleColumns(4);
     }
@@ -71,11 +72,10 @@ const Footer = () => {
   const handleSubscribe = (e) => {
     e.preventDefault();
     if (email && /\S+@\S+\.\S+/.test(email)) {
-      // Simulate API call
       setTimeout(() => {
         setSubscriptionSuccess(true);
         setSnackbarOpen(true);
-        setEmail('');
+        setEmail("");
       }, 500);
     }
   };
@@ -85,86 +85,60 @@ const Footer = () => {
   };
 
   const toggleSection = (section) => {
-    setExpandedSections(prev => ({
+    setExpandedSections((prev) => ({
       ...prev,
-      [section]: !prev[section]
+      [section]: !prev[section],
     }));
   };
 
   const quickLinks = [
-    { text: 'Home', path: '/' },
-    { text: 'About Us', path: '/about' },
-    { text: 'Careers', path: '/careers' },
-    // { text: 'Services', path: '/services' },
-    // { text: 'Products', path: '/products' },
-    // { text: 'Blog', path: '/blog' },
-    { text: 'Contact Us', path: '/contact' },
-    { text: 'FAQ', path: '/faq' },
+    { text: "Home", path: "/" },
+    { text: "About Us", path: "/about" },
+    { text: "Careers", path: "/careers" },
+    { text: "Contact Us", path: "/contact" },
+    { text: "Services", path: "/services" },
+    { text: "FAQ", path: "/faq" },
   ];
 
   const companyLinks = [
-    // { text: 'Contact Us', path: '/contact' },
-    { text: 'Our Team', path: '/team' },
-    // { text: 'Careers', path: '/careers' },
-    { text: 'Services', path: '/services' },
-    { text: 'Products', path: '/products' },
-    // { text: 'Blog', path: '/blog' },
-    // { text: 'Press & Media', path: '/press' },
-    { text: 'Partnerships', path: '/partnerships' },
-    // { text: 'Investor Relations', path: '/investors' },
-    // { text: 'Sustainability', path: '/sustainability' },
-    // { text: 'FAQ', path: '/faq' },
-  ];
-
-  const supportLinks = [
-    { text: 'Help Center', path: '/help' },
-    { text: 'Documentation', path: '/docs' },
-    { text: 'API Reference', path: '/api' },
-    { text: 'Community Forum', path: '/community' },
-    { text: 'Contact Support', path: '/support' },
-    { text: 'Service Status', path: '/status' },
-  ];
-
-  const legalLinks = [
-    { text: 'Privacy Policy', path: '/privacy' },
-    { text: 'Terms of Service', path: '/terms' },
-    { text: 'Cookie Policy', path: '/cookies' },
-    { text: 'GDPR Compliance', path: '/gdpr' },
-    { text: 'Security', path: '/security' },
-    { text: 'SLA', path: '/sla' },
+    { text: "Our Team", path: "/team" },
+    { text: "Products", path: "/products" },
+    { text: "Partnerships", path: "/partnerships" },
+    { text: "Privacy Policy", path: "/privacy" },
+    { text: "Terms of Service", path: "/terms" },
   ];
 
   const socialLinks = [
-    { icon: <Facebook />, label: 'Facebook', url: 'https://www.facebook.com/people/Excellence-Allegiance-Private-Limited/61583992607696/?mibextid=rS40aB7S9Ucbxw6v' },
-    // { icon: <Twitter />, label: 'Twitter', url: 'https://twitter.com' },
-    { icon: <LinkedIn />, label: 'LinkedIn', url: 'https://www.linkedin.com/company/excellence-allegiance-private-limited/' },
-    { icon: <Instagram />, label: 'Instagram', url: 'https://www.instagram.com/eallegiance?igsh=Y2pzejMzNzVhNmc3' },
-    { icon: <GitHub />, label: 'GitHub', url: 'https://github.com/excellenceallegiance25-beep' },
-    // { icon: <Language />, label: 'Website', url: 'https://excellenceallegiance.com' },
-  ];
-
-  const achievements = [
-    { label: 'Years Experience', value: '10+' },
-    { label: 'Projects Delivered', value: '500+' },
-    { label: 'Happy Clients', value: '200+' },
-    { label: 'Countries Served', value: '50+' },
+    {
+      icon: <Facebook />,
+      label: "Facebook",
+      url: "https://www.facebook.com/people/Excellence-Allegiance-Private-Limited/61583992607696/?mibextid=rS40aB7S9Ucbxw6v",
+    },
+    {
+      icon: <LinkedIn />,
+      label: "LinkedIn",
+      url: "https://www.linkedin.com/company/excellence-allegiance-private-limited/",
+    },
+    {
+      icon: <Instagram />,
+      label: "Instagram",
+      url: "https://www.instagram.com/eallegiance?igsh=Y2pzejMzNzVhNmc3",
+    },
   ];
 
   const contactInfo = {
     headquarters: [
-      '1st floor, 1/16, Basanta Rd. Nitai Nagar, Mukundapur Kolkata, West Bengal 700099'
+      "1st floor, 1/16, Basanta Rd. Nitai Nagar, Mukundapur Kolkata, West Bengal 700099",
     ],
-    phones: [
-      'Sales: +91 6289534780',
-      'Support: +91 6289534780',
-      'Emergency: +91 6289534780'
-    ],
-    emails: [
-      'General: contact@myeapl.com',
-      'Support: contact@myeapl.com',
-      'Careers: contact@myeapl.com'
-    ]
+    phones: [ "Support: +91 6289534780"],
+    emails: ["General: contact@myeapl.com"],
   };
+
+  const certifications = [
+    { icon: <VerifiedUser />, label: "ISO 27001" },
+    { icon: <Security />, label: "GDPR" },
+    { icon: <Star />, label: "Best Tech 2023" },
+  ];
 
   // Mobile drawer content
   const MobileFooterDrawer = () => (
@@ -174,20 +148,37 @@ const Footer = () => {
       onClose={() => setMobileDrawerOpen(false)}
       PaperProps={{
         sx: {
-          height: '70vh',
+          height: "70vh",
           borderTopLeftRadius: 16,
           borderTopRightRadius: 16,
-          backgroundColor: 'grey.900',
-          color: 'white',
-        }
+          backgroundColor: "#001f2b",
+          color: "white",
+        },
       }}
     >
-      <Box sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'secondary.light' }}>
-            Excellence Allegiance Pvt Ltd
+      <Box sx={{ p: 3, overflowY: "auto" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: "bold",
+              color: "#a3e5f4",
+              fontSize: "1.2rem",
+            }}
+          >
+            Excellence Allegiance
           </Typography>
-          <IconButton onClick={() => setMobileDrawerOpen(false)} sx={{ color: 'white' }}>
+          <IconButton
+            onClick={() => setMobileDrawerOpen(false)}
+            sx={{ color: "white" }}
+          >
             <ExpandMore />
           </IconButton>
         </Box>
@@ -196,13 +187,13 @@ const Footer = () => {
         <Box sx={{ mb: 3 }}>
           <Button
             fullWidth
-            onClick={() => toggleSection('quickLinks')}
+            onClick={() => toggleSection("quickLinks")}
             sx={{
-              justifyContent: 'space-between',
-              color: 'white',
-              textTransform: 'none',
-              fontSize: '1rem',
-              fontWeight: 'bold',
+              justifyContent: "space-between",
+              color: "white",
+              textTransform: "none",
+              fontSize: "1.1rem",
+              fontWeight: "bold",
             }}
           >
             Quick Links
@@ -216,9 +207,11 @@ const Footer = () => {
                     component={RouterLink}
                     to={link.path}
                     sx={{
-                      color: 'grey.300',
-                      textDecoration: 'none',
-                      '&:hover': { color: 'secondary.light' },
+                      color: location.pathname === link.path ? "#a3e5f4" : "grey.300",
+                      fontWeight: location.pathname === link.path ? "bold" : "normal",
+                      textDecoration: "none",
+                      fontSize: "1rem",
+                      "&:hover": { color: "#a3e5f4" },
                     }}
                   >
                     {link.text}
@@ -233,13 +226,13 @@ const Footer = () => {
         <Box sx={{ mb: 3 }}>
           <Button
             fullWidth
-            onClick={() => toggleSection('companyLinks')}
+            onClick={() => toggleSection("companyLinks")}
             sx={{
-              justifyContent: 'space-between',
-              color: 'white',
-              textTransform: 'none',
-              fontSize: '1rem',
-              fontWeight: 'bold',
+              justifyContent: "space-between",
+              color: "white",
+              textTransform: "none",
+              fontSize: "1.1rem",
+              fontWeight: "bold",
             }}
           >
             Company
@@ -253,9 +246,11 @@ const Footer = () => {
                     component={RouterLink}
                     to={link.path}
                     sx={{
-                      color: 'grey.300',
-                      textDecoration: 'none',
-                      '&:hover': { color: 'secondary.light' },
+                      color: location.pathname === link.path ? "#a3e5f4" : "grey.300",
+                      fontWeight: location.pathname === link.path ? "bold" : "normal",
+                      textDecoration: "none",
+                      fontSize: "1rem",
+                      "&:hover": { color: "#a3e5f4" },
                     }}
                   >
                     {link.text}
@@ -266,26 +261,84 @@ const Footer = () => {
           </Collapse>
         </Box>
 
-        {/* Social Links */}
+        {/* Contact Info */}
         <Box sx={{ mb: 3 }}>
-          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
+          <Button
+            fullWidth
+            onClick={() => toggleSection("contactInfo")}
+            sx={{
+              justifyContent: "space-between",
+              color: "white",
+              textTransform: "none",
+              fontSize: "1.1rem",
+              fontWeight: "bold",
+            }}
+          >
+            Contact
+            {expandedSections.contactInfo ? <ExpandLess /> : <ExpandMore />}
+          </Button>
+          <Collapse in={expandedSections.contactInfo}>
+            <Box sx={{ mt: 2 }}>
+              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1.5, mb: 2 }}>
+                <LocationOn sx={{ color: "#a3e5f4", fontSize: "1.2rem" }} />
+                <Typography sx={{ color: "grey.300", fontSize: "0.95rem" }}>
+                  {contactInfo.headquarters[0]}
+                </Typography>
+              </Box>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
+                <Phone sx={{ color: "#a3e5f4", fontSize: "1.2rem" }} />
+                <Typography sx={{ color: "grey.300", fontSize: "0.95rem" }}>
+                  {contactInfo.phones[0]}
+                </Typography>
+              </Box>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 2 }}>
+                <Email sx={{ color: "#a3e5f4", fontSize: "1.2rem" }} />
+                <Typography sx={{ color: "grey.300", fontSize: "0.95rem" }}>
+                  {contactInfo.emails[0]}
+                </Typography>
+              </Box>
+            </Box>
+          </Collapse>
+        </Box>
+
+        {/* Certifications */}
+        <Box sx={{ mb: 3 }}>
+          <Typography sx={{ fontWeight: "bold", fontSize: "1.1rem", mb: 2, color: "#a3e5f4" }}>
+            Certifications
+          </Typography>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+            {certifications.map((cert, index) => (
+              <Chip
+                key={index}
+                icon={cert.icon}
+                label={cert.label}
+                sx={{
+                  bgcolor: "rgba(163,229,244,0.2)",
+                  color: "white",
+                  "& .MuiChip-icon": { color: "#a3e5f4" },
+                }}
+              />
+            ))}
+          </Box>
+        </Box>
+
+        {/* Social Links */}
+        <Box>
+          <Typography sx={{ fontWeight: "bold", fontSize: "1.1rem", mb: 2, color: "#a3e5f4" }}>
             Follow Us
           </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
+          <Box sx={{ display: "flex", gap: 2 }}>
             {socialLinks.map((social, index) => (
               <IconButton
                 key={index}
                 href={social.url}
                 target="_blank"
-                rel="noopener noreferrer"
                 sx={{
-                  color: 'grey.300',
-                  border: '1px solid',
-                  borderColor: 'grey.700',
-                  '&:hover': {
-                    color: 'secondary.light',
-                    borderColor: 'secondary.light',
-                  },
+                  color: "grey.300",
+                  border: "1px solid",
+                  borderColor: "grey.700",
+                  p: 1.5,
+                  "&:hover": { color: "#a3e5f4", borderColor: "#a3e5f4" },
                 }}
               >
                 {social.icon}
@@ -293,56 +346,9 @@ const Footer = () => {
             ))}
           </Box>
         </Box>
-
-        {/* Contact Info */}
-        <Box>
-          <Button
-            fullWidth
-            onClick={() => toggleSection('contactInfo')}
-            sx={{
-              justifyContent: 'space-between',
-              color: 'white',
-              textTransform: 'none',
-              fontSize: '1rem',
-              fontWeight: 'bold',
-            }}
-          >
-            Contact Information
-            {expandedSections.contactInfo ? <ExpandLess /> : <ExpandMore />}
-          </Button>
-          <Collapse in={expandedSections.contactInfo}>
-            <Box sx={{ mt: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                <LocationOn sx={{ color: 'secondary.light', fontSize: '1rem' }} />
-                <Typography variant="body2" sx={{ color: 'grey.300' }}>
-                  {contactInfo.headquarters[0]}
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                <Phone sx={{ color: 'secondary.light', fontSize: '1rem' }} />
-                <Typography variant="body2" sx={{ color: 'grey.300' }}>
-                  {contactInfo.phones[0]}
-                </Typography>
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Email sx={{ color: 'secondary.light', fontSize: '1rem' }} />
-                <Typography variant="body2" sx={{ color: 'grey.300' }}>
-                  {contactInfo.emails[0]}
-                </Typography>
-              </Box>
-            </Box>
-          </Collapse>
-        </Box>
       </Box>
     </Drawer>
   );
-
-  // Responsive grid configuration
-  const getGridConfig = () => {
-    if (isMobile) return { xs: 12 };
-    if (isTablet) return { xs: 12, sm: 6, md: 3 };
-    return { xs: 12, md: 3 };
-  };
 
   return (
     <>
@@ -351,126 +357,223 @@ const Footer = () => {
         <AppBar
           position="fixed"
           sx={{
-            top: 'auto',
+            top: "auto",
             bottom: 0,
-            backgroundColor: 'grey.900',
-            color: 'white',
+            backgroundColor: "#001f2b",
           }}
         >
-          <Toolbar sx={{ justifyContent: 'space-between' }}>
-            <Typography variant="body2" sx={{ color: 'grey.300' }}>
+          <Toolbar sx={{ justifyContent: "space-between" }}>
+            <Typography sx={{ color: "grey.300", fontSize: "0.9rem" }}>
               © {currentYear} Excellence Allegiance
             </Typography>
-            <IconButton
-              color="inherit"
-              onClick={() => setMobileDrawerOpen(true)}
-              sx={{ color: 'white' }}
-            >
+            <IconButton onClick={() => setMobileDrawerOpen(true)} sx={{ color: "white" }}>
               <Menu />
             </IconButton>
           </Toolbar>
         </AppBar>
       )}
 
-      {/* Main Footer Content (hidden on mobile, shown on tablet/desktop) */}
+      {/* Main Footer */}
       {!isMobile && (
         <Box
           component="footer"
           sx={{
-            backgroundColor: 'grey.900',
-            background: 'linear-gradient(180deg,#005166 0%, #002440 45%, #000d18 100%)',
-
-            color: 'white',
-            pt: { xs: 4, md: 6 },
-            pb: { xs: 8, md: 4 },
-            mt: 'auto',
+            background: "linear-gradient(180deg, #003d4f 0%, #002433 60%, #00111a 100%)",
+            color: "white",
+            pt: { sm: 5, md: 7 },
+            pb: { sm: 4, md: 5 },
+            mt: "auto",
           }}
         >
-          <Container maxWidth="lg">
-            <Grid container spacing={{ xs: 3, md: 4 }} alignItems="flex-start">
-              {/* Company Info Column */}
-              <Grid xs={12} md={visibleColumns >= 4 ? 4 : 6}>
-                <Box sx={{ mb: { xs: 2, md: 3 } }}>
-                  <Typography
-                    variant={isTablet ? "h6" : "h5"}
-                    gutterBottom
-                    sx={{
-                      fontWeight: 'bold',
-                      color: 'secondary.light',
-                      fontSize: { xs: '1.1rem', md: '1.5rem' }
-                    }}
-                  >
-                    Excellence Allegiance Pvt Ltd
+          <Container maxWidth="xl" sx={{ px: { sm: 4, md: 6 } }}>
+            {/* Main Grid - Evenly Distributed Columns */}
+            <Grid container spacing={{ sm: 4, md: 5 }} justifyContent="space-between">
+              {/* Column 1: Company Info & Certifications */}
+              <Grid item xs={12} sm={6} md={3}>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: { sm: "1.3rem", md: "1.3rem", lg: "1.3rem" },
+                    mb: 2.5,
+                    lineHeight: 1.3,
+                  }}
+                >
+                  Excellence Allegiance{" "}
+                  <Box component="span" sx={{ color: "#a3e5f4", mt: 0.5 }}>
+                    Pvt Ltd
+                  </Box>
+                </Typography>
+                
+                <Typography
+                  sx={{
+                    color: "grey.300",
+                    fontSize: { sm: "0.95rem", md: "1rem" },
+                    lineHeight: 1.6,
+                    mb: 3,
+                    pr: { md: 2 },
+                  }}
+                >
+                  Pioneering digital transformation with cutting-edge technology solutions since 2020.
+                </Typography>
+                
+                {/* Certifications */}
+                <Box>
+                  <Typography sx={{ fontWeight: 600, fontSize: "1.1rem", color: "#a3e5f4", mb: 2 }}>
+                    Certifications
                   </Typography>
-                  <Typography
-                    variant="body2"
-                    paragraph
-                    sx={{
-                      color: 'grey.300',
-                      fontSize: { xs: '0.875rem', md: '0.9rem' }
-                    }}
-                  >
-                    {isMobile ? 'Digital transformation pioneers' :
-                      isTablet ? 'Pioneering digital transformation with innovative solutions' :
-                        'Pioneering digital transformation with cutting-edge technology solutions and innovative software development since 2020.'}
-                  </Typography>
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                    {certifications.map((cert, index) => (
+                      <Chip
+                        key={index}
+                        icon={cert.icon}
+                        label={cert.label}
+                        size="small"
+                        sx={{
+                          bgcolor: "rgba(163,229,244,0.15)",
+                          color: "white",
+                          fontSize: "0.85rem",
+                          "& .MuiChip-icon": { color: "#a3e5f4", fontSize: "0.9rem" },
+                        }}
+                      />
+                    ))}
+                  </Box>
+                </Box>
+              </Grid>
+
+              {/* Column 2: Quick Links */}
+              <Grid item xs={6} sm={3} md={2}>
+                <Typography
+                  sx={{
+                    fontWeight: 700,
+                    color: "#a3e5f4",
+                    fontSize: { sm: "1.1rem", md: "1.2rem" },
+                    mb: 2.5,
+                  }}
+                >
+                  Quick Links
+                </Typography>
+                <List dense sx={{ pt: 0 }}>
+                  {quickLinks.map((link, index) => (
+                    <ListItem key={index} disablePadding sx={{ mb: 1.2 }}>
+                      <ListItemIcon sx={{ minWidth: 28 }}>
+                        <ArrowForward sx={{ color: "#a3e5f4", fontSize: "0.9rem" }} />
+                      </ListItemIcon>
+                      <Link
+                        component={RouterLink}
+                        to={link.path}
+                        sx={{
+                          color: location.pathname === link.path ? "#a3e5f4" : "grey.300",
+                          textDecoration: "none",
+                          fontSize: { sm: "0.95rem", md: "1rem" },
+                          "&:hover": { color: "#a3e5f4", textDecoration: "underline" },
+                        }}
+                      >
+                        {link.text}
+                      </Link>
+                    </ListItem>
+                  ))}
+                </List>
+              </Grid>
+
+              {/* Column 3: Company */}
+              <Grid item xs={6} sm={3} md={2}>
+                <Typography
+                  sx={{
+                    fontWeight: 700,
+                    color: "#a3e5f4",
+                    fontSize: { sm: "1.1rem", md: "1.2rem" },
+                    mb: 2.5,
+                  }}
+                >
+                  Company
+                </Typography>
+                <List dense sx={{ pt: 0 }}>
+                  {companyLinks.map((link, index) => (
+                    <ListItem key={index} disablePadding sx={{ mb: 1.2 }}>
+                      <ListItemIcon sx={{ minWidth: 28 }}>
+                        <Business sx={{ color: "#a3e5f4", fontSize: "0.9rem" }} />
+                      </ListItemIcon>
+                      <Link
+                        component={RouterLink}
+                        to={link.path}
+                        sx={{
+                          color: location.pathname === link.path ? "#a3e5f4" : "grey.300",
+                          textDecoration: "none",
+                          fontSize: { sm: "0.95rem", md: "1rem" },
+                          "&:hover": { color: "#a3e5f4", textDecoration: "underline" },
+                        }}
+                      >
+                        {link.text}
+                      </Link>
+                    </ListItem>
+                  ))}
+                </List>
+              </Grid>
+
+              {/* Column 4: Contact & Social */}
+              <Grid item xs={12} sm={6} md={3}>
+                <Typography
+                  sx={{
+                    fontWeight: 700,
+                    color: "#a3e5f4",
+                    fontSize: { sm: "1.1rem", md: "1.2rem" },
+                    mb: 2.5,
+                  }}
+                >
+                  Contact
+                </Typography>
+                
+                <Box sx={{ mb: 3 }}>
+                  <Box sx={{ display: "flex", gap: 1.5, mb: 2 }}>
+                    <LocationOn sx={{ color: "#a3e5f4", fontSize: "1.2rem", mt: 0.3 }} />
+                    <Typography sx={{ fontSize: { sm: "0.95rem", md: "1rem" }, lineHeight: 1.5, color: "grey.300" }}>
+                      {contactInfo.headquarters[0]}
+                    </Typography>
+                  </Box>
+                  
+                  <Box sx={{ display: "flex", gap: 1.5, mb: 2 }}>
+                    <Phone sx={{ color: "#a3e5f4", fontSize: "1.2rem" }} />
+                    <Box>
+                      <Typography sx={{ fontSize: { sm: "0.95rem", md: "1rem" }, color: "grey.300", mb: 0.5 }}>
+                        {contactInfo.phones[0]}
+                      </Typography>
+                      <Typography sx={{ fontSize: { sm: "0.95rem", md: "1rem" }, color: "grey.300" }}>
+                        {contactInfo.phones[1]}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  
+                  <Box sx={{ display: "flex", gap: 1.5 }}>
+                    <Email sx={{ color: "#a3e5f4", fontSize: "1.2rem" }} />
+                    <Box>
+                      <Typography sx={{ fontSize: { sm: "0.95rem", md: "1rem" }, color: "grey.300", mb: 0.5 }}>
+                        {contactInfo.emails[0]}
+                      </Typography>
+                      <Typography sx={{ fontSize: { sm: "0.95rem", md: "1rem" }, color: "grey.300" }}>
+                        {contactInfo.emails[1]}
+                      </Typography>
+                    </Box>
+                  </Box>
                 </Box>
 
-                {isDesktop && (
-                  <>
-                    <Box sx={{ mb: 3 }}>
-                      <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
-                        Certifications & Awards
-                      </Typography>
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                        <Chip
-                          icon={<VerifiedUser fontSize="small" />}
-                          label="ISO 27001"
-                          size="small"
-                          sx={{ bgcolor: 'primary.dark', color: 'white' }}
-                        />
-                        <Chip
-                          icon={<Security fontSize="small" />}
-                          label="GDPR Compliant"
-                          size="small"
-                          sx={{ bgcolor: 'primary.dark', color: 'white' }}
-                        />
-                        <Chip
-                          icon={<Star fontSize="small" />}
-                          label="Best Tech 2023"
-                          size="small"
-                          sx={{ bgcolor: 'primary.dark', color: 'white' }}
-                        />
-                      </Box>
-                    </Box>
-                  </>
-                )}
-
+                {/* Social Links */}
                 <Box>
-                  <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
+                  <Typography sx={{ fontWeight: 600, fontSize: "1.1rem", color: "#a3e5f4", mb: 2 }}>
                     Follow Us
                   </Typography>
-                  <Box sx={{
-                    display: 'flex',
-                    gap: 1,
-                    flexWrap: isMobile ? 'wrap' : 'nowrap'
-                  }}>
-                    {socialLinks.slice(0, isMobile ? 4 : 6).map((social, index) => (
+                  <Box sx={{ display: "flex", gap: 1.5 }}>
+                    {socialLinks.map((social, index) => (
                       <IconButton
                         key={index}
                         href={social.url}
                         target="_blank"
-                        rel="noopener noreferrer"
-                        size={isMobile ? "small" : "medium"}
                         sx={{
-                          color: 'grey.300',
-                          border: '1px solid',
-                          borderColor: 'grey.700',
-                          '&:hover': {
-                            color: 'secondary.light',
-                            borderColor: 'secondary.light',
-                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                          },
+                          color: "grey.300",
+                          border: "1px solid",
+                          borderColor: "grey.700",
+                          p: 1.2,
+                          "&:hover": { color: "#a3e5f4", borderColor: "#a3e5f4" },
                         }}
                       >
                         {social.icon}
@@ -479,254 +582,51 @@ const Footer = () => {
                   </Box>
                 </Box>
               </Grid>
-
-              {/* Quick Links Column - Conditional rendering */}
-              {visibleColumns >= 2 && (
-                <Grid xs={6} sm={4} md={2}>
-                  <Typography
-                    variant="h6"
-                    gutterBottom
-                    sx={{
-                      fontWeight: 'bold',
-                      color: 'secondary.light',
-                      fontSize: { xs: '0.95rem', md: '1.1rem' }
-                    }}
-                  >
-                    Quick Links
-                  </Typography>
-                  <List dense>
-                    {quickLinks.slice(0, isMobile ? 4 : quickLinks.length).map((link, index) => (
-                      <ListItem key={index} disablePadding sx={{ mb: 0.5 }}>
-                        <ListItemIcon sx={{ minWidth: isMobile ? 20 : 30 }}>
-                          <ArrowForward fontSize="small" sx={{ color: 'primary.light' }} />
-                        </ListItemIcon>
-                        <Link
-                          component={RouterLink}
-                          to={link.path}
-                          sx={{
-                            color: 'grey.300',
-                            textDecoration: 'none',
-                            fontSize: { xs: '0.8rem', md: '0.875rem' },
-                            '&:hover': {
-                              color: 'secondary.light',
-                              textDecoration: 'underline',
-                            },
-                          }}
-                        >
-                          {link.text}
-                        </Link>
-                      </ListItem>
-                    ))}
-                  </List>
-                </Grid>
-              )}
-
-              {/* Company Column - Conditional rendering */}
-              {visibleColumns >= 3 && (
-                <Grid xs={6} sm={4} md={2}>
-                  <Typography
-                    variant="h6"
-                    gutterBottom
-                    sx={{
-                      fontWeight: 'bold',
-                      color: 'secondary.light',
-                      fontSize: { xs: '0.95rem', md: '1.1rem' }
-                    }}
-                  >
-                    Company
-                  </Typography>
-                  <List dense>
-                    {companyLinks.slice(0, isMobile ? 4 : companyLinks.length).map((link, index) => (
-                      <ListItem key={index} disablePadding sx={{ mb: 0.5 }}>
-                        <ListItemIcon sx={{ minWidth: isMobile ? 20 : 30 }}>
-                          <Business fontSize="small" sx={{ color: 'primary.light' }} />
-                        </ListItemIcon>
-                        <Link
-                          component={RouterLink}
-                          to={link.path}
-                          sx={{
-                            color: 'grey.300',
-                            textDecoration: 'none',
-                            fontSize: { xs: '0.8rem', md: '0.875rem' },
-                            '&:hover': {
-                              color: 'secondary.light',
-                              textDecoration: 'underline',
-                            },
-                          }}
-                        >
-                          {link.text}
-                        </Link>
-                      </ListItem>
-                    ))}
-                  </List>
-                </Grid>
-              )}
-
-              {/* Support Column - Only on desktop */}
-              {/* {isDesktop && visibleColumns >= 4 && (
-                <Grid item xs={6} sm={4} md={2}>
-                  <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: 'secondary.light' }}>
-                    Support
-                  </Typography>
-                  <List dense>
-                    {supportLinks.slice(0, 4).map((link, index) => (
-                      <ListItem key={index} disablePadding sx={{ mb: 0.5 }}>
-                        <ListItemIcon sx={{ minWidth: 30 }}>
-                          <ArrowForward fontSize="small" sx={{ color: 'primary.light' }} />
-                        </ListItemIcon>
-                        <Link
-                          component={RouterLink}
-                          to={link.path}
-                          sx={{
-                            color: 'grey.300',
-                            textDecoration: 'none',
-                            fontSize: '0.875rem',
-                            '&:hover': {
-                              color: 'secondary.light',
-                              textDecoration: 'underline',
-                            },
-                          }}
-                        >
-                          {link.text}
-                        </Link>
-                      </ListItem>
-                    ))}
-                  </List>
-                </Grid>
-              )} */}
-
-              {/* Contact Info Column for Tablet */}
-              {isTablet && visibleColumns >= 2 && (
-                <Grid xs={12} sm={4}>
-                  <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', color: 'secondary.light' }}>
-                    Contact
-                  </Typography>
-                  <Box sx={{ color: 'grey.300', fontSize: '0.875rem' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 2 }}>
-                      <LocationOn sx={{ color: 'secondary.light', mt: 0.3, fontSize: '1rem' }} />
-                      <Box>
-                        <Typography variant="body2">
-                          {contactInfo.headquarters[0]}
-                        </Typography>
-                      </Box>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                      <Phone sx={{ color: 'secondary.light', mt: 0.3, fontSize: '1rem' }} />
-                      <Typography variant="body2">
-                        {contactInfo.phones[0]}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Grid>
-              )}
             </Grid>
 
-            <Divider sx={{ borderColor: 'grey.700', my: { xs: 3, md: 4 } }} />
+            <Divider sx={{ borderColor: "rgba(255,255,255,0.1)", my: { sm: 4, md: 5 } }} />
 
-            {/* Bottom Footer */}
-            <Grid container spacing={2} alignItems="center" justifyContent={"space-between"}>
-              <Grid xs={12} md={6}>
+            {/* Bottom Footer - Evenly Spaced */}
+            <Grid container spacing={2} alignItems="center" justifyContent="space-between">
+              <Grid item xs={12} md={6}>
                 <Typography
-                  variant="body2"
                   sx={{
-                    color: 'grey.400',
-                    fontSize: { xs: '0.75rem', md: '0.875rem' }
+                    color: "grey.400",
+                    fontSize: { sm: "0.9rem", md: "0.95rem" },
+                    textAlign: { xs: "center", md: "left" },
                   }}
                 >
                   © {currentYear} Excellence Allegiance Pvt Ltd. All rights reserved.
                 </Typography>
               </Grid>
-
-              <Grid xs={12} md={6}>
+              <Grid item xs={12} md={6}>
                 <Typography
-                  variant="caption"
                   sx={{
-                    display: 'block',
-                    color: 'grey.500',
-                    mt: 0.5,
-                    fontSize: { xs: '0.7rem', md: '0.75rem' }
+                    color: "grey.500",
+                    fontSize: { sm: "0.85rem", md: "0.9rem" },
+                    textAlign: { xs: "center", md: "right" },
                   }}
                 >
                   Empowering businesses through technology and innovation.
                 </Typography>
               </Grid>
-
-              {/* <Grid item xs={12} md={6}>
-                <Box sx={{
-                  display: 'flex',
-                  justifyContent: { xs: 'flex-start', md: 'flex-end' },
-                  flexWrap: 'wrap',
-                  gap: { xs: 1, md: 2 }
-                }}>
-                  {legalLinks.slice(0, isMobile ? 3 : legalLinks.length).map((link, index) => (
-                    <Link
-                      key={index}
-                      component={RouterLink}
-                      to={link.path}
-                      sx={{
-                        color: 'grey.400',
-                        textDecoration: 'none',
-                        fontSize: { xs: '0.7rem', md: '0.875rem' },
-                        '&:hover': {
-                          color: 'secondary.light',
-                          textDecoration: 'underline',
-                        },
-                      }}
-                    >
-                      {link.text}
-                    </Link>
-                  ))}
-                </Box>
-              </Grid> */}
             </Grid>
-
-            {/* Certifications for Mobile/Tablet */}
-            {/* {(isMobile || isTablet) && (
-              <Box sx={{ mt: 3, textAlign: 'center' }}>
-                <Typography variant="caption" sx={{ color: 'grey.400', display: 'block', mb: 1 }}>
-                  Certifications:
-                </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, flexWrap: 'wrap' }}>
-                  <Chip
-                    icon={<VerifiedUser fontSize="small" />}
-                    label="ISO 27001"
-                    size="small"
-                    sx={{ bgcolor: 'primary.dark', color: 'white' }}
-                  />
-                  <Chip
-                    icon={<Security fontSize="small" />}
-                    label="GDPR"
-                    size="small"
-                    sx={{ bgcolor: 'primary.dark', color: 'white' }}
-                  />
-                </Box>
-              </Box>
-            )} */}
           </Container>
         </Box>
       )}
 
-      {/* Mobile Footer Drawer */}
+      {/* Mobile Drawer */}
       <MobileFooterDrawer />
 
-      {/* Success Snackbar */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000}
-        onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity="success"
-          sx={{ width: '100%' }}
-        >
-          Thank you for subscribing to our newsletter!
+      {/* Snackbar */}
+      <Snackbar open={snackbarOpen} autoHideDuration={4000} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ fontSize: "0.9rem" }}>
+          Thank you for subscribing!
         </Alert>
       </Snackbar>
 
-      {/* Mobile spacing to prevent content from being hidden behind fixed footer */}
-      {isMobile && <Box sx={{ height: '56px' }} />}
+      {/* Mobile Spacing */}
+      {isMobile && <Box sx={{ height: "56px" }} />}
     </>
   );
 };

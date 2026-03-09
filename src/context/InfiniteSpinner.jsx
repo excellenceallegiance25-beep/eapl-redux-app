@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, keyframes, useTheme } from '@mui/material';
 
 const rotate = keyframes`

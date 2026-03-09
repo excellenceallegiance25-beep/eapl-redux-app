@@ -217,8 +217,8 @@ const DotsBackground = () => {
 
     // Clear canvas with slight fade effect for smooth trails
     ctx.fillStyle = theme.palette.mode === 'dark'
-      ? 'rgba(18, 18, 18, 0.1)'
-      : 'rgba(245, 245, 245, 0.1)';
+      ? 'rgba(248, 245, 245, 0.1)'
+      : 'rgba(250, 248, 248, 0.1)';
     ctx.fillRect(0, 0, width, height);
 
     // Update and draw dots
@@ -313,7 +313,7 @@ const DotsBackground = () => {
           dot.vy += (Math.random() - 0.5) * 0.5;
         }
       });
-    }, 2000);
+    }, 10000);
 
     return () => clearInterval(patternInterval);
   }, []);

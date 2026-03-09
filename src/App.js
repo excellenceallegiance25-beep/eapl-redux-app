@@ -38,6 +38,9 @@ import ForgotPassword from './components/auth/ForgotPassword';
 import { LoadingProvider } from './context/SkeletonWrapper';
 import { LeaveRequestPage } from './components/dashboardmenu/LeaveRequestPage';
 import APILoader from './components/common/APILoader';
+import ContactForm from './components/common/ContactForm';
+import TermsOfService from './components/common/TermsOfService';
+import PrivacyPolicy from './components/common/PrivacyPolicy';
 
 // Create theme
 const theme = createTheme({
@@ -99,7 +102,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <APILoader />
-        <Router basename="/eaplui">
+        <Router>
           <AppContainer>
             <Routes>
               {/* Public Routes */}
@@ -123,6 +126,9 @@ function App() {
               <Route path="/login" element={<Layout><Login /></Layout>} />
               <Route path="/forgot-password" element={<Layout><ForgotPassword /></Layout>} />
               <Route path="/register" element={<Layout><Register /></Layout>} />
+              <Route path="/ContactForm" element={<Layout><ContactForm /></Layout>} />
+              <Route path="/terms" element={<Layout><TermsOfService /></Layout>} />
+              <Route path="/privacy" element={<Layout><PrivacyPolicy /></Layout>} />
 
               {/* Dashboard Routes */}
               <Route path="/dashboard" element={

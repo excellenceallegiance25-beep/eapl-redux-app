@@ -13,8 +13,8 @@ import {
   Smartphone,
   Terminal,
   TrendingUp,
-  VerifiedUser
-} from '@mui/icons-material';
+  VerifiedUser,
+} from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -39,298 +39,400 @@ import {
   Zoom,
   alpha,
   useMediaQuery,
-  useTheme
-} from '@mui/material';
-import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import PageHeader from '../components/common/PageHeader';
-import { getEmployeeList } from '../services/AppConfigAction';
+  useTheme,
+} from "@mui/material";
+import { keyframes } from "@mui/system";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import PageHeader from "../components/common/PageHeader";
+import { getEmployeeList } from "../services/AppConfigAction";
+import OurTeam from "../components/common/Ourteam";
+import AIimagebg from "../assets/images/AIimagebg.jpg";
+import mobilebg from "../assets/images/mobilebg.jpg";
+import serverbg from "../assets/images/serverbg.jpg";
+import teambg from "../assets/images/teambg.jpg";
+import sendmessagebg from "../assets/images/sendmessage.avif";
+import consultingbg from "../assets/images/consultingbg.jpg";
+import outsideearth from "../assets/images/outsideearth.jpg";
+import officemeetingbg from "../assets/images/officemeetingbg.jpg";
+import Amazon_Web_Services_Logo from "../assets/images/Amazon_Web_Services_Logo.svg";
+import Microsoft_logo from "../assets/images/Microsoft_logo.svg";
+import Google_Cloud_logo from "../assets/images/Google_Cloud_logo.svg";
+import blankofficecoridorbg from "../assets/images/blankofficecoridorbg.jpg";
+import procastinationbg from "../assets/images/procastinationbg.avif";
 
-// Import placeholder images (you'll need to replace these with actual images)
-const team1 = 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop';
-const team2 = 'https://images.unsplash.com/photo-1557862921-37829c790f19?w=400&h=400&fit=crop';
-const team3 = 'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w-400&h=400&fit=crop';
-const team4 = 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop';
-const office1 = 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800&h=400&fit=crop';
-const office2 = 'https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?w=800&h=400&fit=crop';
-// const innovation = 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&h-400&fit=crop';
-const innovation = 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1950&q=80';
+// Animation keyframes
+const float = keyframes`
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+`;
+
+const pulse = keyframes`
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+`;
+
+const office1 = blankofficecoridorbg;
+// "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=800&h=400&fit=crop";
+const office2 = officemeetingbg;
+// "https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?w=800&h=400&fit=crop";
+const innovation = procastinationbg;
+// "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1950&q=80";
 
 const About = () => {
   const [hoveredCard, setHoveredCard] = useState(null);
   const [selectedLeader, setSelectedLeader] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
-  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
-  const isLargeDesktop = useMediaQuery(theme.breakpoints.up('lg'));
+
+  // Responsive breakpoints
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
+
+  // Responsive container maxWidth
+  const containerMaxWidth = isMobile ? false : isTablet ? "lg" : "xl";
+
+  // Responsive font sizes
+  const getFontSize = {
+    h1: { xs: "2rem", sm: "2.5rem", md: "3rem", lg: "3.5rem" },
+    h2: { xs: "1.75rem", sm: "2rem", md: "2.5rem", lg: "3rem" },
+    h3: { xs: "1.5rem", sm: "1.75rem", md: "2rem", lg: "2.5rem" },
+    h4: { xs: "1.25rem", sm: "1.5rem", md: "1.75rem", lg: "2rem" },
+    h5: { xs: "1.1rem", sm: "1.25rem", md: "1.5rem", lg: "1.75rem" },
+    h6: { xs: "1rem", sm: "1.1rem", md: "1.25rem", lg: "1.5rem" },
+    body1: { xs: "0.875rem", sm: "0.9rem", md: "1rem", lg: "1.1rem" },
+    body2: { xs: "0.75rem", sm: "0.8rem", md: "0.875rem", lg: "0.95rem" },
+    caption: { xs: "0.65rem", sm: "0.7rem", md: "0.75rem", lg: "0.8rem" },
+  };
+
+  // Responsive spacing
+  const getSpacing = {
+    section: { xs: 4, sm: 6, md: 8, lg: 10 },
+    container: { xs: 2, sm: 3, md: 4, lg: 5 },
+    card: { xs: 1.5, sm: 2, md: 2.5, lg: 3 },
+  };
 
   const [leadershipTeam, setLeadershipTeam] = useState([]);
   const dispatch = useDispatch();
+
   useEffect(() => {
-    // Move the function definition inside useEffect
     const loadConfigs = async () => {
       const result = await dispatch(getEmployeeList());
-      // console.log('Configurations loaded successfully', 'success');
       if (result.type === "EMP_LIST") {
         setLeadershipTeam(result.payload);
       }
     };
-
     loadConfigs();
-  }, [dispatch]); // Only dispatch is needed as dependency
-
-
-  const leadershipTeams = [{
-    name: 'Sarah Johnson',
-    role: 'CEO & Founder',
-    avatar: team1,
-    bio: '15+ years in enterprise technology. Former Google Engineering Director. Passionate about driving digital transformation through innovative solutions.',
-    expertise: ['Cloud Architecture', 'Digital Transformation', 'Leadership'],
-    linkedin: '#',
-    fullBio: 'Sarah founded Excellence Allegiance in 2020 with a vision to bridge the gap between business needs and technological innovation. Under her leadership, the company has grown to serve over 200 clients globally.',
-    education: 'MBA from Stanford, BSc Computer Science from MIT'
-  },
-  {
-    name: 'Michael Chen',
-    role: 'CTO',
-    avatar: team2,
-    bio: 'PhD in Computer Science from MIT. AI/ML specialist with 20+ patents in machine learning algorithms.',
-    expertise: ['AI/ML', 'DevOps', 'System Design', 'Research'],
-    linkedin: '#',
-    fullBio: 'Michael leads our technology strategy and innovation efforts. His research in neural networks has been published in top-tier journals.',
-    education: 'PhD MIT, Postdoc at Stanford AI Lab'
-  },
-  {
-    name: 'Emma Davis',
-    role: 'VP of Engineering',
-    avatar: team3,
-    bio: 'Led teams at Amazon Web Services. Expert in building scalable distributed systems.',
-    expertise: ['Microservices', 'Cloud Security', 'Agile', 'Scalability'],
-    linkedin: '#',
-    fullBio: 'Emma oversees all engineering operations, ensuring our solutions meet the highest standards of quality and reliability.',
-    education: 'MSc Computer Engineering, Carnegie Mellon'
-  },
-  {
-    name: 'David Wilson',
-    role: 'Chief Security Officer',
-    avatar: team4,
-    bio: 'Former cybersecurity lead at NSA. Certified Ethical Hacker with extensive experience in threat intelligence.',
-    expertise: ['Cybersecurity', 'Compliance', 'Risk Management', 'Cryptography'],
-    linkedin: '#',
-    fullBio: 'David built our security framework from the ground up, implementing industry-leading practices to protect client data.',
-    education: 'MSc Cybersecurity, Georgia Tech'
-  },
-  ];
+  }, [dispatch]);
 
   const departments = [
     {
-      name: 'AI Research',
+      name: "AI Research",
       icon: <Psychology fontSize="large" />,
       members: 10,
       projects: 18,
-      description: 'Developing cutting-edge AI solutions',
-      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop'
+      description: "Developing cutting-edge AI solutions",
+      image: AIimagebg,
+      // "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop",
     },
     {
-      name: 'Mobile Development',
+      name: "Mobile Development",
       icon: <Smartphone fontSize="large" />,
       members: 22,
       projects: 56,
-      description: 'Building innovative mobile applications',
-      image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop'
+      description: "Building innovative mobile applications",
+      image: mobilebg,
+      // "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop",
     },
     {
-      name: 'DevOps',
+      name: "DevOps",
       icon: <Terminal fontSize="large" />,
       members: 12,
       projects: 32,
-      description: 'Automating deployment pipelines',
-      image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop'
+      description: "Automating deployment pipelines",
+      image: serverbg,
+      // "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop",
     },
     {
-      name: 'Web Development',
+      name: "Web Development",
       icon: <Code fontSize="large" />,
       members: 19,
       projects: 25,
-      description: 'Creating responsive web applications',
-      image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=300&fit=crop'
-    }
+      description: "Creating responsive web applications",
+      image: teambg,
+      // "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=300&fit=crop",
+    },
   ];
 
   const coreValues = [
     {
-      title: 'Excellence in Execution',
+      title: "Excellence in Execution",
       icon: <EmojiEvents />,
-      description: 'We deliver beyond expectations, focusing on quality and precision in every project.',
-      color: '#667eea'
+      description:
+        "We deliver beyond expectations, focusing on quality and precision in every project.",
+      color: "#667eea",
     },
     {
-      title: 'Innovation First',
+      title: "Innovation First",
       icon: <Rocket />,
-      description: 'Constantly exploring new technologies and methodologies to stay ahead.',
-      color: '#f093fb'
+      description:
+        "Constantly exploring new technologies and methodologies to stay ahead.",
+      color: "#f093fb",
     },
     {
-      title: 'Client Partnership',
+      title: "Client Partnership",
       icon: <Handshake />,
-      description: 'We work with clients as partners, not just vendors.',
-      color: '#4CAF50'
+      description: "We work with clients as partners, not just vendors.",
+      color: "#4CAF50",
     },
     {
-      title: 'Continuous Learning',
+      title: "Continuous Learning",
       icon: <School />,
-      description: 'Investing in our team\'s growth through training and certifications.',
-      color: '#FF9800'
-    }
+      description:
+        "Investing in our team's growth through training and certifications.",
+      color: "#FF9800",
+    },
   ];
 
   const milestones = [
     {
-      year: '2020',
-      title: 'Company Founded',
-      description: 'Started with 5 members in a small garage, focusing on custom software solutions',
+      year: "2020",
+      title: "Company Founded",
+      description:
+        "Started with 5 members in a small garage, focusing on custom software solutions",
       icon: <Business />,
-      image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400&h=300&fit=crop'
+      image: sendmessagebg,
+      // "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400&h=300&fit=crop",
     },
     {
-      year: '2021',
-      title: 'First Major Enterprise Client',
-      description: 'Secured partnership with Fortune 500 healthcare provider',
+      year: "2021",
+      title: "First Major Enterprise Client",
+      description: "Secured partnership with Fortune 500 healthcare provider",
       icon: <VerifiedUser />,
-      image: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=400&h=300&fit=crop'
+      image: consultingbg,
+      // "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=400&h=300&fit=crop",
     },
     {
-      year: '2022',
-      title: 'Cloud Services Division',
-      description: 'Expanded to AWS and Azure cloud migration services',
+      year: "2022",
+      title: "Cloud Services Division",
+      description: "Expanded to AWS and Azure cloud migration services",
       icon: <Cloud />,
-      image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop'
+      image: outsideearth,
+      // "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop",
     },
     {
-      year: '2024',
-      title: 'International Expansion',
-      description: 'Opened offices in London, Singapore, and Toronto',
+      year: "2024",
+      title: "International Expansion",
+      description: "Opened offices in London, Singapore, and Toronto",
       icon: <Public />,
-      image: 'https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?w=400&h=300&fit=crop'
+      image: officemeetingbg,
+      // "https://images.unsplash.com/photo-1542744095-fcf48d80b0fd?w=400&h=300&fit=crop",
     },
     {
-      year: '2025',
-      title: 'AI Research Lab Established',
-      description: 'Launched dedicated AI research division with top-tier talent',
+      year: "2025",
+      title: "AI Research Lab Established",
+      description:
+        "Launched dedicated AI research division with top-tier talent",
       icon: <Architecture />,
-      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop'
+      image: AIimagebg,
+      // "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=300&fit=crop",
     },
   ];
 
   const certifications = [
-    { name: 'AWS Partner Network', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg' },
-    { name: 'Microsoft Gold Partner', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg' },
-    { name: 'Google Cloud Premier Partner', logo: 'https://upload.wikimedia.org/wikipedia/commons/5/51/Google_Cloud_logo.svg' },
-    // { name: 'ISO 27001 Certified', logo: 'https://upload.wikimedia.org/wikipedia/commons/4/44/ISO_Certification.svg' },
-    // { name: 'SOC 2 Type II Compliant', logo: 'https://upload.wikimedia.org/wikipedia/commons/9/9e/AICPA_logo.svg' }
+    {
+      name: "AWS Partner Network",
+      logo: Amazon_Web_Services_Logo,
+      // "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg",
+    },
+    {
+      name: "Microsoft Gold Partner",
+      logo: Microsoft_logo,
+      // "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg",
+    },
+    {
+      name: "Google Cloud Premier Partner",
+      logo: Google_Cloud_logo,
+      // "https://upload.wikimedia.org/wikipedia/commons/5/51/Google_Cloud_logo.svg",
+    },
   ];
 
-  const handleLeaderClick = (leader) => {
-    setSelectedLeader(leader);
-    setOpenDialog(true);
-  };
+  // const handleLeaderClick = (leader) => {
+  //   setSelectedLeader(leader);
+  //   setOpenDialog(true);
+  // };
 
-  const getAvatarImage = (avatar) => {
-    switch (avatar) {
-      case "SJ": return team1;
-      case "MC": return team2;
-      case "ED": return team3;
-      case "DW": return team4;
-      default: return innovation;
-    }
-  };
+  // const getAvatarImage = (avatar) => {
+  //   switch (avatar) {
+  //     case "SJ":
+  //       return team1;
+  //     case "MC":
+  //       return team2;
+  //     case "ED":
+  //       return team3;
+  //     case "DW":
+  //       return team4;
+  //     default:
+  //       return innovation;
+  //   }
+  // };
 
   return (
     <Box>
       <PageHeader
         title="About Excellence Allegiance"
+        animation="slideInLeft"
         subtitle="Empowering digital transformation through innovation and expertise"
-        breadcrumbs={[{ label: 'Home', path: '/' }, { label: 'About Us', path: '/about' }]}
         backgroundImage={`linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${innovation})`}
         sx={{
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          height: {
-            xs: 400, md: 500, xl: 600
-          },
-          display: 'flex',
-          alignItems: 'center',
-          color: 'white'
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          display: "flex",
+          alignItems: "center",
+          color: "white",
+          minHeight: { xs: "300px", sm: "350px", md: "400px", lg: "450px" },
         }}
       />
 
-      <Container maxWidth="xl" sx={{ py: 2 }}>
+      <Container
+        maxWidth={containerMaxWidth}
+        sx={{
+          py: { xs: 3, sm: 4, md: 5, lg: 6 },
+          px: { xs: 2, sm: 3, md: 4, lg: 5 },
+        }}
+      >
         {/* Company Overview with Stats */}
-        <Box sx={{ mb: 10, textAlign: 'center', position: 'relative' }}>
-          <Zoom in={true} style={{ transitionDelay: '100ms' }}>
+        <Box
+          sx={{
+            mb: { xs: 4, sm: 5, md: 6, lg: 8 },
+            textAlign: "center",
+            position: "relative",
+          }}
+        >
+          <Zoom in={true} style={{ transitionDelay: "100ms" }}>
             <Chip
               label="SINCE 2020"
               color="primary"
               variant="outlined"
-              sx={{ mb: 3, fontWeight: 'bold', px: 3, py: 1 }}
+              sx={{
+                mb: { xs: 2, sm: 2.5, md: 3 },
+                fontWeight: "bold",
+                px: { xs: 1.5, sm: 2, md: 2.5 },
+                py: { xs: 0.5, sm: 0.75, md: 1 },
+                fontSize: getFontSize.caption,
+                height: { xs: 28, sm: 32, md: 36 },
+              }}
             />
           </Zoom>
 
           <Fade in={true} timeout={1000}>
             <Typography
-              variant={isMobile ? "h4" : isTablet ? "h3" : "h2"}
+              variant="h2"
               gutterBottom
               fontWeight="bold"
-              sx={{ mb: 3 }}
+              sx={{
+                mb: { xs: 2, sm: 2.5, md: 3 },
+                fontSize: getFontSize.h2,
+                lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
+                px: { xs: 1, sm: 2 },
+                color: "#1a237e",
+              }}
             >
               Shaping the Future of Technology
             </Typography>
           </Fade>
 
           <Fade in={true} timeout={1500}>
-            <Typography variant="h6" color="text.secondary"
+            <Typography
+              variant="body1"
+              color="text.secondary"
               sx={{
-                maxWidth: 800, mx: 'auto',
-                lineHeight: 1.8, mb: 6,
+                maxWidth: { xs: "100%", sm: "90%", md: "80%", lg: "70%" },
+                mx: "auto",
+                lineHeight: { xs: 1.5, sm: 1.6, md: 1.7, lg: 1.8 },
+                mb: { xs: 4, sm: 5, md: 6 },
+                fontSize: getFontSize.body1,
+                px: { xs: 2, sm: 3, md: 4 },
               }}
             >
-              Excellence Allegiance is a premier technology consulting firm specializing in digital transformation,
-              cloud solutions, and enterprise software development. With a team of 150+ experts across 4 continents,
-              we help organizations navigate complex technological challenges and achieve measurable business outcomes.
+              Excellence Allegiance is a premier technology consulting firm
+              specializing in digital transformation, cloud solutions, and
+              enterprise software development. With a team of 150+ experts
+              across 4 continents, we help organizations navigate complex
+              technological challenges and achieve measurable business outcomes.
             </Typography>
           </Fade>
 
           {/* Stats Counter */}
-          <Grid container spacing={3} sx={{ mt: 6, justifyContent: 'center' }}>
+          <Grid
+            container
+            spacing={{ xs: 1.5, sm: 2, md: 3 }}
+            sx={{
+              mt: { xs: 3, sm: 4, md: 5 },
+              justifyContent: "center",
+            }}
+          >
             {[
-              { number: '150+', label: 'Experts Worldwide', icon: '👥' },
-              { number: '10+', label: 'Countries Served', icon: '🌍' },
-              { number: '98%', label: 'Client Satisfaction', icon: '⭐' },
-              { number: '60+', label: 'Projects Completed', icon: '🚀' }
+              { number: "150+", label: "Experts Worldwide", icon: "👥" },
+              { number: "10+", label: "Countries Served", icon: "🌍" },
+              { number: "98%", label: "Client Satisfaction", icon: "⭐" },
+              { number: "60+", label: "Projects Completed", icon: "🚀" },
             ].map((stat, index) => (
               <Grid item xs={6} md={3} key={index}>
                 <Grow in={true} timeout={(index + 1) * 300}>
                   <Paper
                     elevation={0}
                     sx={{
-                      p: 3,
-                      textAlign: 'center',
-                      borderRadius: 3,
-                      bgcolor: alpha(theme.palette.primary.main, 0.05),
-                      transition: 'transform 0.3s',
-                      '&:hover': {
-                        transform: 'translateY(-5px)',
-                        bgcolor: alpha(theme.palette.primary.main, 0.1)
-                      }
+                      p: { xs: 1.5, sm: 2, md: 2.5, lg: 3 },
+                      textAlign: "center",
+                      borderRadius: { xs: 2, sm: 2.5, md: 3 },
+                      bgcolor: alpha(theme.palette.primary.main, 0.25),
+                      transition: "transform 0.3s, background-color 0.3s",
+                      "&:hover": {
+                        transform: isDesktop ? "translateY(-5px)" : "none",
+                        bgcolor: alpha(theme.palette.primary.main, 0.1),
+                      },
                     }}
                   >
-                    <Typography variant="h3" fontWeight="bold" color="primary" gutterBottom>
+                    <Typography
+                      variant="h3"
+                      fontWeight="bold"
+                      color="primary"
+                      gutterBottom
+                      sx={{
+                        fontSize: {
+                          xs: "1.5rem",
+                          sm: "1.8rem",
+                          md: "2.2rem",
+                          lg: "2.5rem",
+                        },
+                      }}
+                    >
                       {stat.number}
                     </Typography>
-                    <Typography variant="body1" color="text.secondary">
-                      <Box component="span" sx={{ fontSize: '1.5rem', mr: 1 }}>{stat.icon}</Box>
+                    <Typography
+                      variant="body1"
+                      color="text.secondary"
+                      sx={{
+                        fontSize: getFontSize.body2,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 0.5,
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      <Box
+                        component="span"
+                        sx={{
+                          fontSize: { xs: "1rem", sm: "1.2rem", md: "1.4rem" },
+                        }}
+                      >
+                        {stat.icon}
+                      </Box>
                       {stat.label}
                     </Typography>
                   </Paper>
@@ -341,47 +443,117 @@ const About = () => {
         </Box>
 
         {/* Mission & Vision Cards */}
-        <Grid container spacing={4} sx={{ mb: 10 }}>
+        <Grid
+          container
+          spacing={{ xs: 2, sm: 3, md: 4 }}
+          sx={{ mb: { xs: 4, sm: 5, md: 6, lg: 8 } }}
+        >
           <Grid item xs={12} md={6}>
             <Grow in={true}>
-              <Card sx={{
-                height: '100%',
-                background: `linear-gradient(rgba(66, 73, 106, 0.9), rgba(51, 39, 62, 0.9)), url(${office1})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                color: 'white',
-                position: 'relative',
-                overflow: 'hidden',
-                transition: 'transform 0.3s',
-                '&:hover': {
-                  transform: 'scale(1.02)'
-                }
-              }}>
-                <Box sx={{ p: 5, position: 'relative', zIndex: 1 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                    <Rocket sx={{ fontSize: 40 }} />
-                    <Typography variant={isMobile ? "h4" : isTablet ? "h3" : "h2"} fontWeight="bold">
+              <Card
+                sx={{
+                  height: "100%",
+                  background: `linear-gradient(rgba(66, 73, 106, 0.9), rgba(51, 39, 62, 0.9)), url(${office1})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  color: "white",
+                  position: "relative",
+                  overflow: "hidden",
+                  transition: "transform 0.3s",
+                  borderRadius: { xs: 2, sm: 2.5, md: 3 },
+                  "&:hover": {
+                    transform: isDesktop ? "scale(1.02)" : "none",
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    p: { xs: 2.5, sm: 3, md: 3.5, lg: 4 },
+                    position: "relative",
+                    zIndex: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: { xs: 1.5, sm: 2 },
+                      mb: { xs: 2, sm: 2.5, md: 3 },
+                    }}
+                  >
+                    <Rocket
+                      sx={{ fontSize: { xs: 24, sm: 28, md: 32, lg: 36 } }}
+                    />
+                    <Typography
+                      variant="h2"
+                      fontWeight="bold"
+                      sx={{
+                        fontSize: {
+                          xs: "1.5rem",
+                          sm: "1.8rem",
+                          md: "2.2rem",
+                          lg: "2.5rem",
+                        },
+                      }}
+                    >
                       Our Mission
                     </Typography>
                   </Box>
-                  <Typography variant="h6" paragraph sx={{ mb: 4, opacity: 0.95 }}>
-                    To accelerate digital innovation by providing cutting-edge technology solutions
-                    that drive growth, efficiency, and sustainable competitive advantage.
+                  <Typography
+                    variant="body1"
+                    paragraph
+                    sx={{
+                      mb: { xs: 2.5, sm: 3, md: 3.5 },
+                      opacity: 0.95,
+                      fontSize: {
+                        xs: "0.9rem",
+                        sm: "1rem",
+                        md: "1.1rem",
+                        lg: "1.2rem",
+                      },
+                      lineHeight: { xs: 1.5, sm: 1.6, md: 1.7 },
+                    }}
+                  >
+                    To accelerate digital innovation by providing cutting-edge
+                    technology solutions that drive growth, efficiency, and
+                    sustainable competitive advantage.
                   </Typography>
-                  <List>
+                  <List sx={{ pt: 0 }}>
                     {[
-                      'Transform businesses through strategic technology adoption',
-                      'Deliver exceptional ROI through measurable outcomes',
-                      'Foster long-term partnerships built on trust and results'
+                      "Transform businesses through strategic technology adoption",
+                      "Deliver exceptional ROI through measurable outcomes",
+                      "Foster long-term partnerships built on trust and results",
                     ].map((item, index) => (
-                      <ListItem key={index} sx={{ px: 0 }}>
-                        <ListItemIcon sx={{ minWidth: 40, color: 'white' }}>
-                          <CheckCircle />
+                      <ListItem
+                        key={index}
+                        sx={{ px: 0, py: { xs: 0.5, sm: 0.75, md: 1 } }}
+                      >
+                        <ListItemIcon
+                          sx={{
+                            minWidth: { xs: 28, sm: 32, md: 36 },
+                            color: "white",
+                          }}
+                        >
+                          <CheckCircle
+                            sx={{
+                              fontSize: { xs: 16, sm: 18, md: 20, lg: 22 },
+                            }}
+                          />
                         </ListItemIcon>
                         <ListItemText
                           primary={item}
-                          variant='h6'
-                          sx={{ opacity: 0.9 }}
+                          primaryTypographyProps={{
+                            sx: {
+                              fontSize: {
+                                xs: "0.8rem",
+                                sm: "0.9rem",
+                                md: "1rem",
+                                lg: "1.1rem",
+                              },
+                              opacity: 0.9,
+                              lineHeight: 1.5,
+                            },
+                          }}
                         />
                       </ListItem>
                     ))}
@@ -393,45 +565,101 @@ const About = () => {
 
           <Grid item xs={12} md={6}>
             <Grow in={true} timeout={500}>
-              <Card sx={{
-                height: '100%',
-                background: `linear-gradient(rgba(89, 58, 92, 0.9), rgba(100, 121, 205, 0.9)), url(${office2})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                color: 'white',
-                position: 'relative',
-                overflow: 'hidden',
-                transition: 'transform 0.3s',
-                '&:hover': {
-                  transform: 'scale(1.02)'
-                }
-              }}>
-                <Box sx={{ p: 5, position: 'relative', zIndex: 1 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                    <TrendingUp sx={{ fontSize: 40 }} />
-                    <Typography variant={isMobile ? "h4" : isTablet ? "h3" : "h2"} fontWeight="bold">
+              <Card
+                sx={{
+                  height: "100%",
+                  background: `linear-gradient(rgba(89, 58, 92, 0.9), rgba(100, 121, 205, 0.9)), url(${office2})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  color: "white",
+                  position: "relative",
+                  overflow: "hidden",
+                  transition: "transform 0.3s",
+                  borderRadius: { xs: 2, sm: 2.5, md: 3 },
+                  "&:hover": {
+                    transform: isDesktop ? "scale(1.02)" : "none",
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    p: { xs: 2.5, sm: 3, md: 3.5, lg: 4 },
+                    position: "relative",
+                    zIndex: 1,
+                  }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: { xs: 1.5, sm: 2 },
+                      mb: { xs: 2, sm: 2.5, md: 3 },
+                    }}
+                  >
+                    <TrendingUp
+                      sx={{ fontSize: { xs: 24, sm: 28, md: 32, lg: 36 } }}
+                    />
+                    <Typography
+                      variant="h2"
+                      fontWeight="bold"
+                      sx={{
+                        fontSize: {
+                          xs: "1.5rem",
+                          sm: "1.8rem",
+                          md: "2.2rem",
+                          lg: "2.5rem",
+                        },
+                      }}
+                    >
                       Our Vision
                     </Typography>
                   </Box>
-                  <Typography variant="h6" paragraph sx={{ mb: 4, opacity: 0.95 }}>
-                    To be the world's most trusted technology innovation partner,
-                    recognized for transforming industries and creating lasting impact.
+                  <Typography
+                    variant="body1"
+                    paragraph
+                    sx={{
+                      mb: { xs: 2.5, sm: 3, md: 3.5 },
+                      opacity: 0.95,
+                      fontSize: {
+                        xs: "0.9rem",
+                        sm: "1rem",
+                        md: "1.1rem",
+                        lg: "1.2rem",
+                      },
+                      lineHeight: { xs: 1.5, sm: 1.6, md: 1.7 },
+                    }}
+                  >
+                    To be the world's most trusted technology innovation
+                    partner, recognized for transforming industries and creating
+                    lasting impact.
                   </Typography>
-                  <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 3 }}>
-                    {['Global Leader', 'Innovation Hub', 'Trusted Partner', 'Industry Pioneer'].map((tag, idx) => (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: { xs: 1, sm: 1.5, md: 2 },
+                      flexWrap: "wrap",
+                      mt: { xs: 2, sm: 2.5, md: 3 },
+                    }}
+                  >
+                    {[
+                      "Global Leader",
+                      "Innovation Hub",
+                      "Trusted Partner",
+                      "Industry Pioneer",
+                    ].map((tag, idx) => (
                       <Chip
                         key={idx}
                         label={tag}
                         sx={{
-                          bgcolor: 'rgba(255,255,255,0.2)',
-                          color: 'white',
-                          fontWeight: 'bold',
-                          backdropFilter: 'blur(10px)',
-                          variant: 'h6',
-                          opacity: 0.9,
-                          '&:hover': {
-                            bgcolor: 'rgba(255,255,255,0.3)'
-                          }
+                          bgcolor: "rgba(255,255,255,0.2)",
+                          color: "white",
+                          fontWeight: "bold",
+                          backdropFilter: "blur(10px)",
+                          fontSize: getFontSize.caption,
+                          height: { xs: 24, sm: 28, md: 32, lg: 36 },
+                          "&:hover": {
+                            bgcolor: "rgba(255,255,255,0.3)",
+                          },
                         }}
                       />
                     ))}
@@ -443,43 +671,46 @@ const About = () => {
         </Grid>
 
         {/* Core Values with Interactive Cards */}
-        <Box
+        {/* <Box
           component="section"
           sx={{
-            width: '100vw',
-            position: 'relative',
-            left: '50%',
-            right: '50%',
-            ml: '-50vw',
-            mr: '-50vw',
-
-            mb: 10,
-            py: { xs: 8, md: 10 },
-            px: { xs: 2, sm: 3 },
-            background: 'linear-gradient(135deg, #296374 0%, #1f4e5f 100%)',
+            // width: "100vw",
+            // position: "relative",
+            // left: "50%",
+            // right: "50%",
+            // ml: "-50vw",
+            // mr: "-50vw",
+            // mb: { xs: 4, sm: 5, md: 6, lg: 8 },
+            // py: { xs: 4, sm: 5, md: 6, lg: 8 },
+            // px: { xs: 2, sm: 3, md: 4, lg: 5 },
+            background: "linear-gradient(135deg, #296374 0%, #1f4e5f 100%)",
           }}
-        >
+        > */}
+        <Box sx={{ mb: { xs: 4, sm: 5, md: 6, lg: 8 }, mt: 5 }}>
           <Typography
-            variant={isMobile ? "h4" : isTablet ? "h3" : "h2"}
+            variant="h2"
             align="center"
             fontWeight="bold"
             sx={{
-              mb: 2,
-              color: '#fff',
-              letterSpacing: 0.5,
+              mb: { xs: 1.5, sm: 2 },
+              color: "#065972",
+              fontSize: getFontSize.h2,
+              px: { xs: 1, sm: 2 },
             }}
           >
             Our Core Values
           </Typography>
 
           <Typography
-            variant="h6"
+            variant="body1"
             align="center"
             sx={{
-              mb: 6,
-              color: 'rgba(255,255,255,0.85)',
-              maxWidth: 720,
-              mx: 'auto',
+              mb: { xs: 3, sm: 4, md: 5, lg: 6 },
+              color: "rgba(43, 2, 2, 0.85)",
+              maxWidth: { xs: "90%", sm: "80%", md: "70%", lg: "60%" },
+              mx: "auto",
+              fontSize: getFontSize.body1,
+              px: { xs: 2, sm: 3 },
             }}
           >
             The principles that guide everything we do
@@ -487,13 +718,13 @@ const About = () => {
 
           <Grid
             container
-            spacing={{ xs: 3, md: 4 }}
+            spacing={{ xs: 2, sm: 3, md: 4 }}
             justifyContent="center"
-            alignItems="stretch"
-            sx={{
-              width: { xs: '100%', sm: '90%', md: '80%' },
-              mx: 'auto', // centers grid container
-            }}
+            // alignItems="stretch"
+            // sx={{
+            //   // width: { xs: '100%', sm: '95%', md: '90%' },
+            //   // mx: 'auto',
+            // }}
           >
             {coreValues.map((value, index) => (
               <Grid
@@ -510,79 +741,91 @@ const About = () => {
                     onMouseEnter={() => setHoveredCard(index)}
                     onMouseLeave={() => setHoveredCard(null)}
                     sx={{
-                      width: '100%',
-                      maxWidth: 320,
-                      height: '100%',
-                      p: 3.5,
-                      textAlign: 'center', // ✅ text center
-                      cursor: 'pointer',
-                      borderRadius: 3,
-                      backgroundColor: '#ffffff',
-                      transition: 'all 0.35s ease',
+                      width: "100%",
+                      maxWidth: { xs: "100%", sm: 320, md: 340 },
+                      height: "100%",
+                      p: { xs: 2, sm: 2.5, md: 3, lg: 3.5 },
+                      textAlign: "center",
+                      cursor: "pointer",
+                      borderRadius: { xs: 2, sm: 2.5, md: 3 },
+                      // backgroundColor: "#ffffff",
+                      background: `linear-gradient(270deg, #b3dcec, #ffff 60%)`,
+                      transition: "all 0.35s ease",
                       boxShadow:
-                        hoveredCard === index
-                          ? '0px 20px 40px rgba(0,0,0,0.15)'
-                          : '0px 6px 16px rgba(0,0,0,0.08)',
+                        hoveredCard === index && isDesktop
+                          ? "0px 20px 40px rgba(0,0,0,0.15)"
+                          : "0px 6px 16px rgba(0,0,0,0.08)",
                       transform:
-                        hoveredCard === index
-                          ? 'translateY(-10px)'
-                          : 'translateY(0)',
+                        hoveredCard === index && isDesktop
+                          ? "translateY(-10px)"
+                          : "translateY(0)",
                       borderTop: `5px solid ${value.color}`,
-                      position: 'relative',
-                      overflow: 'hidden',
-
-                      '&::after': {
+                      position: "relative",
+                      overflow: "hidden",
+                      "&::after": {
                         content: '""',
-                        position: 'absolute',
+                        position: "absolute",
                         inset: 0,
-                        background: `linear-gradient(
-                180deg,
-                ${alpha(value.color, 0.08)},
-                transparent 60%
-              )`,
-                        opacity: hoveredCard === index ? 1 : 0,
-                        transition: 'opacity 0.3s ease',
+                        background: `linear-gradient(180deg, ${alpha(value.color, 0.08)}, transparent 60%)`,
+                        opacity: hoveredCard === index && isDesktop ? 1 : 0,
+                        transition: "opacity 0.3s ease",
                       },
                     }}
                   >
-                    {/* Icon */}
                     <Box
                       sx={{
-                        width: 84,
-                        height: 84,
-                        borderRadius: '50%',
+                        width: { xs: 60, sm: 65, md: 70, lg: 80 },
+                        height: { xs: 60, sm: 65, md: 70, lg: 80 },
+                        borderRadius: "50%",
                         bgcolor: alpha(value.color, 0.12),
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mx: 'auto', // ✅ icon center
-                        mb: 3,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        mx: "auto",
+                        mb: { xs: 2, sm: 2.5, md: 3 },
                         color: value.color,
-                        transition: 'all 0.35s ease',
+                        transition: "all 0.35s ease",
                         transform:
-                          hoveredCard === index ? 'scale(1.15)' : 'scale(1)',
+                          hoveredCard === index && isDesktop
+                            ? "scale(1.15)"
+                            : "scale(1)",
+                        fontSize: {
+                          xs: "1.75rem",
+                          sm: "2rem",
+                          md: "2.25rem",
+                          lg: "2.5rem",
+                        },
                       }}
                     >
                       {value.icon}
                     </Box>
 
-                    {/* Title */}
                     <Typography
                       variant="h5"
                       fontWeight="bold"
                       align="center"
                       gutterBottom
+                      sx={{
+                        fontSize: {
+                          xs: "1rem",
+                          sm: "1.1rem",
+                          md: "1.2rem",
+                          lg: "1.3rem",
+                        },
+                        mb: { xs: 1, sm: 1.5 },
+                      }}
                     >
                       {value.title}
                     </Typography>
 
-                    {/* Description */}
                     <Typography
-                      variant="body1"
+                      variant="body2"
                       align="center"
                       sx={{
-                        color: 'text.secondary',
-                        lineHeight: 1.7,
+                        color: "text.secondary",
+                        lineHeight: { xs: 1.5, sm: 1.6, md: 1.7 },
+                        fontSize: getFontSize.body2,
+                        px: { xs: 1, sm: 1.5 },
                       }}
                     >
                       {value.description}
@@ -595,175 +838,166 @@ const About = () => {
         </Box>
 
         {/* Leadership Team with Images */}
-        <Box sx={{ mb: 10 }}>
-          <Box sx={{ textAlign: 'center', mb: 6 }}>
-            <Chip
-              label="LEADERSHIP"
-              color="secondary"
-              sx={{ mb: 3, fontWeight: 'bold', px: 3, py: 1 }}
-            />
-            <Typography variant={isMobile ? "h4" : isTablet ? "h3" : "h2"} gutterBottom fontWeight="bold">
-              Meet Our Leadership Team
-            </Typography>
-            <Typography variant="h6" color="text.secondary" sx={{ maxWidth: 700, mx: 'auto' }}>
-              Industry veterans with decades of combined experience in technology and business transformation
-            </Typography>
-          </Box>
-
-          <Grid container spacing={4} justifyContent="center">
-            {leadershipTeam.map((member, index) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                <Grow in={true} timeout={index * 200}>
-                  <Card
-                    sx={{
-                      height: 400,
-                      cursor: 'pointer',
-                      transition: 'all 0.3s',
-                      overflow: 'hidden',
-                      position: 'relative',
-                      '&:hover': {
-                        transform: 'translateY(-10px)',
-                        boxShadow: theme.shadows[10],
-                        '& .leader-image': {
-                          transform: 'scale(1.1)'
-                        },
-                        '& .leader-overlay': {
-                          opacity: 1
-                        }
-                      }
-                    }}
-                    onClick={() => handleLeaderClick(member)}
-                  >
-                    <Box
-                      className="leader-image"
-                      sx={{
-                        height: '60%',
-                        backgroundImage: `url(${getAvatarImage(member.avatar)})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'fit-center',
-                        backgroundRepeat: 'no-repeat',
-                        transition: 'transform 0.5s'
-                      }}
-                    />
-                    <Box
-                      className="leader-overlay"
-                      sx={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: '40%',
-                        bgcolor: 'rgba(0,0,0,0.5)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        opacity: 0,
-                        transition: 'opacity 0.3s'
-                      }}
-                    >
-                      <Typography variant="h6" color="white" fontWeight="bold">
-                        View Profile →
-                      </Typography>
-                    </Box>
-                    <CardContent sx={{ p: 3, textAlign: 'center' }}>
-                      <Typography variant="h6" gutterBottom fontWeight="bold">
-                        {member.name}
-                      </Typography>
-                      <Chip
-                        label={member.role}
-                        color="primary"
-                        size="small"
-                        sx={{ mb: 2, fontWeight: 'bold' }}
-                      />
-                      <Typography variant="body2" color="text.secondary" paragraph sx={{ mb: 2 }}>
-                        {member.bio}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grow>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
+        <OurTeam />
 
         {/* Departments with Hover Effects */}
-        <Box sx={{ mb: 10 }}>
-          <Typography variant={isMobile ? "h4" : isTablet ? "h3" : "h2"} align="center" gutterBottom fontWeight="bold" sx={{ mb: 6 }}>
+        <Box sx={{ mb: { xs: 4, sm: 5, md: 6, lg: 8 }, mt: 5 }}>
+          <Typography
+            variant="h2"
+            align="center"
+            gutterBottom
+            fontWeight="bold"
+            sx={{
+              mb: { xs: 3, sm: 4, md: 5, lg: 6 },
+              fontSize: getFontSize.h2,
+              px: { xs: 1, sm: 2 },
+              color: "#1a237e",
+            }}
+          >
             Our Expertise Areas
           </Typography>
 
-          <Grid container spacing={4} sx={{ justifyContent: 'center' }}>
+          <Grid
+            container
+            spacing={{ xs: 2, sm: 3, md: 4 }}
+            sx={{ justifyContent: "center" }}
+          >
             {departments.map((dept, index) => (
               <Grid item xs={12} sm={6} md={3} key={index}>
                 <Grow in={true} timeout={index * 200}>
                   <Paper
                     sx={{
                       p: 0,
-                      overflow: 'hidden',
-                      height: '100%',
-                      position: 'relative',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s',
-                      '&:hover': {
-                        transform: 'translateY(-8px)',
-                        boxShadow: theme.shadows[8],
-                        '& .department-content': {
-                          transform: 'translateY(0)'
-                        }
-                      }
+                      overflow: "hidden",
+                      height: "100%",
+                      position: "relative",
+                      cursor: "pointer",
+                      borderRadius: { xs: 2, sm: 2.5, md: 3 },
+                      transition: "all 0.3s",
+                      background: `linear-gradient(231deg, #f9fbfc 60%, #b5f1f7)`,
+                      "&:hover": {
+                        transform: isDesktop ? "translateY(-8px)" : "none",
+                        boxShadow: isDesktop
+                          ? theme.shadows[8]
+                          : theme.shadows[4],
+                        "& .department-content": {
+                          transform: isDesktop ? "translateY(0)" : "none",
+                        },
+                      },
                     }}
                   >
                     <Box
                       sx={{
-                        height: 200,
+                        height: { xs: 140, sm: 150, md: 160, lg: 180 },
                         backgroundImage: `url(${dept.image})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
                       }}
                     />
                     <Box
                       className="department-content"
                       sx={{
-                        p: 3,
-                        textAlign: 'center',
-                        transition: 'transform 0.3s'
+                        p: { xs: 1.5, sm: 2, md: 2.5 },
+                        textAlign: "center",
+                        transition: "transform 0.3s",
                       }}
                     >
                       <Box
                         sx={{
-                          width: 60,
-                          height: 60,
-                          borderRadius: '50%',
+                          width: { xs: 45, sm: 50, md: 55, lg: 60 },
+                          height: { xs: 45, sm: 50, md: 55, lg: 60 },
+                          borderRadius: "50%",
                           bgcolor: alpha(theme.palette.primary.main, 0.1),
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          margin: '0 auto 15px',
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          margin: "0 auto 12px",
                           color: theme.palette.primary.main,
+                          fontSize: {
+                            xs: "1.4rem",
+                            sm: "1.5rem",
+                            md: "1.75rem",
+                            lg: "2rem",
+                          },
                         }}
                       >
                         {dept.icon}
                       </Box>
-                      <Typography variant="h5" gutterBottom fontWeight="bold">
+                      <Typography
+                        variant="h5"
+                        gutterBottom
+                        fontWeight="bold"
+                        sx={{
+                          fontSize: { xs: "1rem", sm: "1.1rem", md: "1.2rem" },
+                          mb: { xs: 0.5, sm: 0.75 },
+                        }}
+                      >
                         {dept.name}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary" paragraph sx={{ mb: 3 }}>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        paragraph
+                        sx={{
+                          mb: { xs: 1.5, sm: 2, md: 2.5 },
+                          fontSize: getFontSize.body2,
+                          px: { xs: 1, sm: 1.5 },
+                        }}
+                      >
                         {dept.description}
                       </Typography>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-around', mt: 2 }}>
-                        <Box sx={{ textAlign: 'center' }}>
-                          <Typography variant="h4" fontWeight="bold" color="primary">
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-around",
+                          mt: { xs: 1, sm: 1.5, md: 2 },
+                        }}
+                      >
+                        <Box sx={{ textAlign: "center" }}>
+                          <Typography
+                            variant="h4"
+                            fontWeight="bold"
+                            color="primary"
+                            sx={{
+                              fontSize: {
+                                xs: "1.1rem",
+                                sm: "1.3rem",
+                                md: "1.5rem",
+                                lg: "1.75rem",
+                              },
+                            }}
+                          >
                             {dept.members}
                           </Typography>
-                          <Typography variant="caption" color="text.secondary">
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ fontSize: getFontSize.caption }}
+                          >
                             Experts
                           </Typography>
                         </Box>
-                        <Box sx={{ textAlign: 'center' }}>
-                          <Typography variant="h4" fontWeight="bold" color="secondary">
+                        <Box sx={{ textAlign: "center" }}>
+                          <Typography
+                            variant="h4"
+                            fontWeight="bold"
+                            color="secondary"
+                            sx={{
+                              fontSize: {
+                                xs: "1.1rem",
+                                sm: "1.3rem",
+                                md: "1.5rem",
+                                lg: "1.75rem",
+                              },
+                            }}
+                          >
                             {dept.projects}
                           </Typography>
-                          <Typography variant="caption" color="text.secondary">
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ fontSize: getFontSize.caption }}
+                          >
                             Projects
                           </Typography>
                         </Box>
@@ -777,27 +1011,45 @@ const About = () => {
         </Box>
 
         {/* Interactive Timeline */}
-        <Box sx={{ mb: 10 }}>
-          <Box sx={{ textAlign: 'center', mb: 6 }}>
+        <Box sx={{ mb: { xs: 4, sm: 5, md: 6, lg: 8 } }}>
+          <Box sx={{ textAlign: "center", mb: { xs: 3, sm: 4, md: 5, lg: 6 } }}>
             <Chip
               label="OUR JOURNEY"
               color="primary"
               variant="outlined"
-              sx={{ mb: 3, fontWeight: 'bold', px: 3, py: 1 }}
+              sx={{
+                mb: { xs: 2, sm: 2.5, md: 3 },
+                fontWeight: "bold",
+                px: { xs: 1.5, sm: 2, md: 2.5 },
+                py: { xs: 0.5, sm: 0.75, md: 1 },
+                fontSize: getFontSize.caption,
+                height: { xs: 28, sm: 32, md: 36 },
+              }}
             />
-            <Typography variant={isMobile ? "h4" : isTablet ? "h3" : "h2"} gutterBottom fontWeight="bold">
+            <Typography
+              variant="h2"
+              gutterBottom
+              fontWeight="bold"
+              sx={{
+                fontSize: getFontSize.h2,
+                px: { xs: 1, sm: 2 },
+                color: "#1a237e",
+              }}
+            >
               Milestones & Achievements
             </Typography>
           </Box>
 
-          <Box sx={{ position: 'relative', mt: 6 }}>
+          <Box
+            sx={{ position: "relative", mt: { xs: 3, sm: 4, md: 5, lg: 6 } }}
+          >
             <Box
               sx={{
-                position: 'absolute',
-                left: { xs: '30px', md: '50%' },
-                transform: { xs: 'none', md: 'translateX(-50%)' },
-                width: '4px',
-                height: '100%',
+                position: "absolute",
+                left: { xs: "20px", sm: "25px", md: "50%" },
+                transform: { xs: "none", md: "translateX(-50%)" },
+                width: { xs: "2px", sm: "3px", md: "4px" },
+                height: "100%",
                 bgcolor: alpha(theme.palette.primary.main, 0.2),
                 zIndex: 0,
               }}
@@ -807,23 +1059,34 @@ const About = () => {
               <Grow in={true} timeout={index * 300} key={index}>
                 <Box
                   sx={{
-                    display: 'flex',
-                    mb: 6,
-                    position: 'relative',
-                    flexDirection: { xs: 'row', md: index % 2 === 0 ? 'row' : 'row-reverse' },
-                    alignItems: 'start',
-                    cursor: 'pointer',
-                    '&:hover .timeline-dot': {
-                      transform: 'scale(1.5)'
-                    }
+                    display: "flex",
+                    mb: { xs: 3, sm: 4, md: 5, lg: 6 },
+                    position: "relative",
+                    flexDirection: {
+                      xs: "row",
+                      md: index % 2 === 0 ? "row" : "row-reverse",
+                    },
+                    alignItems: "start",
+                    cursor: "pointer",
+                    "&:hover .timeline-dot": {
+                      transform: isDesktop ? "scale(1.5)" : "none",
+                    },
                   }}
                 >
                   <Box
                     sx={{
-                      width: { xs: '100px', md: '120px', lg: '140px', xl: '150px' },
-                      textAlign: { xs: 'left', md: index % 2 === 0 ? 'right' : 'left' },
-                      pr: { xs: 2, md: index % 2 === 0 ? 4 : 0 },
-                      pl: { xs: 0, md: index % 2 === 0 ? 0 : 4 },
+                      width: {
+                        xs: "70px",
+                        sm: "80px",
+                        md: "100px",
+                        lg: "120px",
+                      },
+                      textAlign: {
+                        xs: "left",
+                        md: index % 2 === 0 ? "right" : "left",
+                      },
+                      pr: { xs: 1, md: index % 2 === 0 ? 3 : 0 },
+                      pl: { xs: 0, md: index % 2 === 0 ? 0 : 3 },
                       flexShrink: 0,
                     }}
                   >
@@ -832,7 +1095,12 @@ const About = () => {
                       fontWeight="bold"
                       color="primary"
                       sx={{
-                        fontSize: { xs: '2rem', md: '3rem' },
+                        fontSize: {
+                          xs: "1.2rem",
+                          sm: "1.5rem",
+                          md: "2rem",
+                          lg: "2.5rem",
+                        },
                         opacity: 0.8,
                       }}
                     >
@@ -843,75 +1111,130 @@ const About = () => {
                   <Box
                     sx={{
                       flex: 1,
-                      position: 'relative',
-                      ml: { xs: 0, md: index % 2 === 0 ? 0 : 'auto' },
-                      mr: { xs: 0, md: index % 2 === 0 ? 'auto' : 0 },
-                      maxWidth: { xs: 'calc(100% - 60px)', md: '400px' },
+                      position: "relative",
+                      ml: { xs: 1, md: index % 2 === 0 ? 0 : "auto" },
+                      mr: { xs: 0, md: index % 2 === 0 ? "auto" : 0 },
+                      maxWidth: {
+                        xs: "calc(100% - 90px)",
+                        sm: "calc(100% - 100px)",
+                        md: "350px",
+                        lg: "400px",
+                      },
                     }}
                   >
                     <Box
                       className="timeline-dot"
                       sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: { xs: '-38px', md: index % 2 === 0 ? '-20px' : 'calc(100% + 20px)' },
-                        transform: 'translateY(-50%)',
-                        width: { xs: '16px', md: '20px' },
-                        height: { xs: '16px', md: '20px' },
-                        borderRadius: '50%',
-                        bgcolor: 'primary.main',
-                        border: `4px solid ${theme.palette.background.paper}`,
+                        position: "absolute",
+                        top: "50%",
+                        left: {
+                          xs: "-24px",
+                          sm: "-28px",
+                          md: index % 2 === 0 ? "-16px" : "calc(100% + 16px)",
+                        },
+                        transform: "translateY(-50%)",
+                        width: { xs: "10px", sm: "12px", md: "16px" },
+                        height: { xs: "10px", sm: "12px", md: "16px" },
+                        borderRadius: "50%",
+                        bgcolor: "primary.main",
+                        border: {
+                          xs: "2px solid white",
+                          sm: "3px solid white",
+                        },
                         zIndex: 2,
-                        transition: 'transform 0.3s'
+                        transition: "transform 0.3s",
                       }}
                     />
 
                     <Card
                       sx={{
-                        p: 3,
+                        p: { xs: 1.5, sm: 2, md: 2.5 },
                         boxShadow: theme.shadows[4],
-                        borderLeft: `4px solid ${theme.palette.primary.main}`,
-                        transition: 'transform 0.3s',
-                        color: '#fff',
+                        borderLeft:
+                          { xs: "3px", sm: "4px" } +
+                          ` solid ${theme.palette.primary.main}`,
+                        borderRadius: { xs: 1.5, sm: 2, md: 2.5 },
+                        transition: "transform 0.3s",
+                        color: "#fff",
                         backgroundImage: `
-  linear-gradient(
-    135deg,
-    rgba(69, 65, 85, 0.95) 0%,
-    rgba(69, 65, 85, 0.7) 25%,
-    rgba(167, 154, 154, 0.4) 75%,
-    rgba(167, 154, 154, 0.2) 100%
-  ),
-  url(${milestone.image})
-`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundBlendMode: 'multiply',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        '&::before': {
+                          linear-gradient(
+                            135deg,
+                            rgba(69, 65, 85, 0.95) 0%,
+                            rgba(69, 65, 85, 0.7) 25%,
+                            rgba(167, 154, 154, 0.4) 75%,
+                            rgba(167, 154, 154, 0.2) 100%
+                          ),
+                          url(${milestone.image})
+                        `,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        backgroundBlendMode: "multiply",
+                        position: "relative",
+                        overflow: "hidden",
+                        "&::before": {
                           content: '""',
-                          position: 'absolute',
+                          position: "absolute",
                           top: 0,
                           left: 0,
                           right: 0,
                           bottom: 0,
-                          background: 'linear-gradient(135deg, rgba(69, 65, 85, 0.3) 0%, transparent 50%)',
+                          background:
+                            "linear-gradient(135deg, rgba(69, 65, 85, 0.3) 0%, transparent 50%)",
                           zIndex: 1,
                         },
-                        '&:hover': {
-                          transform: 'translateX(5px)'
-                        }
+                        "&:hover": {
+                          transform: isDesktop ? "translateX(5px)" : "none",
+                        },
                       }}
                     >
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                        <Box sx={{ color: 'primary.main' }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: { xs: 1, sm: 1.5 },
+                          mb: { xs: 1, sm: 1.5 },
+                          position: "relative",
+                          zIndex: 2,
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            color: "primary.main",
+                            fontSize: {
+                              xs: "1.2rem",
+                              sm: "1.4rem",
+                              md: "1.6rem",
+                              lg: "1.8rem",
+                            },
+                          }}
+                        >
                           {milestone.icon}
                         </Box>
-                        <Typography variant="h5" fontWeight="bold">
+                        <Typography
+                          variant="h5"
+                          fontWeight="bold"
+                          sx={{
+                            fontSize: {
+                              xs: "0.9rem",
+                              sm: "1rem",
+                              md: "1.1rem",
+                              lg: "1.2rem",
+                            },
+                          }}
+                        >
                           {milestone.title}
                         </Typography>
                       </Box>
-                      <Typography variant="body1" color="#fff" >
+                      <Typography
+                        variant="body2"
+                        color="#fff"
+                        sx={{
+                          fontSize: getFontSize.body2,
+                          lineHeight: { xs: 1.5, sm: 1.6 },
+                          position: "relative",
+                          zIndex: 2,
+                        }}
+                      >
                         {milestone.description}
                       </Typography>
                     </Card>
@@ -923,47 +1246,69 @@ const About = () => {
         </Box>
 
         {/* Interactive Certifications */}
-        <Paper sx={{
-          p: 5,
-          mb: 8,
-          bgcolor: alpha(theme.palette.primary.main, 0.03),
-          borderRadius: 3,
-          overflow: 'hidden',
-          position: 'relative'
-        }}>
+        <Paper
+          sx={{
+            p: { xs: 2, sm: 3, md: 4, lg: 5 },
+            mb: { xs: 4, sm: 5, md: 6, lg: 8 },
+            bgcolor: alpha(theme.palette.primary.main, 0.13),
+            borderRadius: { xs: 2, sm: 2.5, md: 3 },
+            overflow: "hidden",
+            position: "relative",
+          }}
+        >
           <Box
             sx={{
-              position: 'absolute',
+              position: "absolute",
               top: 0,
               left: 0,
               right: 0,
-              height: '4px',
-              background: 'linear-gradient(90deg, #667eea, #f093fb)',
+              height: "4px",
+              background: "linear-gradient(90deg, #667eea, #f093fb)",
             }}
           />
 
-          <Typography variant="h4" gutterBottom fontWeight="bold" align="center" sx={{ mb: 4 }}>
+          <Typography
+            variant="h4"
+            gutterBottom
+            fontWeight="bold"
+            align="center"
+            sx={{
+              mb: { xs: 2, sm: 2.5, md: 3, lg: 4 },
+              fontSize: getFontSize.h4,
+              px: { xs: 1, sm: 2 },
+              color: "#1a237e",
+            }}
+          >
             Certifications & Industry Recognition
           </Typography>
 
-          <Grid container spacing={3} justifyContent="center" alignItems="center">
+          <Grid
+            container
+            spacing={{ xs: 1.5, sm: 2, md: 3 }}
+            justifyContent="center"
+            alignItems="center"
+          >
             {certifications.map((cert, index) => (
               <Grid item key={index}>
                 <Grow in={true} timeout={index * 200}>
                   <Paper
                     elevation={0}
                     sx={{
-                      p: 2,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 2,
-                      cursor: 'pointer',
-                      transition: 'all 0.3s',
-                      '&:hover': {
-                        transform: 'translateY(-5px)',
-                        boxShadow: theme.shadows[4],
-                        bgcolor: alpha(theme.palette.primary.main, 0.05)
-                      }
+                      p: { xs: 1, sm: 1.5, md: 2 },
+                      display: "flex",
+                      alignItems: "center",
+                      gap: { xs: 1, sm: 1.5, md: 2 },
+                      cursor: "pointer",
+                      borderRadius: { xs: 1.5, sm: 2 },
+                      background: `linear-gradient(231deg, #b6e6f1 , #f5f8f8 60%)`,
+                      transition: "all 0.3s",
+                      "&:hover": {
+                        transform: isDesktop ? "translateY(-5px)" : "none",
+                        boxShadow: isDesktop
+                          ? theme.shadows[4]
+                          : theme.shadows[2],
+                        bgcolor: alpha(theme.palette.primary.main, 0.05),
+                      },
                     }}
                   >
                     <Box
@@ -971,12 +1316,23 @@ const About = () => {
                       src={cert.logo}
                       alt={cert.name}
                       sx={{
-                        width: 40,
-                        height: 40,
-                        objectFit: 'contain'
+                        width: { xs: 25, sm: 30, md: 35, lg: 40 },
+                        height: { xs: 25, sm: 30, md: 35, lg: 40 },
+                        objectFit: "contain",
                       }}
                     />
-                    <Typography variant="body1" fontWeight="medium">
+                    <Typography
+                      variant="body1"
+                      fontWeight="medium"
+                      sx={{
+                        fontSize: {
+                          xs: "0.75rem",
+                          sm: "0.8rem",
+                          md: "0.9rem",
+                          lg: "1rem",
+                        },
+                      }}
+                    >
                       {cert.name}
                     </Typography>
                   </Paper>
@@ -985,185 +1341,7 @@ const About = () => {
             ))}
           </Grid>
         </Paper>
-
-        {/* Contact Information with Images */}
-        {/* <Box sx={{ mb: 6 }}>
-          <Typography variant="h3" gutterBottom fontWeight="bold" align="center" sx={{ mb: 1 }}>
-            Ready to Transform Your Business?
-          </Typography>
-          <Typography variant="h6" color="text.secondary" align="center" paragraph sx={{ mb: 6 }}>
-            Get in touch with our team of experts
-          </Typography>
-
-          <Grid container spacing={4}>
-            {[
-              {
-                icon: <LocationOn sx={{ fontSize: 40 }} />,
-                title: 'Global Headquarters',
-                details: ['123 Innovation Drive', 'San Francisco, CA 94107', 'United States'],
-                color: '#667eea',
-                image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=300&fit=crop'
-              },
-              {
-                icon: <Email sx={{ fontSize: 40 }} />,
-                title: 'Contact Email',
-                details: ['hello@excellenceallegiance.com', 'sales@excellenceallegiance.com', 'careers@excellenceallegiance.com'],
-                color: '#f5576c',
-                image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop'
-              },
-              {
-                icon: <Phone sx={{ fontSize: 40 }} />,
-                title: 'Phone Numbers',
-                details: ['+1 (415) 123-4567 (Sales)', '+1 (415) 987-6543 (Support)', '24/7 Emergency: +1 (415) 555-7890'],
-                color: '#4CAF50',
-                image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=300&fit=crop'
-              }
-            ].map((contact, index) => (
-              <Grid item xs={12} md={4} key={index}>
-                <Grow in={true} timeout={index * 300}>
-                  <Card sx={{
-                    p: 0,
-                    height: '100%',
-                    overflow: 'hidden',
-                    position: 'relative',
-                    transition: 'all 0.3s',
-                    '&:hover': {
-                      transform: 'translateY(-8px)',
-                      boxShadow: `0 20px 40px ${alpha(contact.color, 0.2)}`,
-                      '& .contact-image': {
-                        transform: 'scale(1.1)'
-                      }
-                    }
-                  }}>
-                    <Box
-                      className="contact-image"
-                      sx={{
-                        height: 150,
-                        backgroundImage: `url(${contact.image})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        transition: 'transform 0.5s'
-                      }}
-                    />
-                    <Box sx={{ p: 4, textAlign: 'center' }}>
-                      <Box
-                        sx={{
-                          width: 70,
-                          height: 70,
-                          borderRadius: '50%',
-                          bgcolor: alpha(contact.color, 0.1),
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          margin: '-55px auto 25px',
-                          color: contact.color,
-                          border: `4px solid ${theme.palette.background.paper}`,
-                          position: 'relative',
-                          zIndex: 1
-                        }}
-                      >
-                        {contact.icon}
-                      </Box>
-                      <Typography variant="h5" gutterBottom fontWeight="bold" sx={{ mb: 3 }}>
-                        {contact.title}
-                      </Typography>
-                      {contact.details.map((detail, idx) => (
-                        <Typography
-                          key={idx}
-                          variant="body1"
-                          sx={{
-                            mb: 2,
-                            color: idx === 0 ? 'text.primary' : 'text.secondary',
-                            transition: 'all 0.3s',
-                            '&:hover': {
-                              color: contact.color,
-                              transform: 'translateX(5px)'
-                            }
-                          }}
-                        >
-                          {detail}
-                        </Typography>
-                      ))}
-                    </Box>
-                  </Card>
-                </Grow>
-              </Grid>
-            ))}
-          </Grid>
-        </Box> */}
       </Container>
-
-      {/* Leader Detail Dialog */}
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        maxWidth="md"
-        fullWidth
-      >
-        {selectedLeader && (
-          <>
-            <DialogTitle>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Avatar
-                  src={getAvatarImage(selectedLeader.avatar)}
-                  sx={{ width: 60, height: 60 }}
-                />
-                <Box>
-                  <Typography variant="h5" fontWeight="bold">{selectedLeader.name}</Typography>
-                  <Typography color="text.secondary">{selectedLeader.role}</Typography>
-                </Box>
-              </Box>
-            </DialogTitle>
-            <DialogContent>
-              <Box sx={{ mb: 3 }}>
-                <Typography variant="h6" gutterBottom color="primary">
-                  Biography
-                </Typography>
-                <Typography paragraph>
-                  {selectedLeader.fullBio}
-                </Typography>
-              </Box>
-
-              <Box sx={{ mb: 3 }}>
-                <Typography variant="h6" gutterBottom color="primary">
-                  Education
-                </Typography>
-                <Typography paragraph>
-                  {selectedLeader.education}
-                </Typography>
-              </Box>
-
-              <Box>
-                <Typography variant="h6" gutterBottom color="primary">
-                  Expertise
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                  {selectedLeader.expertise.split(',').map((skill, idx) => (
-                    <Chip
-                      key={idx}
-                      label={skill}
-                      color="primary"
-                      variant="outlined"
-                      sx={{ fontWeight: 'medium' }}
-                    />
-                  ))}
-                </Box>
-              </Box>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setOpenDialog(false)}>Close</Button>
-              <Button
-                variant="contained"
-                color="primary"
-                href={selectedLeader.linkedin}
-                target="_blank"
-              >
-                View LinkedIn
-              </Button>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
     </Box>
   );
 };

@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Box, Fab, Badge, Zoom, useTheme, useMediaQuery } from '@mui/material';
-import ChatIcon from '@mui/icons-material/Chat';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
+import { Badge, Fab, Zoom, useMediaQuery, useTheme } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { toggleChat } from '../../redux/slices/chatSlice';
 import ChatWindow from './ChatWindow';
 

@@ -38,7 +38,8 @@ const authSlice = createSlice({
         id: fullUser.id,
         name: fullUser.name,
         email: fullUser.email,
-        role: fullUser.role
+        role: fullUser.role,
+        twoFactorEnabled: fullUser.twoFactorEnabled || false,
       };
 
       state.user = safeUser;

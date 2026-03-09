@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import {
-    Box,
-    TextField,
-    IconButton,
-    Paper,
-    InputAdornment,
-} from '@mui/material';
-import {
-    Send as SendIcon,
     AttachFile as AttachFileIcon,
     Mic as MicIcon,
     Mood as MoodIcon,
+    Send as SendIcon,
 } from '@mui/icons-material';
-import { sendMessage, addMessage } from '../../redux/slices/chatSlice';
+import {
+    IconButton,
+    InputAdornment,
+    Paper,
+    TextField
+} from '@mui/material';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addMessage, sendMessage } from '../../redux/slices/chatSlice';
 
 const ChatInput = () => {
     const dispatch = useDispatch();

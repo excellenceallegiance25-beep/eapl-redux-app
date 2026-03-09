@@ -1,19 +1,14 @@
-import React from 'react';
+import {
+    SmartToy as BotIcon,
+    Close as CloseIcon,
+    Refresh as RefreshIcon
+} from '@mui/icons-material';
 import {
     Box,
-    Typography,
     IconButton,
-    Avatar,
     Tooltip,
-    Badge,
+    Typography
 } from '@mui/material';
-import {
-    Close as CloseIcon,
-    SmartToy as BotIcon,
-    Minimize as MinimizeIcon,
-    Settings as SettingsIcon,
-    Refresh as RefreshIcon,
-} from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { clearChat } from '../../redux/slices/chatSlice';
 

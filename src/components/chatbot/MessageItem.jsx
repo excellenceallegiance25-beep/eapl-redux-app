@@ -1,17 +1,16 @@
-import React from 'react';
 import {
-    Box,
-    Paper,
-    Typography,
-    Avatar,
-    IconButton,
-    Tooltip,
-} from '@mui/material';
-import {
-    Person as PersonIcon,
     SmartToy as BotIcon,
     ContentCopy as CopyIcon,
+    Person as PersonIcon,
 } from '@mui/icons-material';
+import {
+    Avatar,
+    Box,
+    IconButton,
+    Paper,
+    Tooltip,
+    Typography,
+} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 const MessageItem = ({ message }) => {

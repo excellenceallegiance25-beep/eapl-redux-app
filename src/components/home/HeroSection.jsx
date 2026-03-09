@@ -1,8 +1,4 @@
-import {
-  ArrowForward,
-  PlayCircle,
-  KeyboardArrowDown,
-} from "@mui/icons-material";
+import { ArrowForward, KeyboardArrowDown } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -10,20 +6,12 @@ import {
   Fade,
   Stack,
   Typography,
-  useMediaQuery,
-  useTheme,
-  alpha,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import TrustIndicators from "./TrustIndicators";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import home_background from "../../assets/images/home_bg.avif";
-import { Link as RouterLink } from "react-router-dom";
 
 const HeroSection = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
   const navigate = useNavigate();
   const { isAuthenticated } = useSelector((state) => state.auth);
 
@@ -31,7 +19,7 @@ const HeroSection = () => {
     if (isAuthenticated) {
       navigate("/dashboard");
     } else {
-      navigate("/register");
+      navigate("/ContactForm");
     }
   };
 
@@ -50,173 +38,163 @@ const HeroSection = () => {
         alignItems: "center",
         justifyContent: "center",
         position: "relative",
-        background: `linear-gradient(135deg, rgba(0,0,0,0.75), rgba(0,0,0,0.6)),url("${home_background}")`,
+        background: `
+          linear-gradient(135deg, rgba(0, 5, 10, 0.88), rgba(3, 35, 53, 0.85)),
+          url("${home_background}")
+        `,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         overflow: "hidden",
+        px: { xs: 2, sm: 3, md: 6 },
       }}
     >
-      {/* Background Pattern */}
+      {/* Glow Effect */}
       <Box
         sx={{
           position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          opacity: 0.1,
-          backgroundImage: `radial-gradient(${alpha("#fff", 0.2)} 1px, transparent 1px)`,
-          backgroundSize: "50px 50px",
+          width: "600px",
+          height: "600px",
+          background:
+            "radial-gradient(circle, rgba(59,130,246,0.25), transparent 70%)",
+          top: "-200px",
+          right: "-200px",
+          filter: "blur(120px)",
         }}
       />
 
       <Container maxWidth="lg">
-        <Fade in={true} timeout={1000}>
+        <Fade in timeout={1000}>
           <Box
             sx={{
               textAlign: "center",
               color: "white",
               position: "relative",
               zIndex: 1,
-              px: { xs: 2, sm: 3, md: 0 },
             }}
           >
+            {/* COMPANY NAME */}
             <Typography
-              variant={isMobile ? "h3" : isTablet ? "h2" : "h1"}
               sx={{
-                fontWeight: 900,
-                mb: 3,
+                fontWeight: 800,
+                mb: { xs: 2, sm: 3, md: 4 },
                 fontSize: {
-                  xs: "2rem",
-                  sm: "2.8rem",
-                  md: "3.5rem",
-                  lg: "4.5rem",
+                  xs: "1.8rem",
+                  sm: "2.4rem",
+                  md: "3rem",
+                  lg: "3.8rem",
+                  xl: "4.5rem",
                 },
-                lineHeight: 1.2,
+                lineHeight: 1.15,
+                letterSpacing: "-0.5px",
               }}
             >
               Excellence Allegiance{" "}
               <Box
                 component="span"
                 sx={{
-                  background: "linear-gradient(45deg, #FFD700, #FF8C00)",
+                  background:
+                    "linear-gradient(90deg, #3B82F6, #8B5CF6)",
                   backgroundClip: "text",
                   WebkitBackgroundClip: "text",
                   color: "transparent",
-                  display: isMobile ? "block" : "inline",
+                  display: { xs: "block", sm: "inline" },
                 }}
               >
                 Private Limited
               </Box>
             </Typography>
 
+            {/* TAGLINE */}
             <Typography
-              variant={isMobile ? "body1" : "h5"}
               sx={{
-                mb: 5,
+                mb: { xs: 4, md: 6 },
                 opacity: 0.9,
-                maxWidth: 800,
+                maxWidth: { xs: "100%", md: 750 },
                 mx: "auto",
                 fontSize: {
-                  xs: "1rem",
-                  sm: "1.2rem",
-                  md: "1.5rem",
+                  xs: "0.95rem",
+                  sm: "1.05rem",
+                  md: "1.2rem",
+                  lg: "1.35rem",
                 },
-                lineHeight: 1.6,
+                lineHeight: 1.7,
               }}
             >
-              We deliver innovative technology solutions that drive growth,
-              enhance efficiency, and create sustainable competitive advantages
-              for businesses worldwide.
+              Delivering enterprise-grade IT solutions including
+              software development, cloud infrastructure,
+              cybersecurity, and AI-driven digital transformation
+              for modern businesses.
             </Typography>
 
+            {/* BUTTONS */}
             <Stack
-              direction={isMobile ? "column" : "row"}
-              spacing={3}
+              direction={{ xs: "column", md: "row" }}
+              spacing={{ xs: 2, md: 3 }}
               justifyContent="center"
-              sx={{ mb: { xs: 6, md: 8 } }}
+              alignItems="center"
+              sx={{ mb: { xs: 5, md: 8 } }}
             >
-              {/* Version 1.0  1_0_EAPL_2026*/}
               <Button
-                component={RouterLink}
-                to="/contact"
-                variant="outlined"
-                color="warning"
-                size={isMobile ? "medium" : "large"}
-                endIcon={<ArrowForward />}
-                sx={{
-                  py: { xs: 1.5, md: 2 },
-                  px: { xs: 3.5, md: 5 },
-                  fontSize: { xs: "1rem", md: "1.05rem" },
-                  fontWeight: 600,
-                  letterSpacing: "0.3px",
-                  borderRadius: 3,
-                  minWidth: { xs: "100%", sm: 220 },
-                  borderWidth: 1,
-                  textTransform: "none",
-                  transition: "all 0.3s ease",
-                  "& svg": {
-                    transition: "transform 0.3s ease",
-                  },
-                  "&:hover": {
-                    backgroundColor: alpha(theme.palette.warning.main, 0.08),
-                    borderColor: theme.palette.warning.main,
-                    boxShadow: `0 6px 18px ${alpha(theme.palette.warning.main, 0.25)}`,
-                    "& svg": {
-                      transform: "translateX(4px)",
-                    },
-                  },
-                  "&:active": {
-                    transform: "scale(0.98)",
-                  },
-                }}
-              >
-                Start Free Trial
-              </Button>
-              {/* Version 1.0 1_0_EAPL_2026*/}
-
-              {/* <Button
                 variant="contained"
-                color="secondary"
-                size={isMobile ? "medium" : "large"}
                 endIcon={<ArrowForward />}
                 onClick={handleGetStarted}
                 sx={{
-                  py: { xs: 1.5, md: 2 },
-                  px: { xs: 3, md: 4 },
-                  fontSize: { xs: '1rem', md: '1.1rem' },
-                  fontWeight: 'bold',
-                  borderRadius: 2,
-                  minWidth: { xs: '100%', sm: 200 },
+                  width: { xs: "100%", sm: "80%", md: "auto" },
+                  py: { xs: 1.4, sm: 1.6, md: 2 },
+                  px: { md: 5 },
+                  fontSize: {
+                    xs: "0.9rem",
+                    sm: "1rem",
+                    md: "1.05rem",
+                  },
+                  borderRadius: 3,
+                  textTransform: "none",
+                  background:
+                    "linear-gradient(90deg, #3B82F6, #8B5CF6)",
+                  boxShadow:
+                    "0 10px 30px rgba(59,130,246,0.4)",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    transform: "translateY(-3px)",
+                  },
                 }}
               >
-                Start Free Trial
-              </Button> */}
+                Get Free Consultation
+              </Button>
 
               {/* <Button
+                component={RouterLink}
+                to="/services"
                 variant="outlined"
-                color="inherit"
-                size={isMobile ? "medium" : "large"}
-                startIcon={<PlayCircle />}
                 sx={{
-                  py: { xs: 1.5, md: 2 },
-                  px: { xs: 3, md: 4 },
-                  fontSize: { xs: '1rem', md: '1.1rem' },
+                  width: { xs: "100%", sm: "80%", md: "auto" },
+                  py: { xs: 1.4, sm: 1.6, md: 2 },
+                  px: { md: 5 },
+                  fontSize: {
+                    xs: "0.9rem",
+                    sm: "1rem",
+                    md: "1.05rem",
+                  },
+                  borderRadius: 3,
+                  textTransform: "none",
+                  borderColor: "#3B82F6",
+                  color: "#3B82F6",
                   borderWidth: 2,
-                  '&:hover': { borderWidth: 2 },
-                  minWidth: { xs: '100%', sm: 200 },
+                  "&:hover": {
+                    borderWidth: 2,
+                    backgroundColor:
+                      "rgba(59,130,246,0.08)",
+                  },
                 }}
               >
-                Watch Demo
+                Explore Services
               </Button> */}
             </Stack>
-
-            {/* <TrustIndicators /> */}
           </Box>
         </Fade>
 
-        {/* Scroll Indicator */}
+        {/* SCROLL INDICATOR */}
         <Box
           sx={{
             position: "absolute",
@@ -225,7 +203,7 @@ const HeroSection = () => {
             transform: "translateX(-50%)",
             textAlign: "center",
             cursor: "pointer",
-            display: isMobile ? "none" : "block",
+            display: { xs: "none", md: "block" },
           }}
           onClick={scrollToNext}
         >

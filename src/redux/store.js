@@ -1,9 +1,9 @@
-import { configureStore } from '@reduxjs/toolkit';
-import authReducer from './slices/authSlice';
-import userReducer from './slices/userSlice';
-import chatReducer from './slices/chatSlice';
-import loadingReducer from './slices/loadingSlice';
-import notificationReducer from './slices/notificationSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import authReducer from "./slices/authSlice";
+import userReducer from "./slices/userSlice";
+import chatReducer from "./slices/chatSlice";
+import loadingReducer from "./slices/loadingSlice";
+import notificationReducer from "./slices/notificationSlice";
 
 export const store = configureStore({
   reducer: {
@@ -13,4 +13,8 @@ export const store = configureStore({
     loading: loadingReducer,
     notification: notificationReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
