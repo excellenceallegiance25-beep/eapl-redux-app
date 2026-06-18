@@ -13,13 +13,11 @@ const NotificationBell = ({ isMobile, onClick }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // Fetch unread count for the current user
-    fetchUnreadCount();
-
-    // Set up polling every 30 seconds
-    // const interval = setInterval(fetchUnreadCount, 30000);
-
-    // return () => clearInterval(interval);
+    if (user?.id) {
+      fetchUnreadCount();
+    } else {
+      dispatch(setNotifications([]));
+    }
   }, [user?.id]);
 
   // const fetchUnreadCount = async () => {
@@ -42,8 +40,10 @@ const NotificationBell = ({ isMobile, onClick }) => {
   // };
 
   const fetchUnreadCount = async () => {
+    if (!user?.id) return;
+
     try {
-      const result = await dispatch(getNotificationList(user?.id));
+      const result = await dispatch(getNotificationList(user.id));
       if (result.type === "EMP_NOTIFICATION_LIST") {
         // Dispatch to Redux store
         dispatch(setNotifications(result.payload.dataList || []));

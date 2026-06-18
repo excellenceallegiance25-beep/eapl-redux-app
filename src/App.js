@@ -1,63 +1,63 @@
-import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { Provider } from 'react-redux';
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { store } from './redux/store';
-
+import CssBaseline from "@mui/material/CssBaseline";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { Provider } from "react-redux";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { store } from "./redux/store";
+import { Navigate } from "react-router-dom";
 // Layout
-import Layout from './components/layout/Layout';
+import Layout from "./components/layout/Layout";
 
 // Pages
-import About from './pages/About';
-import Blog from './pages/Blog';
-import Contact from './pages/Contact';
-import Home from './pages/Home';
-import Products from './pages/Products';
-import Profile from './pages/Profile';
-import Services from './pages/Services';
+import About from "./pages/About";
+import Blog from "./pages/Blog";
+import Contact from "./pages/Contact";
+import Home from "./pages/Home";
+import Products from "./pages/Products";
+import Profile from "./pages/Profile";
+import Services from "./pages/Services";
 
 // Auth Components
-import Login from './components/auth/Login';
-import ProtectedRoute from './components/auth/ProtectedRoute';
-import Register from './components/auth/Register';
-import AppNotification from './components/common/AppNotification';
-import FaqSection from './components/common/FaqSection';
-import Ourteam from './components/common/Ourteam';
-import CareerSection from './components/home/CareerSection';
-import PartnersSection from './components/home/PartnersSection';
-import AppContainer from './components/common/AppContainer';
-import ServiceDetails from './components/common/ServiceDetails';
+import Login from "./components/auth/Login";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import Register from "./components/auth/Register";
+import AppNotification from "./components/common/AppNotification";
+import FaqSection from "./components/common/FaqSection";
+import Ourteam from "./components/common/Ourteam";
+import CareerSection from "./components/home/CareerSection";
+import PartnersSection from "./components/home/PartnersSection";
+import AppContainer from "./components/common/AppContainer";
+import ServiceDetails from "./components/common/ServiceDetails";
 
 // Dashboard Components
-import Dashboard from './components/dashboardmenu/Dashboard';
-import { LeaveManagementPage } from './components/dashboardmenu/LeaveManagementPage';
-import { EmployeeManagementPage } from './components/dashboardmenu/EmployeeManagementPage';
-import { ServicesManagementPage } from './components/dashboardmenu/ServicesManagementPage';
-import { PartnersManagementPage } from './components/dashboardmenu/PartnersManagementPage';
-import ForgotPassword from './components/auth/ForgotPassword';
-import { LoadingProvider } from './context/SkeletonWrapper';
-import { LeaveRequestPage } from './components/dashboardmenu/LeaveRequestPage';
-import APILoader from './components/common/APILoader';
-import ContactForm from './components/common/ContactForm';
-import TermsOfService from './components/common/TermsOfService';
-import PrivacyPolicy from './components/common/PrivacyPolicy';
+import Dashboard from "./components/dashboardmenu/Dashboard";
+import { LeaveManagementPage } from "./components/dashboardmenu/LeaveManagementPage";
+import { EmployeeManagementPage } from "./components/dashboardmenu/EmployeeManagementPage";
+import { ServicesManagementPage } from "./components/dashboardmenu/ServicesManagementPage";
+import { PartnersManagementPage } from "./components/dashboardmenu/PartnersManagementPage";
+import ForgotPassword from "./components/auth/ForgotPassword";
+import { LoadingProvider } from "./context/SkeletonWrapper";
+import { LeaveRequestPage } from "./components/dashboardmenu/LeaveRequestPage";
+import APILoader from "./components/common/APILoader";
+import ContactForm from "./components/common/ContactForm";
+import TermsOfService from "./components/common/TermsOfService";
+import PrivacyPolicy from "./components/common/PrivacyPolicy";
 
 // Create theme
 const theme = createTheme({
   palette: {
-    mode: 'light',
+    mode: "light",
     primary: {
-      main: '#1976d2',
-      dark: '#115293',
-      light: '#42a5f5',
+      main: "#1976d2",
+      dark: "#115293",
+      light: "#42a5f5",
     },
     secondary: {
-      main: '#dc004e',
-      dark: '#9a0036',
-      light: '#ff4081',
+      main: "#dc004e",
+      dark: "#9a0036",
+      light: "#ff4081",
     },
     background: {
-      default: '#f5f5f5',
+      default: "#f5f5f5",
     },
   },
   typography: {
@@ -80,7 +80,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 8,
-          textTransform: 'none',
+          textTransform: "none",
           fontWeight: 600,
         },
       },
@@ -89,7 +89,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 12,
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
         },
       },
     },
@@ -106,85 +106,240 @@ function App() {
           <AppContainer>
             <Routes>
               {/* Public Routes */}
-              <Route path="/" element={<Layout><Home /></Layout>} />
-              <Route path="/about" element={<Layout><About /></Layout>} />
-              <Route path="/services" element={<Layout><Services /></Layout>} />
-              <Route path="/services/:serviceId" element={
-                // <ProtectedRoute>
-                <Layout><ServiceDetails /></Layout>
-                // </ProtectedRoute>
-              } />
-              <Route path="/products" element={<Layout><Products /></Layout>} />
-              <Route path="/blog" element={<Layout><Blog /></Layout>} />
-              <Route path="/contact" element={<Layout><Contact /></Layout>} />
-              <Route path="/faq" element={<Layout><FaqSection /></Layout>} />
-              <Route path="/careers" element={<Layout><CareerSection /></Layout>} />
-              <Route path="/team" element={<Layout><Ourteam /></Layout>} />
-              <Route path="/partnerships" element={<Layout><PartnersSection /></Layout>} />
+              <Route
+                path="/"
+                element={
+                  <Layout>
+                    <Home />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/about"
+                element={
+                  <Layout>
+                    <About />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/services"
+                element={
+                  <Layout>
+                    <Services />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/services/:serviceId"
+                element={
+                  // <ProtectedRoute>
+                  <Layout>
+                    <ServiceDetails />
+                  </Layout>
+                  // </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/products"
+                element={
+                  <Layout>
+                    <Products />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/blog"
+                element={
+                  <Layout>
+                    <Blog />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/contact"
+                element={
+                  <Layout>
+                    <Contact />
+                  </Layout>
+                }
+              />
+
+              <Route
+                path="/contact-us"
+                element={<Navigate to="/contact" replace />}
+              />
+              <Route
+                path="/faq"
+                element={
+                  <Layout>
+                    <FaqSection />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/careers"
+                element={
+                  <Layout>
+                    <CareerSection />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/team"
+                element={
+                  <Layout>
+                    <Ourteam />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/partnerships"
+                element={
+                  <Layout>
+                    <PartnersSection />
+                  </Layout>
+                }
+              />
 
               {/* Auth Routes */}
-              <Route path="/login" element={<Layout><Login /></Layout>} />
-              <Route path="/forgot-password" element={<Layout><ForgotPassword /></Layout>} />
-              <Route path="/register" element={<Layout><Register /></Layout>} />
-              <Route path="/ContactForm" element={<Layout><ContactForm /></Layout>} />
-              <Route path="/terms" element={<Layout><TermsOfService /></Layout>} />
-              <Route path="/privacy" element={<Layout><PrivacyPolicy /></Layout>} />
+              <Route
+                path="/login"
+                element={
+                  <Layout>
+                    <Login />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/forgot-password"
+                element={
+                  <Layout>
+                    <ForgotPassword />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/register"
+                element={
+                  <Layout>
+                    <Register />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/ContactForm"
+                element={
+                  <Layout>
+                    <ContactForm />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/terms"
+                element={
+                  <Layout>
+                    <TermsOfService />
+                  </Layout>
+                }
+              />
+              <Route
+                path="/privacy"
+                element={
+                  <Layout>
+                    <PrivacyPolicy />
+                  </Layout>
+                }
+              />
 
               {/* Dashboard Routes */}
-              <Route path="/dashboard" element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              } />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
 
-              <Route path="/dashboard/:userId" element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              } />
+              <Route
+                path="/dashboard/:userId"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* Dashboard Child Pages - These should use Dashboard layout, not main Layout */}
-              <Route path="/leave-management" element={
-                <ProtectedRoute>
-                  <LeaveManagementPage />
-                </ProtectedRoute>
-              } />
+              <Route
+                path="/leave-management"
+                element={
+                  <ProtectedRoute>
+                    <LeaveManagementPage />
+                  </ProtectedRoute>
+                }
+              />
 
-              <Route path="/leave-request" element={
-                <ProtectedRoute>
-                  <LeaveRequestPage />
-                </ProtectedRoute>
-              } />
+              <Route
+                path="/leave-request"
+                element={
+                  <ProtectedRoute>
+                    <LeaveRequestPage />
+                  </ProtectedRoute>
+                }
+              />
               {/* <Route path="/leave/new" element={<QuickLeaveRequest />} /> */}
               {/* <Route path="/request-leave" element={<QuickLeaveRequest />} /> */}
 
-              <Route path="/employees" element={
-                <ProtectedRoute>
-                  <EmployeeManagementPage />
-                </ProtectedRoute>
-              } />
+              <Route
+                path="/employees"
+                element={
+                  <ProtectedRoute>
+                    <EmployeeManagementPage />
+                  </ProtectedRoute>
+                }
+              />
 
-              <Route path="/services-management" element={
-                <ProtectedRoute>
-                  <ServicesManagementPage />
-                </ProtectedRoute>
-              } />
+              <Route
+                path="/services-management"
+                element={
+                  <ProtectedRoute>
+                    <ServicesManagementPage />
+                  </ProtectedRoute>
+                }
+              />
 
-              <Route path="/partners-management" element={
-                <ProtectedRoute>
-                  <PartnersManagementPage />
-                </ProtectedRoute>
-              } />
+              <Route
+                path="/partners-management"
+                element={
+                  <ProtectedRoute>
+                    <PartnersManagementPage />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* Profile Route */}
-              <Route path="/profile/:userId" element={
-                <ProtectedRoute>
-                  <Layout><Profile /></Layout>
-                </ProtectedRoute>
-              } />
+              <Route
+                path="/profile/:userId"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <Profile />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
 
               {/* 404 Route */}
-              <Route path="*" element={<Layout><div>404 - Page Not Found</div></Layout>} />
+              <Route
+                path="*"
+                element={
+                  <Layout>
+                    <div>404 - Page Not Found</div>
+                  </Layout>
+                }
+              />
             </Routes>
             <AppNotification />
           </AppContainer>

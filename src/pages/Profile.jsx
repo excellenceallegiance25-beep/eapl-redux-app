@@ -426,9 +426,12 @@ const Profile = () => {
           }
         };
 
+        const formatStatus = (status) =>
+          status ? status.charAt(0).toUpperCase() + status.slice(1) : "";
+
         return (
           <Chip
-            label={params.value}
+            label={formatStatus(params.value)}
             color={getStatusColor(params.value)}
             size="small"
             sx={{ fontWeight: "medium" }}

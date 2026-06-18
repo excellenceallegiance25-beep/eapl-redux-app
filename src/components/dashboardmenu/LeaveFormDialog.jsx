@@ -759,6 +759,7 @@ export const LeaveFormDialog = ({
                         "Maternity",
                         "Paternity",
                         "Casual",
+                        "Paid",
                       ].map((type) => (
                         <MenuItem key={type} value={type}>
                           {type}
@@ -839,10 +840,8 @@ export const LeaveFormDialog = ({
                     label="Half Day Period"
                     sx={inputStyle}
                   >
-                    <MenuItem value="morning">Morning (9 AM – 1 PM)</MenuItem>
-                    <MenuItem value="afternoon">
-                      Afternoon (2 PM – 6 PM)
-                    </MenuItem>
+                    <MenuItem value="morning">1st Half</MenuItem>
+                    <MenuItem value="afternoon">2nd Half</MenuItem>
                   </Select>
                 </FormControl>
               )}
@@ -1026,6 +1025,7 @@ export const LeaveFormDialog = ({
               <MenuItem value="Maternity">Maternity</MenuItem>
               <MenuItem value="Paternity">Paternity</MenuItem>
               <MenuItem value="Casual">Casual</MenuItem>
+              <MenuItem value="Paid">Paid</MenuItem>
             </Select>
           </FormControl>
 
@@ -1087,8 +1087,8 @@ export const LeaveFormDialog = ({
                 label="Half Day Period"
                 disabled={viewMode}
               >
-                <MenuItem value="morning">Morning (9 AM - 1 PM)</MenuItem>
-                <MenuItem value="afternoon">Afternoon (2 PM - 6 PM)</MenuItem>
+                <MenuItem value="morning">1st Half</MenuItem>
+                <MenuItem value="afternoon">2nd Half</MenuItem>
               </Select>
             </FormControl>
           )}

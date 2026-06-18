@@ -10,6 +10,7 @@ import {
   Person,
   Search,
   Upload,
+  Visibility,
 } from "@mui/icons-material";
 import {
   Alert,
@@ -38,6 +39,7 @@ import {
   Paper,
   Divider,
   alpha,
+  Autocomplete,
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
@@ -53,6 +55,8 @@ import {
   getEmployeeProfileList,
   updateEmployeeCompleteProfile,
 } from "../../services/AppConfigAction";
+import { isVisible } from "@testing-library/user-event/dist/utils";
+import { a } from "framer-motion/client";
 
 export const EmployeeManagementPage = () => {
   const theme = useTheme();
@@ -70,7 +74,9 @@ export const EmployeeManagementPage = () => {
   const [employeeRoles, setEmployeeRoles] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [positions, setPositions] = useState([]);
-
+  const [columnVisibilityModel, setColumnVisibilityModel] = useState({
+    id: false,
+  });
   // Dialog states
   const [openDialog, setOpenDialog] = useState(false);
   const [currentEmployee, setCurrentEmployee] = useState({
@@ -423,6 +429,7 @@ export const EmployeeManagementPage = () => {
         profilePicture: profilePictureBase64,
         profilePictureType: profilePictureType,
         indicator: currentEmployee.id ? "U" : "I",
+        actualEmpId: currentEmployee.actualEmpId || null,
         currentPassword: currentEmployee.id
           ? currentEmployee.password
           : currentEmployee.password,
@@ -598,6 +605,15 @@ export const EmployeeManagementPage = () => {
           </Typography>
         </Box>
       ),
+    },
+    {
+      field: "actualEmpId",
+      headerName: "Employee ID",
+      width: 140,
+      headerClassName: "no-sort-icon",
+      align: "center",
+      headerAlign: "center",
+      valueGetter: (params) => params.row.actualEmpId ?? "N/A",
     },
     {
       field: "profilePicture",
@@ -930,6 +946,8 @@ export const EmployeeManagementPage = () => {
           rows={filteredEmployees}
           columns={columns}
           loading={loading}
+          columnVisibilityModel={columnVisibilityModel}
+          onColumnVisibilityModelChange={setColumnVisibilityModel}
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: isMobile ? 5 : 10 },
@@ -1215,26 +1233,23 @@ export const EmployeeManagementPage = () => {
                   placeholder="1234567891"
                 />
               </Grid>
-              {/* <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
-                  label="Phone Number"
-                  value={currentEmployee.phone}
+                  label="Employee ID"
+                  value={currentEmployee.actualEmpId || ""}
                   onChange={(e) =>
                     setCurrentEmployee({
                       ...currentEmployee,
-                      phone: e.target.value,
+                      actualEmpId: e.target.value,
                     })
                   }
                   fullWidth
                   size={isMobile ? "small" : "medium"}
-                  InputProps={{
-                    sx: { fontSize: getFontSize.body2 },
-                  }}
-                  InputLabelProps={{
-                    sx: { fontSize: getFontSize.body2 },
-                  }}
+                  placeholder="e.g. EAPL14078"
+                  sx={{ fontSize: getFontSize.body2 }}
+                  InputLabelProps={{ shrink: true }}
                 />
-              </Grid> */}
+              </Grid>
             </Grid>
 
             <Grid container spacing={{ xs: 1.5, sm: 2 }}>
@@ -1251,6 +1266,14 @@ export const EmployeeManagementPage = () => {
                   size={isMobile ? "small" : "medium"}
                   error={!!errors.department}
                   displayEmpty
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        width: 250, // fixed dropdown width
+                        maxHeight: 250,
+                      },
+                    },
+                  }}
                   sx={{ fontSize: getFontSize.body2 }}
                 >
                   <MenuItem value="">
@@ -1279,7 +1302,7 @@ export const EmployeeManagementPage = () => {
                 )}
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Select
+                {/* <Select
                   value={currentEmployee.position || ""}
                   onChange={(e) =>
                     setCurrentEmployee({
@@ -1306,7 +1329,49 @@ export const EmployeeManagementPage = () => {
                       {position.name}
                     </MenuItem>
                   ))}
-                </Select>
+                </Select> */}
+                <Grid item xs={12}>
+                  <Autocomplete
+                    freeSolo
+                    options={positions.map((p) => p.name)}
+                    value={currentEmployee.position || ""}
+                    onChange={(event, newValue) =>
+                      setCurrentEmployee({
+                        ...currentEmployee,
+                        position: newValue || "",
+                      })
+                    }
+                    onInputChange={(event, newInputValue) =>
+                      setCurrentEmployee({
+                        ...currentEmployee,
+                        position: newInputValue || "",
+                      })
+                    }
+                    ListboxProps={{
+                      style: {
+                        maxHeight: 250,
+                        overflowY: "auto",
+                      },
+                    }}
+                    slotProps={{
+                      paper: {
+                        sx: {
+                          width: 280,
+                          overflow: "hidden"
+                        },
+                      },
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Position (Optional)"
+                        fullWidth
+                        size={isMobile ? "small" : "medium"}
+                        sx={{ fontSize: getFontSize.body2 }}
+                      />
+                    )}
+                  />
+                </Grid>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <Select
@@ -1321,6 +1386,14 @@ export const EmployeeManagementPage = () => {
                   size={isMobile ? "small" : "medium"}
                   error={!!errors.role}
                   displayEmpty
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        width: 250, // fixed dropdown width
+                        maxHeight: 250,
+                      },
+                    },
+                  }}
                   sx={{ fontSize: getFontSize.body2 }}
                 >
                   <MenuItem value="">
