@@ -3,7 +3,6 @@ import Add from "@mui/icons-material/Add";
 import ArrowForward from "@mui/icons-material/ArrowForward";
 import CalendarToday from "@mui/icons-material/CalendarToday";
 import CameraAlt from "@mui/icons-material/CameraAlt";
-import CheckCircle from "@mui/icons-material/CheckCircle";
 import Delete from "@mui/icons-material/Delete";
 import Done from "@mui/icons-material/Done";
 import Edit from "@mui/icons-material/Edit";
@@ -37,7 +36,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Fade,
   FormControlLabel,
   Grid,
   Grow,
@@ -50,7 +48,6 @@ import {
   MenuItem,
   Paper,
   Select,
-  Snackbar,
   Step,
   StepLabel,
   Stepper,
@@ -62,7 +59,7 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-  Zoom,
+  Zoom
 } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -71,6 +68,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 import LeaveFormDialog from "../components/dashboardmenu/LeaveFormDialog";
 import {
   getEmpAppliedLeaveList,
@@ -79,7 +77,6 @@ import {
   getEmployeeSkillList,
   updateEmployeeCompleteProfile, // Your existing generic API
 } from "../services/AppConfigAction";
-import Swal from "sweetalert2";
 
 const Profile = () => {
   const { userId } = useParams(); // This gets the userId from URL
@@ -619,23 +616,21 @@ const Profile = () => {
 
   // Default profile data if API returns null
   const defaultProfileData = {
-    name: user?.name || profile?.name || "E A P L",
-    email: user?.email || profile?.email || "eapl@example.com",
-    phone: user?.phone || "555-123-4567",
-    title: user?.title || "Senior Software Engineer",
-    company: user?.company || "Excellence Allegiance Pvt Ltd",
-    location: user?.location || "San Francisco, CA",
-    bio:
-      user?.bio ||
-      "Passionate software engineer with 8+ years of experience in building scalable web applications and cloud solutions.",
-    education: user?.education || "M.S. Computer Science, Stanford University",
-    website: user?.website || "https://johndoe.dev",
-    github: user?.github || "https://github.com/johndoe",
-    linkedin: user?.linkedin || "https://linkedin.com/in/johndoe",
-    joinedDate: user?.joinedDate || "January 2022",
+    name: user?.name || profile?.name || "",
+    email: user?.email || profile?.email || "",
+    phone: user?.phone || "",
+    title: user?.title || "",
+    company: user?.company || "",
+    location: user?.location || "",
+    bio: user?.bio || "",
+    education: user?.education || "",
+    website: user?.website || "",
+    github: user?.github || "",
+    linkedin: user?.linkedin || "",
+    joinedDate: user?.joinedDate || "",
     status: user?.status || "Active",
-    role: user?.role || "Senior Developer",
-    roleType: user?.roleType || "Full-time",
+    role: user?.role || "",
+    roleType: user?.roleType || "",
     notificationsEmail: user?.notificationsEmail || true,
     notificationsPush: user?.notificationsPush || true,
     notificationsMarketing: user?.notificationsMarketing || false,
@@ -1738,7 +1733,8 @@ const Profile = () => {
                               <Grid container spacing={{ xs: 1.5, sm: 2 }}>
                                 {[
                                   { field: "name", label: "Full Name" },
-                                  { field: "title", label: "Job Title" },
+                                  // { field: "title", label: "Job Title" },
+                                  { field: "position", label: "Job Title" },
                                   { field: "company", label: "Company" },
                                   { field: "location", label: "Location" },
                                   { field: "email", label: "Email" },
@@ -1767,7 +1763,7 @@ const Profile = () => {
                                         )
                                       }
                                       disabled={
-                                        ["status", "role", "roleType"].includes(
+                                        ["status", "role", "position"].includes(
                                           item.field,
                                         ) || !editMode
                                       }

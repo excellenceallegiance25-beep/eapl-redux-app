@@ -1,3 +1,4 @@
+import { apiFetch } from "./authorization/ApiClient";
 // Get values from .env file
 const BASE_API_URL = process.env.REACT_APP_API_URL;
 const BasicAuthentication = process.env.REACT_APP_BASIC_AUTH || "admin:admin";
@@ -58,13 +59,14 @@ export const getApplicationServicesList = () => async (dispatch) => {
 
 export const updateEmployeeCompleteProfile = (param) => async (dispatch) => {
   try {
-    const response = await fetch(
+    const response = await apiFetch(
       `${cleanApiUrl}/profile/update`, // Your new endpoint
       {
         method: "POST",
         headers: postAuthorizedHeaders,
         body: JSON.stringify(param),
       },
+      dispatch,
     );
 
     if (!response.ok) {
@@ -210,10 +212,14 @@ export const getEmployeeList = () => async (dispatch) => {
 
 export const getEmployeeProfileList = () => async (dispatch) => {
   try {
-    const response = await fetch(`${cleanApiUrl}/profile/employeeinfo`, {
-      method: "GET",
-      headers: getAuthorizedHeaders,
-    });
+    const response = await apiFetch(
+      `${cleanApiUrl}/profile/employeeinfo`,
+      {
+        method: "GET",
+        headers: getAuthorizedHeaders,
+      },
+      dispatch,
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -258,10 +264,14 @@ export const getEmployeeSkillList = () => async (dispatch) => {
 
 export const getEmployeePHistoryList = () => async (dispatch) => {
   try {
-    const response = await fetch(`${cleanApiUrl}/profile/history`, {
-      method: "GET",
-      headers: getAuthorizedHeaders,
-    });
+    const response = await apiFetch(
+      `${cleanApiUrl}/profile/history`,
+      {
+        method: "GET",
+        headers: getAuthorizedHeaders,
+      },
+      dispatch,
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -312,38 +322,6 @@ export const newEmployeeRegistration = (param) => async (dispatch) => {
   }
 };
 
-// export const verifyingOtp = (param) => async (dispatch) => {
-//   try {
-//     const response = await fetch(
-//       `${cleanApiUrl}/profile/verifyOTP?employeeId=${param.employeeId}&otp=${param.otp}&otpType=${param.otpType}`, // Your new endpoint
-//       {
-//         method: "POST",
-//         headers: postAuthorizedHeaders,
-//         // body: JSON.stringify(param),
-//       },
-//     );
-
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! status: ${response.status}`);
-//     }
-
-//     const data = await response.json();
-
-//     return dispatch({
-//       type: data.success
-//         ? "EMP_COMPLETE_VERIFY_OTP_SUCCESS"
-//         : "EMP_FAILURE_VERIFY_OTP",
-//       payload: data,
-//     });
-//   } catch (error) {
-//     console.error("Error verifying OTP:", error);
-//     return dispatch({
-//       type: "EMP_FAILURE_VERIFY_OTP",
-//       payload: error.message,
-//     });
-//   }
-// };
-
 export const userLogin = (param) => async (dispatch) => {
   try {
     const response = await fetch(
@@ -360,29 +338,17 @@ export const userLogin = (param) => async (dispatch) => {
 
     const data = await response.json();
 
-    // Dispatch based on success
-    if (data.success) {
-      // Store user data in localStorage
-      // if (data.dataList && data.dataList[0]) {
-      //     localStorage.setItem('user', JSON.stringify(data.dataList[0]));
-      // }
-      // if (data.token) {
-      //     localStorage.setItem('token', data.token);
-      // }
+    if (data.success && data.dataList && data.dataList.length > 0) {
+      const user = data.dataList[0];
 
-      if (data.success && data.dataList && data.dataList[0]) {
-        const user = data.dataList[0];
+      const safeUser = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      };
 
-        // Store ONLY lightweight fields
-        const safeUser = {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        };
-
-        localStorage.setItem("user", JSON.stringify(safeUser));
-      }
+      localStorage.setItem("user", JSON.stringify(safeUser));
 
       if (data.token) {
         localStorage.setItem("token", data.token);
@@ -393,9 +359,12 @@ export const userLogin = (param) => async (dispatch) => {
         payload: data,
       });
     } else {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+
       return dispatch({
         type: "EMP_FAILURE_LOGIN",
-        payload: data.message || "Login failed",
+        payload: "Invalid email or password",
       });
     }
   } catch (error) {
@@ -409,10 +378,14 @@ export const userLogin = (param) => async (dispatch) => {
 
 export const getApplicationRolesList = () => async (dispatch) => {
   try {
-    const response = await fetch(`${cleanApiUrl}/services/roles`, {
-      method: "GET",
-      headers: getAuthorizedHeaders,
-    });
+    const response = await apiFetch(
+      `${cleanApiUrl}/services/roles`,
+      {
+        method: "GET",
+        headers: getAuthorizedHeaders,
+      },
+      dispatch,
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -436,10 +409,14 @@ export const getApplicationRolesList = () => async (dispatch) => {
 
 export const getApplicationDepartmentsList = () => async (dispatch) => {
   try {
-    const response = await fetch(`${cleanApiUrl}/services/departments`, {
-      method: "GET",
-      headers: getAuthorizedHeaders,
-    });
+    const response = await apiFetch(
+      `${cleanApiUrl}/services/departments`,
+      {
+        method: "GET",
+        headers: getAuthorizedHeaders,
+      },
+      dispatch,
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -463,10 +440,14 @@ export const getApplicationDepartmentsList = () => async (dispatch) => {
 
 export const getApplicationPositionsList = () => async (dispatch) => {
   try {
-    const response = await fetch(`${cleanApiUrl}/services/positions`, {
-      method: "GET",
-      headers: getAuthorizedHeaders,
-    });
+    const response = await apiFetch(
+      `${cleanApiUrl}/services/positions`,
+      {
+        method: "GET",
+        headers: getAuthorizedHeaders,
+      },
+      dispatch,
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -490,13 +471,14 @@ export const getApplicationPositionsList = () => async (dispatch) => {
 
 export const sendEmailForOTP = (param) => async (dispatch) => {
   try {
-    const response = await fetch(
+    const response = await apiFetch(
       `${cleanApiUrl}/users/forgotPasswordSendEmail?email=${param.email}`, // Your new endpoint
       {
         method: "POST",
         headers: postAuthorizedHeaders,
         // body: JSON.stringify(param)
       },
+      dispatch,
     );
 
     if (!response.ok) {
@@ -520,12 +502,13 @@ export const sendEmailForOTP = (param) => async (dispatch) => {
 
 export const resetOTPforVerification = (param) => async (dispatch) => {
   try {
-    const response = await fetch(
+    const response = await apiFetch(
       `${cleanApiUrl}/users/resetPassword?email=${param.email}&newPassword=${param.newPassword}`, // Your new endpoint
       {
         method: "POST",
         headers: postAuthorizedHeaders,
       },
+      dispatch,
     );
 
     if (!response.ok) {
@@ -549,10 +532,14 @@ export const resetOTPforVerification = (param) => async (dispatch) => {
 
 export const getEmpAppliedLeaveList = () => async (dispatch) => {
   try {
-    const response = await fetch(`${cleanApiUrl}/leave/getEmpLeaveDetails`, {
-      method: "GET",
-      headers: getAuthorizedHeaders,
-    });
+    const response = await apiFetch(
+      `${cleanApiUrl}/leave/getEmpLeaveDetails`,
+      {
+        method: "GET",
+        headers: getAuthorizedHeaders,
+      },
+      dispatch,
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -576,13 +563,14 @@ export const getEmpAppliedLeaveList = () => async (dispatch) => {
 
 export const manageLeaveRequest = (param) => async (dispatch) => {
   try {
-    const response = await fetch(
+    const response = await apiFetch(
       `${cleanApiUrl}/leave/empLeaveRequest`, // Your new endpoint
       {
         method: "POST",
         headers: postAuthorizedHeaders,
         body: JSON.stringify(param),
       },
+      dispatch,
     );
 
     if (!response.ok) {
@@ -608,13 +596,14 @@ export const manageLeaveRequest = (param) => async (dispatch) => {
 
 export const updateServiceRequest = (param) => async (dispatch) => {
   try {
-    const response = await fetch(
+    const response = await apiFetch(
       `${cleanApiUrl}/services/updateServiceDetails`, // Your new endpoint
       {
         method: "POST",
         headers: postAuthorizedHeaders,
         body: JSON.stringify(param),
       },
+      dispatch,
     );
 
     if (!response.ok) {
@@ -640,13 +629,14 @@ export const updateServiceRequest = (param) => async (dispatch) => {
 
 export const updatePartnersDetails = (param) => async (dispatch) => {
   try {
-    const response = await fetch(
+    const response = await apiFetch(
       `${cleanApiUrl}/users/updatePartnersDetails`, // Your new endpoint
       {
         method: "POST",
         headers: postAuthorizedHeaders,
         body: JSON.stringify(param),
       },
+      dispatch,
     );
 
     if (!response.ok) {
@@ -704,11 +694,15 @@ export const resendOTPnewEmployeeRegistration = (param) => async (dispatch) => {
 
 export const sendUserDetailsToManager = (param) => async (dispatch) => {
   try {
-    const response = await fetch(`${cleanApiUrl}/users/sendUserDetails`, {
-      method: "POST",
-      headers: postAuthorizedHeaders,
-      body: JSON.stringify(param),
-    });
+    const response = await apiFetch(
+      `${cleanApiUrl}/users/sendUserDetails`,
+      {
+        method: "POST",
+        headers: postAuthorizedHeaders,
+        body: JSON.stringify(param),
+      },
+      dispatch,
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -733,11 +727,15 @@ export const sendUserDetailsToManager = (param) => async (dispatch) => {
 
 export const getNoticesList = (param) => async (dispatch) => {
   try {
-    const response = await fetch(`${cleanApiUrl}/services/getNoticesList`, {
-      method: "POST",
-      headers: postAuthorizedHeaders,
-      body: JSON.stringify(param),
-    });
+    const response = await apiFetch(
+      `${cleanApiUrl}/services/getNoticesList`,
+      {
+        method: "POST",
+        headers: postAuthorizedHeaders,
+        body: JSON.stringify(param),
+      },
+      dispatch,
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -758,13 +756,14 @@ export const getNoticesList = (param) => async (dispatch) => {
 
 export const getNoticesAttachmentList = (param) => async (dispatch) => {
   try {
-    const response = await fetch(
+    const response = await apiFetch(
       `${cleanApiUrl}/services/getNoticesAttachmentList`,
       {
         method: "POST",
         headers: postAuthorizedHeaders,
         body: JSON.stringify(param),
       },
+      dispatch,
     );
 
     if (!response.ok) {
@@ -792,13 +791,14 @@ export const getNoticesAttachmentList = (param) => async (dispatch) => {
 
 export const getNoticesReadByList = (param) => async (dispatch) => {
   try {
-    const response = await fetch(
+    const response = await apiFetch(
       `${cleanApiUrl}/services/getNoticesReadByList`,
       {
         method: "POST",
         headers: postAuthorizedHeaders,
         body: JSON.stringify(param),
       },
+      dispatch,
     );
 
     if (!response.ok) {
@@ -823,11 +823,15 @@ export const getNoticesReadByList = (param) => async (dispatch) => {
 
 export const updateNoticesDetails = (param) => async (dispatch) => {
   try {
-    const response = await fetch(`${cleanApiUrl}/services/updateNotice`, {
-      method: "POST",
-      headers: postAuthorizedHeaders,
-      body: JSON.stringify(param),
-    });
+    const response = await apiFetch(
+      `${cleanApiUrl}/services/updateNotice`,
+      {
+        method: "POST",
+        headers: postAuthorizedHeaders,
+        body: JSON.stringify(param),
+      },
+      dispatch,
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -853,10 +857,14 @@ export const updateNoticesDetails = (param) => async (dispatch) => {
 
 export const getEmployeeListForNotice = () => async (dispatch) => {
   try {
-    const response = await fetch(`${cleanApiUrl}/services/allEmployeeList`, {
-      method: "GET",
-      headers: getAuthorizedHeaders,
-    });
+    const response = await apiFetch(
+      `${cleanApiUrl}/services/allEmployeeList`,
+      {
+        method: "GET",
+        headers: getAuthorizedHeaders,
+      },
+      dispatch,
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -880,12 +888,13 @@ export const getEmployeeListForNotice = () => async (dispatch) => {
 
 export const getNotificationList = (param) => async (dispatch) => {
   try {
-    const response = await fetch(
+    const response = await apiFetch(
       `${cleanApiUrl}/services/getNotificationList?employeeId=${param}`,
       {
         method: "GET",
         headers: getAuthorizedHeaders,
       },
+      dispatch,
     );
 
     if (!response.ok) {
@@ -910,13 +919,14 @@ export const getNotificationList = (param) => async (dispatch) => {
 
 export const getMarkNoticeAsRead = (param) => async (dispatch) => {
   try {
-    const response = await fetch(
+    const response = await apiFetch(
       `${cleanApiUrl}/services/getMarkNoticeAsRead?employeeId=${param.employeeId}&noticeId=${param.noticeId}`,
       {
         method: "POST",
         headers: postAuthorizedHeaders,
         body: JSON.stringify(param),
       },
+      dispatch,
     );
 
     if (!response.ok) {
@@ -956,12 +966,13 @@ export const verifyingOtp = (param) => async (dispatch) => {
     params.append("otp", param.otp);
     params.append("otpType", param.otpType);
 
-    const response = await fetch(
+    const response = await apiFetch(
       `${cleanApiUrl}/profile/verifyOTP?${params.toString()}`,
       {
         method: "POST",
         headers: postAuthorizedHeaders,
       },
+      dispatch,
     );
 
     if (!response.ok) {
@@ -1001,10 +1012,14 @@ export const commonOtpSendOnEmail = (param) => async (dispatch) => {
 
     url.search = params.toString();
 
-    const response = await fetch(url.toString(), {
-      method: "POST",
-      headers: postAuthorizedHeaders,
-    });
+    const response = await apiFetch(
+      url.toString(),
+      {
+        method: "POST",
+        headers: postAuthorizedHeaders,
+      },
+      dispatch,
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -1025,33 +1040,3 @@ export const commonOtpSendOnEmail = (param) => async (dispatch) => {
     });
   }
 };
-
-// export const commonOtpSendOnEmail = (param) => async (dispatch) => {
-//   try {
-//     const response = await fetch(
-//       `${cleanApiUrl}/users/sendOtpOnEmailBasedOnType?userId=${param.userId}&email=${param.email}&type=${param.type}`, // Your new endpoint
-//       {
-//         method: "POST",
-//         headers: postAuthorizedHeaders,
-//         // body: JSON.stringify(param)
-//       },
-//     );
-
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! status: ${response.status}`);
-//     }
-
-//     const data = await response.json();
-
-//     return dispatch({
-//       type: data.success ? "EMP_OTP_SEND_SUCCESS" : "EMP_OTP_SEND_FAILURE",
-//       payload: data,
-//     });
-//   } catch (error) {
-//     console.error("Error updating profile:", error);
-//     return dispatch({
-//       type: "EMP_OTP_SEND_FAILURE",
-//       payload: error.message,
-//     });
-//   }
-// };
