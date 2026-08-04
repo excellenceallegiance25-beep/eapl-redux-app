@@ -59,7 +59,7 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-  Zoom
+  Zoom,
 } from "@mui/material";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
@@ -940,24 +940,69 @@ const Profile = () => {
     }
   };
 
+  // const formatTimeAgo = (timestamp) => {
+  //   if (!timestamp) return "Never";
+
+  //   const now = new Date();
+  //   const past = new Date(timestamp);
+  //   if (isNaN(past.getTime())) return "Invalid date";
+
+  //   const diffMs = now - past;
+  //   const diffMins = Math.floor(diffMs / 60000);
+  //   const diffHours = Math.floor(diffMs / 3600000);
+  //   const diffDays = Math.floor(diffMs / 86400000);
+
+  //   if (diffMins < 1) return "Just now";
+  //   if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
+  //   if (diffHours < 24)
+  //     return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+  //   if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+  //   return past.toLocaleDateString();
+  // };
+
   const formatTimeAgo = (timestamp) => {
     if (!timestamp) return "Never";
 
-    const now = new Date();
-    const past = new Date(timestamp);
-    if (isNaN(past.getTime())) return "Invalid date";
+    try {
+      let past;
 
-    const diffMs = now - past;
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
+      // Check if timestamp is already in ISO format with timezone info
+      if (
+        timestamp.includes("T") &&
+        (timestamp.includes("+") || timestamp.includes("Z"))
+      ) {
+        // Contains timezone info, parse directly
+        past = new Date(timestamp);
+      } else {
+        // Assume it's UTC without timezone info, append 'Z'
+        past = new Date(`${timestamp}Z`);
+      }
 
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
-    if (diffHours < 24)
-      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
-    return past.toLocaleDateString();
+      if (isNaN(past.getTime())) return "Invalid date";
+
+      const now = new Date();
+      const diffMs = now - past;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+
+      if (diffMins < 1) return "Just now";
+      if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? "s" : ""} ago`;
+      if (diffHours < 24)
+        return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+      if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+
+      // Format the date using UTC to avoid timezone issues
+      return past.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        timeZone: "UTC",
+      });
+    } catch (error) {
+      console.error("Error formatting timestamp:", error);
+      return "Invalid date";
+    }
   };
 
   const [activeTab, setActiveTab] = useState(0);

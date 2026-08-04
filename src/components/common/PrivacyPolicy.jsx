@@ -1,43 +1,43 @@
-import { 
-  Box, 
-  Container, 
-  Divider, 
-  Paper, 
+import {
+  Box,
+  Container,
+  Divider,
+  Paper,
   Typography,
   useTheme,
   useMediaQuery,
   Grid,
-  alpha
+  alpha,
 } from "@mui/material";
 
 const PrivacyPolicy = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
   // Responsive font sizes
   const responsiveFont = {
     h4: {
-      fontSize: isMobile ? '1.8rem' : isTablet ? '2.2rem' : '2.5rem',
-      fontWeight: 'bold',
+      fontSize: isMobile ? "1.8rem" : isTablet ? "2.2rem" : "2.5rem",
+      fontWeight: "bold",
     },
     h5: {
-      fontSize: isMobile ? '1.3rem' : isTablet ? '1.4rem' : '1.5rem',
-      fontWeight: 'bold',
+      fontSize: isMobile ? "1.3rem" : isTablet ? "1.4rem" : "1.5rem",
+      fontWeight: "bold",
     },
     h6: {
-      fontSize: isMobile ? '1.1rem' : isTablet ? '1.15rem' : '1.2rem',
-      fontWeight: '600',
+      fontSize: isMobile ? "1.1rem" : isTablet ? "1.15rem" : "1.2rem",
+      fontWeight: "600",
     },
     subtitle1: {
-      fontSize: isMobile ? '0.9rem' : isTablet ? '0.95rem' : '1rem',
+      fontSize: isMobile ? "0.9rem" : isTablet ? "0.95rem" : "1rem",
     },
     body1: {
-      fontSize: isMobile ? '0.95rem' : isTablet ? '1rem' : '1.05rem',
+      fontSize: isMobile ? "0.95rem" : isTablet ? "1rem" : "1.05rem",
     },
     body2: {
-      fontSize: isMobile ? '0.85rem' : isTablet ? '0.9rem' : '0.95rem',
-    }
+      fontSize: isMobile ? "0.85rem" : isTablet ? "0.9rem" : "0.95rem",
+    },
   };
 
   return (
@@ -54,23 +54,19 @@ const PrivacyPolicy = () => {
     >
       <Paper
         elevation={3}
-        sx={{ 
-          p: { xs: 2, sm: 3, md: 4 }, 
+        sx={{
+          p: { xs: 2, sm: 3, md: 4 },
           borderRadius: { xs: 1, sm: 1.5, md: 2 },
           background: "linear-gradient(120deg, #fff, #dceef1 60%)",
         }}
       >
-        <Typography 
-          variant="h4" 
-          gutterBottom 
-          sx={responsiveFont.h4}
-        >
+        <Typography variant="h4" gutterBottom sx={responsiveFont.h4}>
           Privacy Policy
         </Typography>
 
-        <Typography 
-          variant="subtitle1" 
-          color="text.secondary" 
+        <Typography
+          variant="subtitle1"
+          color="text.secondary"
           paragraph
           sx={responsiveFont.subtitle1}
         >
@@ -82,28 +78,29 @@ const PrivacyPolicy = () => {
 
         <Box>
           {/* Introduction */}
-          <Typography 
-            paragraph 
-            sx={responsiveFont.body1}
-          >
-            Excellence Allegiance Private Limited (“Excellence Allegiance”, “Company”, “we”, “us”, or “our”) is an India-based company headquartered in Kolkata, West Bengal. We are committed to protecting the privacy and personal data of users across India and the Asia-Pacific region.
+          <Typography paragraph sx={responsiveFont.body1}>
+            Excellence Allegiance Private Limited (“Excellence Allegiance”,
+            “Company”, “we”, “us”, or “our”) is an India-based company
+            headquartered in Kolkata, West Bengal. We are committed to
+            protecting the privacy and personal data of users across India and
+            the Asia-Pacific region.
           </Typography>
 
-          <Typography 
-            paragraph 
-            sx={responsiveFont.body1}
-          >
-            This Privacy Policy explains how we collect, use, process, disclose, and safeguard your information when you access our websites, applications, platforms, and services (collectively, the “Services”).
+          <Typography paragraph sx={responsiveFont.body1}>
+            This Privacy Policy explains how we collect, use, process, disclose,
+            and safeguard your information when you access our websites,
+            applications, platforms, and services (collectively, the
+            “Services”).
           </Typography>
 
           {/* Section 1 */}
-          <Typography 
-            variant="h5" 
-            gutterBottom 
-            sx={{ 
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
               ...responsiveFont.h5,
               mt: { xs: 3, sm: 3.5, md: 4 },
-              color: 'primary.main',
+              color: "primary.main",
             }}
           >
             1. Information We Collect
@@ -111,92 +108,100 @@ const PrivacyPolicy = () => {
 
           <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }}>
             <Grid item xs={12} md={6}>
-              <Typography 
-                variant="h6" 
-                sx={{ 
+              <Typography
+                variant="h6"
+                sx={{
                   ...responsiveFont.h6,
-                  color: 'primary.dark',
-                  mb: 1
+                  color: "primary.dark",
+                  mb: 1,
                 }}
               >
                 Information You Provide
               </Typography>
               <Typography paragraph sx={responsiveFont.body1}>
-                We may collect personal information including your name, email address, phone number, company name, postal address, login credentials, payment details, and other information voluntarily submitted by you.
+                We may collect personal information including your name, email
+                address, phone number, company name, postal address, login
+                credentials, payment details, and other information voluntarily
+                submitted by you.
               </Typography>
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Typography 
-                variant="h6" 
-                sx={{ 
+              <Typography
+                variant="h6"
+                sx={{
                   ...responsiveFont.h6,
-                  color: 'primary.dark',
-                  mb: 1
+                  color: "primary.dark",
+                  mb: 1,
                 }}
               >
                 Automatically Collected Information
               </Typography>
               <Typography paragraph sx={responsiveFont.body1}>
-                When you use our Services, we may automatically collect IP address, device information, browser type, operating system, time zone, interaction data, and cookie identifiers.
+                When you use our Services, we may automatically collect IP
+                address, device information, browser type, operating system,
+                time zone, interaction data, and cookie identifiers.
               </Typography>
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Typography 
-                variant="h6" 
-                sx={{ 
+              <Typography
+                variant="h6"
+                sx={{
                   ...responsiveFont.h6,
-                  color: 'primary.dark',
-                  mb: 1
+                  color: "primary.dark",
+                  mb: 1,
                 }}
               >
                 Location Information
               </Typography>
               <Typography paragraph sx={responsiveFont.body1}>
-                We may collect approximate location information through IP address or network-based data to enhance user experience and security.
+                We may collect approximate location information through IP
+                address or network-based data to enhance user experience and
+                security.
               </Typography>
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Typography 
-                variant="h6" 
-                sx={{ 
+              <Typography
+                variant="h6"
+                sx={{
                   ...responsiveFont.h6,
-                  color: 'primary.dark',
-                  mb: 1
+                  color: "primary.dark",
+                  mb: 1,
                 }}
               >
                 Information from Third Parties
               </Typography>
               <Typography paragraph sx={responsiveFont.body1}>
-                We may receive information from business partners, affiliates, marketing providers, and analytics service providers.
+                We may receive information from business partners, affiliates,
+                marketing providers, and analytics service providers.
               </Typography>
             </Grid>
           </Grid>
 
           {/* Section 2 */}
-          <Typography 
-            variant="h5" 
-            gutterBottom 
-            sx={{ 
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
               ...responsiveFont.h5,
               mt: { xs: 3, sm: 3.5, md: 4 },
-              color: 'primary.main',
+              color: "primary.main",
             }}
           >
             2. Purpose of Processing
           </Typography>
 
-          <Box 
-            component="ul" 
-            sx={{ 
-              pl: { xs: 3, sm: 4 }, 
+          <Box
+            component="ul"
+            sx={{
+              pl: { xs: 3, sm: 4 },
               mb: 2,
-              '& li': {
+              "& li": {
                 ...responsiveFont.body1,
-                mb: 0.5
-              }
+                mb: 0.5,
+              },
             }}
           >
             <li>Provide and maintain our Services</li>
@@ -209,46 +214,43 @@ const PrivacyPolicy = () => {
             <li>Comply with legal and regulatory obligations</li>
           </Box>
 
-          <Typography 
-            paragraph 
-            sx={{ 
+          <Typography
+            paragraph
+            sx={{
               ...responsiveFont.body1,
-              fontStyle: 'italic',
-              color: 'text.secondary'
+              fontStyle: "italic",
+              color: "text.secondary",
             }}
           >
             We do not sell personal data.
           </Typography>
 
           {/* Section 3 */}
-          <Typography 
-            variant="h5" 
-            gutterBottom 
-            sx={{ 
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
               ...responsiveFont.h5,
               mt: { xs: 3, sm: 3.5, md: 4 },
-              color: 'primary.main',
+              color: "primary.main",
             }}
           >
             3. Legal Compliance (India)
           </Typography>
 
-          <Typography 
-            paragraph 
-            sx={responsiveFont.body1}
-          >
+          <Typography paragraph sx={responsiveFont.body1}>
             We comply with:
           </Typography>
 
-          <Box 
-            component="ul" 
-            sx={{ 
-              pl: { xs: 3, sm: 4 }, 
+          <Box
+            component="ul"
+            sx={{
+              pl: { xs: 3, sm: 4 },
               mb: 2,
-              '& li': {
+              "& li": {
                 ...responsiveFont.body1,
-                mb: 0.5
-              }
+                mb: 0.5,
+              },
             }}
           >
             <li>Information Technology Act, 2000</li>
@@ -256,42 +258,38 @@ const PrivacyPolicy = () => {
             <li>Digital Personal Data Protection Act, 2023 (DPDP Act)</li>
           </Box>
 
-          <Typography 
-            paragraph 
-            sx={responsiveFont.body1}
-          >
-            Sensitive personal data such as passwords, financial details, health records, and biometric data (if collected) are processed only with consent and appropriate safeguards.
+          <Typography paragraph sx={responsiveFont.body1}>
+            Sensitive personal data such as passwords, financial details, health
+            records, and biometric data (if collected) are processed only with
+            consent and appropriate safeguards.
           </Typography>
 
           {/* Section 4 */}
-          <Typography 
-            variant="h5" 
-            gutterBottom 
-            sx={{ 
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
               ...responsiveFont.h5,
               mt: { xs: 3, sm: 3.5, md: 4 },
-              color: 'primary.main',
+              color: "primary.main",
             }}
           >
             4. Data Sharing
           </Typography>
 
-          <Typography 
-            paragraph 
-            sx={responsiveFont.body1}
-          >
+          <Typography paragraph sx={responsiveFont.body1}>
             We may share personal information with:
           </Typography>
 
-          <Box 
-            component="ul" 
-            sx={{ 
-              pl: { xs: 3, sm: 4 }, 
+          <Box
+            component="ul"
+            sx={{
+              pl: { xs: 3, sm: 4 },
               mb: 2,
-              '& li': {
+              "& li": {
                 ...responsiveFont.body1,
-                mb: 0.5
-              }
+                mb: 0.5,
+              },
             }}
           >
             <li>Payment gateways</li>
@@ -300,87 +298,84 @@ const PrivacyPolicy = () => {
           </Box>
 
           {/* Section 5 */}
-          <Typography 
-            variant="h5" 
-            gutterBottom 
-            sx={{ 
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
               ...responsiveFont.h5,
               mt: { xs: 3, sm: 3.5, md: 4 },
-              color: 'primary.main',
+              color: "primary.main",
             }}
           >
             5. Data Security
           </Typography>
 
-          <Typography 
-            paragraph 
-            sx={responsiveFont.body1}
-          >
-            We implement reasonable technical and organizational security measures, including encryption, secure servers, and access controls, to protect personal data from unauthorized access or misuse.
+          <Typography paragraph sx={responsiveFont.body1}>
+            We implement reasonable technical and organizational security
+            measures, including encryption, secure servers, and access controls,
+            to protect personal data from unauthorized access or misuse.
           </Typography>
 
           {/* Section 6 */}
-          <Typography 
-            variant="h5" 
-            gutterBottom 
-            sx={{ 
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
               ...responsiveFont.h5,
               mt: { xs: 3, sm: 3.5, md: 4 },
-              color: 'primary.main',
+              color: "primary.main",
             }}
           >
             6. Data Retention
           </Typography>
 
-          <Typography 
-            paragraph 
-            sx={responsiveFont.body1}
-          >
-            Personal information is retained only as long as necessary for legitimate business purposes or as required by applicable Indian laws.
+          <Typography paragraph sx={responsiveFont.body1}>
+            Personal information is retained only as long as necessary for
+            legitimate business purposes or as required by applicable Indian
+            laws.
           </Typography>
 
           {/* Section 7 */}
-          <Typography 
-            variant="h5" 
-            gutterBottom 
-            sx={{ 
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
               ...responsiveFont.h5,
               mt: { xs: 3, sm: 3.5, md: 4 },
-              color: 'primary.main',
+              color: "primary.main",
             }}
           >
             7. Cross-Border Transfers
           </Typography>
 
-          <Typography 
-            paragraph 
-            sx={responsiveFont.body1}
-          >
-            In certain cases, data may be stored or processed outside India within Asia-Pacific regions or other jurisdictions where our service providers operate, subject to appropriate safeguards.
+          <Typography paragraph sx={responsiveFont.body1}>
+            In certain cases, data may be stored or processed outside India
+            within Asia-Pacific regions or other jurisdictions where our service
+            providers operate, subject to appropriate safeguards.
           </Typography>
 
           {/* Section 8 */}
-          <Typography 
-            variant="h5" 
-            gutterBottom 
-            sx={{ 
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
               ...responsiveFont.h5,
               mt: { xs: 3, sm: 3.5, md: 4 },
-              color: 'primary.main',
+              color: "primary.main",
             }}
           >
             8. Your Rights (Under Indian Law)
           </Typography>
 
-          <Box 
-            component="ul" 
-            sx={{ 
-              pl: { xs: 3, sm: 4 }, 
+          <Box
+            component="ul"
+            sx={{
+              pl: { xs: 3, sm: 4 },
               mb: 2,
-              '& li': {
+              "& li": {
                 ...responsiveFont.body1,
-                mb: 0.5
-              }
+                mb: 0.5,
+              },
             }}
           >
             <li>Right to access personal data</li>
@@ -389,27 +384,25 @@ const PrivacyPolicy = () => {
             <li>Right to grievance redressal</li>
           </Box>
 
-          <Typography 
-            paragraph 
-            sx={responsiveFont.body1}
-          >
-            To exercise these rights, contact: <strong>contact@myeapl.com</strong>
+          <Typography paragraph sx={responsiveFont.body1}>
+            To exercise these rights, contact:{" "}
+            <strong>contact@myeapl.com</strong>
           </Typography>
 
           {/* Grievance Officer */}
-          <Typography 
-            variant="h6" 
-            sx={{ 
+          <Typography
+            variant="h6"
+            sx={{
               ...responsiveFont.h6,
               mt: 3,
-              color: 'primary.dark',
+              color: "primary.dark",
             }}
           >
             Grievance Officer
           </Typography>
 
-          <Box 
-            sx={{ 
+          <Box
+            sx={{
               pl: { xs: 2, sm: 2.5, md: 3 },
               mb: 3,
               p: { xs: 2, sm: 2.5 },
@@ -430,51 +423,150 @@ const PrivacyPolicy = () => {
           </Box>
 
           {/* Section 9 */}
-          <Typography 
-            variant="h5" 
-            gutterBottom 
-            sx={{ 
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
               ...responsiveFont.h5,
               mt: { xs: 2, sm: 2.5, md: 3 },
-              color: 'primary.main',
+              color: "primary.main",
             }}
           >
             9. Children’s Privacy
           </Typography>
 
-          <Typography 
-            paragraph 
-            sx={responsiveFont.body1}
-          >
-            Our Services are not directed to children under 18 years of age. We do not knowingly collect personal data from minors without verified parental consent where required.
+          <Typography paragraph sx={responsiveFont.body1}>
+            Our Services are not directed to children under 18 years of age. We
+            do not knowingly collect personal data from minors without verified
+            parental consent where required.
           </Typography>
 
           {/* Section 10 */}
-          <Typography 
-            variant="h5" 
-            gutterBottom 
-            sx={{ 
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
               ...responsiveFont.h5,
               mt: { xs: 2, sm: 2.5, md: 3 },
-              color: 'primary.main',
+              color: "primary.main",
             }}
           >
-            10. Changes to This Policy
+            10. Account and Personal Data Deletion
           </Typography>
 
-          <Typography 
-            paragraph 
-            sx={responsiveFont.body1}
+          <Typography paragraph sx={responsiveFont.body1}>
+            We provide users with the ability to request deletion of their
+            account and associated personal information in accordance with
+            applicable laws and this Privacy Policy.
+          </Typography>
+
+          <Typography
+            variant="h6"
+            sx={{
+              ...responsiveFont.h6,
+              color: "primary.dark",
+              mb: 1,
+            }}
           >
-            We may update this Privacy Policy periodically. Any changes will be posted on this page with a revised date.
+            Requesting Deletion
+          </Typography>
+
+          <Typography paragraph sx={responsiveFont.body1}>
+            To request deletion of your account or personal information, please
+            contact us at <strong>contact@myeapl.com</strong> using your
+            registered email address or mobile number. We may request additional
+            information, where necessary, to verify your identity before
+            processing your request.
+          </Typography>
+
+          <Typography
+            variant="h6"
+            sx={{
+              ...responsiveFont.h6,
+              color: "primary.dark",
+              mb: 1,
+            }}
+          >
+            Processing Your Request
+          </Typography>
+
+          <Box
+            component="ul"
+            sx={{
+              pl: { xs: 3, sm: 4 },
+              mb: 2,
+              "& li": {
+                ...responsiveFont.body1,
+                mb: 0.5,
+              },
+            }}
+          >
+            <li>
+              Your request will be reviewed after successful identity
+              verification.
+            </li>
+            <li>
+              Your account may be permanently deactivated or deleted, where
+              applicable.
+            </li>
+            <li>
+              Personal information associated with your account will be removed
+              from our active systems.
+            </li>
+            <li>
+              Access to the affected account and related Services will no longer
+              be available once the deletion process has been completed.
+            </li>
+          </Box>
+
+          <Typography paragraph sx={responsiveFont.body1}>
+            Where we are legally required or otherwise permitted to retain
+            certain information, such information will continue to be handled in
+            accordance with this Privacy Policy and applicable laws.
+          </Typography>
+
+          <Typography
+            variant="h6"
+            sx={{
+              ...responsiveFont.h6,
+              color: "primary.dark",
+              mb: 1,
+            }}
+          >
+            Processing Time
+          </Typography>
+
+          <Typography paragraph sx={responsiveFont.body1}>
+            We will make reasonable efforts to process verified deletion
+            requests within <strong>30 business days</strong>, although
+            additional time may be required where permitted by applicable laws
+            or due to exceptional operational circumstances.
+          </Typography>
+
+          {/* Section 11 */}
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
+              ...responsiveFont.h5,
+              mt: { xs: 2, sm: 2.5, md: 3 },
+              color: "primary.main",
+            }}
+          >
+            11. Changes to This Policy
+          </Typography>
+
+          <Typography paragraph sx={responsiveFont.body1}>
+            We may update this Privacy Policy periodically. Any changes will be
+            posted on this page with a revised date.
           </Typography>
 
           <Divider sx={{ my: { xs: 3, sm: 3.5, md: 4 } }} />
 
           {/* Footer */}
-          <Typography 
-            variant="body2" 
-            color="text.secondary" 
+          <Typography
+            variant="body2"
+            color="text.secondary"
             align="center"
             sx={responsiveFont.body2}
           >

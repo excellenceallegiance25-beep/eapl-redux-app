@@ -294,7 +294,7 @@ const Navbar = () => {
                 }}
               />
             </ListItem>
-            <ListItem
+            {/* <ListItem
               onClick={() => {
                 setMobileOpen(false);
                 setRegisterOpen(true);
@@ -317,7 +317,7 @@ const Navbar = () => {
                   color: "secondary.main",
                 }}
               />
-            </ListItem>
+            </ListItem> */}
           </>
         ) : (
           <>
@@ -378,7 +378,7 @@ const Navbar = () => {
           zIndex: theme.zIndex.drawer + 1,
         }}
       >
-        <Container maxWidth="xl">       
+        <Container maxWidth="xl">
           <Toolbar disableGutters>
             {isMobile && (
               <IconButton
@@ -687,7 +687,7 @@ const Navbar = () => {
                       >
                         Login
                       </Button>
-                      <Button
+                      {/* <Button
                         onClick={() => setRegisterOpen(true)}
                         variant="contained"
                         color="secondary"
@@ -702,7 +702,7 @@ const Navbar = () => {
                         }}
                       >
                         Register
-                      </Button>
+                      </Button> */}
                     </>
                   )}
                 </Box>
